@@ -1,0 +1,56 @@
+<!DOCTYPE html>{% load static %}{% load cache %}
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Katalogas</title>
+      <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+      <link href="//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css" rel="stylesheet">
+      <link rel="stylesheet" href="{% static 'css/app.css' %}">
+      <link rel="stylesheet" href="{% static 'css/lightbox.css' %}">
+    {% block stylesheet %}{% endblock %}
+  </head>
+  <body>
+    <div id="wrapper" class="toggled">
+      <nav class="navbar navbar-light bg-light">
+        {% block top_nav %}&nbsp;{% endblock %}
+        <form class="form-inline" method="GET" action="{% url 'products:search' %}">
+          <!--{% csrf_token %}-->
+          <input class="form-control mr-sm-2" type="search" placeholder="Ieškoti" aria-label="Search" name="q" value="{{ request.GET.q }}">
+          <button class="btn btn-primary my-2 my-sm-0" type="submit">Ieškoti</button>
+        </form>
+      </nav> 
+
+      {% cache 500 sidebar %}
+      <div id="sidebar-wrapper">
+        <div class="row pl-2 pt-2 pr-0 m-0">
+          <ul class="sidebar-nav">
+            {%for key, value in categories_tree.items %}
+            <li class="{% if value.child %}child {% endif %}nav-item"><a href="{{ value.url }}">{{ value.title }}</a></li>
+            {%endfor%}
+          </ul>
+        </div>
+
+        <div class="row pl-2 pt-4 pr-0 m-0">
+          <p class="p-0 m-0">Greiti filtrai:</p>
+        </div>
+        <div class="row pl-2 pr-0 m-0">
+          {% for tag in tag_list %}<a class="p-1" href="{% url 'products:tag' tag %}">{{ tag }}</a>{% endfor %}
+        </div>
+      </div>
+      {% endcache %}
+
+      <div id="page-content-wrapper">
+        <div class="container-fluid">
+          {% block content %}{% endblock %}
+        </div>
+
+        {% include "pagination.html" %}
+      </div>
+    </div>
+    <script type="text/javascript" src="{% static 'js/jquery-3.3.1.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/bootstrap.min.js' %}"></script>
+    <!--<script type="text/javascript" src="{% static 'js/popper.min.js' %}"></script>-->
+    <script type="text/javascript" src="{% static 'js/lightbox.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/app.js' %}"></script>
+  </body>
+</html>

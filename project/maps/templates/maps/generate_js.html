@@ -1,0 +1,55 @@
+ {% load datetime_filter %}
+
+var map;
+$(document).ready(function () {
+    s = [
+        {% for item in tracks %}["{{ item.date|date:'Y-m-d' }}", {{ item.stats.total_km | floatformat:2 }}, "{{ item.stats.total_time_seconds|format_datetime }}", "{{ item.stats.avg_speed|floatformat:2 }}",], {% endfor %}
+    ];
+
+    p = [
+        {% for item in tracks %}[{% for point in item.points.all %}[{{ point.latitude | safe }}, {{ point.longitude | safe }}], {% endfor %}], {% endfor %}
+    ];
+
+    var last0 = p.length - 1;
+    var last1 = p[last0].length - 1;
+
+    prettyPrint();
+
+    map = new GMaps({
+        div: '#map',
+        zoom: 14,
+        lat: p[last0][last1][0],
+        lng: p[last0][last1][1],
+    });
+
+    for (i = 0; i < p.length; i++) {
+        var color = 'Blue';
+        if (i % 2 == 0) {
+            color = 'CornflowerBlue';
+        }
+
+        var _last = p[i].length - 1;
+
+        map.drawPolyline({
+            path: p[i],
+            strokeColor: color,
+            strokeOpacity: 0.6,
+            strokeWeight: 3
+        });
+
+        map.addMarker({
+            lat: p[i][_last][0],
+            lng: p[i][_last][1],
+            title: '',
+            infoWindow: {
+                content: `
+                        <table border="0">
+                            <tr><td>Diena:</td><td>${s[i][0]}</td></tr>
+                            <tr><td>Atstumas:</td><td>${s[i][1]} km</td></tr>
+                            <tr><td>Laikas:</td><td>${s[i][2]}</td></tr>
+                            <tr><td>Vidutis greitis:</td><td>${s[i][3]} km/h</td></tr>
+                        </table>`
+            }
+        });
+    };
+});
