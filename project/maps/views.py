@@ -6,7 +6,6 @@ from django.views.generic import TemplateView
 from django.template.loader import render_to_string
 from django.conf import settings
 from django.db.models import Avg, Count, Min, Sum
-import datetime
 
 from wordpress import API
 
