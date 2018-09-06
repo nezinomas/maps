@@ -21,7 +21,7 @@ class GenerateMaps(TemplateView):
         context = super().get_context_data(*args, **kwargs)
 
         trip = models.Trip.objects.get(pk=1)
-
+        wp = {}
         try:
             if trip.blog:
                 wpapi = API(
