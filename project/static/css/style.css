@@ -145,3 +145,12 @@ article.large-post{
 .large-post .post-thumb{
     margin-bottom: 28px;
 }
+
+.wp-block-image, .wp-block-image img {
+    max-width: 100%;
+}
+
+.post img {
+    max-width: 100%;
+    height: auto;
+}
