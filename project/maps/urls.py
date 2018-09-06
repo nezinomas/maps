@@ -8,7 +8,7 @@ app_name = 'maps'
 
 urlpatterns = [
     path('', views.GenerateMaps.as_view(), name='index'),
-    path('up/', views.update_data, name='update')
+    path('up/', views.UpdateMaps.as_view(), name='update')
 ]
 
 if settings.DEBUG:
