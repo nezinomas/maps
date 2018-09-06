@@ -1,7 +1,7 @@
 {% load static %}{% load parse_date_filter %} {% load datetime_filter %}<!DOCTYPE html>
 <html>
-
 <head>
+    <meta charset="utf-8">
     <title>Maps</title>
     <script type="text/javascript" src="http://maps.google.com/maps/api/js?key=AIzaSyAfJcS8g2TAkvFlMksk9Dq-WQmXa4PEb0o"></script>
     <script type="text/javascript" src="{% static 'js/jquery-3.3.1.min.js' %}"></script>
@@ -34,10 +34,10 @@
 
         <div class="row mx-auto">
             <div class="col-sm-8 mx-auto pt-3 text-center">
-               <p class="stats"><b>{{ total_days }}</b> diena kelyje. Nuvažiavau <b>{{ total_km|floatformat:2 }}</b>km per <b>{{ total_time|format_datetime }}</b></p>
+                <p class="stats"><b>{{ st.total_days }}</b> diena kelyje. Nuvažiavau <b>{{ st.total_km|floatformat:2 }}</b>km per <b>{{ st.total_time|format_datetime }}</b></p>
             </div>
         </div>
-
+        {% if not wp.error %}
         {% for w in wp %}
         <div class="row mx-auto pt-5">
             <div class="col-sm-8 mx-auto text-center">
@@ -50,6 +50,11 @@
                  {{ w.content.rendered|safe }}
             </div>
         </div> {% endfor %}
+        {% else %}
+        <div class="row mx-auto pt-5">
+            <div class="col-sm-8 mx-auto text-center">{{ wp.error }}</div>
+        </div>
+        {% endif %}
     </div>
 </body>
 </html>
