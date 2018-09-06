@@ -1,6 +1,8 @@
 from django.conf import settings
-from ..lib_tcx import endomondo2db as importer
+from django.template.loader import render_to_string
 
+from ..lib_tcx import endomondo2db as importer
+from .. import models
 
 def update_track_points():
     importer.main()
