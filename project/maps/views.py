@@ -33,7 +33,7 @@ class GenerateMaps(TemplateView):
                     wp_pass=get_secret("WP_PASS"),
                     oauth1a_3leg=True,
                     creds_store="",
-                    callback=trip.blog+'/oauth1_callback'
+                    callback='{}/oauth1_callback'.format(trip.blog)
                 )
 
                 r = wpapi.get("posts?categories={}&per_page=100".format(trip.blog_category))
@@ -67,4 +67,4 @@ class UpdateMaps(LoginRequiredMixin, TemplateView):
     def get(self, request, *args, **kwargs):
         context = importer.update_track_points()
 
-        return render(request, 'maps/generate_js_message.html',context)
+        return render(request, 'maps/generate_js_message.html', context)

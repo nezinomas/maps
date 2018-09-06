@@ -28,17 +28,18 @@ def to_meters(v):
         v *= 1000
     return v
 
+
 SPORTS = {
-    0:  'Running',
-    1:  'Cycling, transport',
-    2:  'Cycling, sport',
-    3:  'Mountain biking',
-    4:  'Skating',
-    5:  'Roller skiing',
-    6:  'Skiing, cross country',
-    7:  'Skiing, downhill',
-    8:  'Snowboarding',
-    9:  'Kayaking',
+    0: 'Running',
+    1: 'Cycling, transport',
+    2: 'Cycling, sport',
+    3: 'Mountain biking',
+    4: 'Skating',
+    5: 'Roller skiing',
+    6: 'Skiing, cross country',
+    7: 'Skiing, downhill',
+    8: 'Snowboarding',
+    9: 'Kayaking',
     10: 'Kite surfing',
     11: 'Rowing',
     12: 'Sailing',
@@ -82,6 +83,7 @@ SPORTS = {
     50: 'Step counter'
 }
 
+
 class Endomondo:
     os = "Android"
     os_version = "2.2"
@@ -107,20 +109,19 @@ class Endomondo:
 
         # API request for authentication
         params = {
-            'email':            email,
-            'password':         password,
-            'country':          'US',
-            'deviceId':         self.get_device_id(),
-            'os':               self.os,
-            'appVersion':       "7.1",
-            'appVariant':       "M-Pro",
-            'osVersion':        self.os_version,
-            'model':            self.model,
-            'v':                2.4,
-            'action':           'PAIR'
+            'email': email,
+            'password': password,
+            'country': 'US',
+            'deviceId': self.get_device_id(),
+            'os': self.os,
+            'appVersion': "7.1",
+            'appVariant': "M-Pro",
+            'osVersion': self.os_version,
+            'model': self.model,
+            'v': 2.4,
+            'action': 'PAIR'
         }
-        r = self.request.get('http://api.mobile.endomondo.com/mobile/auth',
-                             params=params)
+        r = self.request.get('http://api.mobile.endomondo.com/mobile/auth', params=params)
         lines = r.text.split("\n")
 
         # check success
@@ -161,7 +162,7 @@ class Endomondo:
 
         # check success
         if r.status_code != requests.codes.ok:
-            print ("Error: failed GET URL %s" % r.url)
+            print("Error: failed GET URL %s" % r.url)
             r.raise_for_status()
             return None
 
@@ -216,15 +217,10 @@ class EndomondoWorkout:
         data = lines[0].split(";")
         start_time = to_datetime(data[6])
 
-        activity_int = int(data[5])
-        # if activity_int != 2 or activity_int != 3:
-        #     return
-
         self.activity = Activity()
         self.activity.sport = SPORTS.get(int(data[5]), "Other")
         self.activity.start_time = start_time
         self.activity.notes = self.notes
-
 
         # create a single lap for the whole activity
         l = ActivityLap()
