@@ -3,7 +3,6 @@ import json
 
 from django.shortcuts import render
 from django.views.generic import TemplateView
-from django.template.loader import render_to_string
 from django.db.models import Avg, Count, Min, Sum
 from django.contrib.auth.mixins import LoginRequiredMixin
 
@@ -21,7 +20,7 @@ class GenerateMaps(TemplateView):
         context = super().get_context_data(*args, **kwargs)
 
         trip = models.Trip.objects.get(pk=1)
-
+        wp = {}
         try:
             if trip.blog:
                 wpapi = API(
