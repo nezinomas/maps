@@ -1,16 +1,10 @@
 import re
-import getpass
-import sys
-import os
 import requests  # Verifica PROXY
-import datetime
-
-from .. import models
-
-from  . import endomondo as e
-from . import tcx
 
 from ...config.secrets import get_secret
+from .. import models
+
+from . import endomondo as e
 
 __VERSION__ = "0.4.2"
 __APP__ = "Endomondo Export TCX files"

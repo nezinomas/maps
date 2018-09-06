@@ -3,7 +3,7 @@ import json
 
 from django.shortcuts import render
 from django.views.generic import TemplateView
-from django.db.models import Avg, Count, Min, Sum
+from django.db.models import Sum
 from django.contrib.auth.mixins import LoginRequiredMixin
 
 from wordpress import API

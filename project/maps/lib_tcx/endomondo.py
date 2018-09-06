@@ -2,9 +2,8 @@ from .tcx import Activity, ActivityLap, Trackpoint
 import requests
 import uuid
 import socket
-import datetime
-from django.utils.dateparse import parse_datetime
 import dateutil.parser
+
 
 def to_datetime(v):
     dt = dateutil.parser.parse(v)
