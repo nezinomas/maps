@@ -4,13 +4,13 @@ import json
 from django.shortcuts import render
 from django.views.generic import TemplateView
 from django.template.loader import render_to_string
-from django.conf import settings
 from django.db.models import Avg, Count, Min, Sum
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 from wordpress import API
 
 from ..config.secrets import get_secret
-from .lib_tcx import endomondo2db as importer
+from .utils import update_track_points as importer
 from . import models
 
 
@@ -62,22 +62,10 @@ class GenerateMaps(TemplateView):
         return context
 
 
-def update_data(request):
-    importer.main()
-    context = {'message': 'ok'}
+class UpdateMaps(LoginRequiredMixin, TemplateView):
+    login_url = '/admin/'
 
-    try:
-        with open('{}/js/points.js'.format(settings.STATICFILES_DIRS[0]), 'w') as the_file:
-            trip = models.Trip.objects.get(pk=1)
-            content = render_to_string(
-                'maps/generate_js.html',
-                {
-                    'tracks': trip.tracks.filter(date__range=(trip.start_date, trip.end_date)).filter(activity_type__icontains='cycling')
-                })
-            the_file.write(content)
+    def get(self, request, *args, **kwargs):
+        context = importer.update_track_points()
 
-    except Exception as ex:
-        template = "An exception of type {0} occurred. Arguments:\n{1!r}"
-        context = {'message': template.format(type(ex).__name__, ex.args)}
-
-    return render(request, 'maps/generate_js_message.html',context)
+        return render(request, 'maps/generate_js_message.html',context)
