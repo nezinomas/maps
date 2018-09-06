@@ -37,7 +37,7 @@ class GenerateMaps(TemplateView):
                     callback=trip.blog+'/oauth1_callback'
                 )
 
-                r = wpapi.get("posts?categories=23&per_page=6")
+                r = wpapi.get("posts?categories={}&per_page=100".format(trip.blog_category))
 
                 wp = json.loads(r.text)
 
