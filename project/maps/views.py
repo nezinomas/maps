@@ -6,6 +6,7 @@ from django.views.generic import TemplateView
 from django.template.loader import render_to_string
 from django.conf import settings
 from django.db.models import Avg, Count, Min, Sum
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 from wordpress import API
 
@@ -62,7 +63,8 @@ class GenerateMaps(TemplateView):
         return context
 
 
-class UpdateMaps(TemplateView):
+class UpdateMaps(LoginRequiredMixin, TemplateView):
+    login_url = '/admin/'
 
     def get(self, request, *args, **kwargs):
         importer.main()
