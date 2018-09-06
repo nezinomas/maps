@@ -21,31 +21,42 @@ class GenerateMaps(TemplateView):
         context = super().get_context_data(*args, **kwargs)
 
         trip = models.Trip.objects.get(pk=1)
-        context['trip'] = trip
 
-        if trip.blog:
-            wpapi = API(
-                url=trip.blog,
-                consumer_key=get_secret("CONSUMER_KEY"),
-                consumer_secret=get_secret("CONSUMER_SECRET"),
-                api="wp-json",
-                version="wp/v2",
-                wp_user=get_secret("WP_USER"),
-                wp_pass=get_secret("WP_PASS"),
-                oauth1a_3leg=True,
-                creds_store="~/.wc-api-creds.json",
-                callback=trip.blog+'/oauth1_callback'
-            )
+        try:
+            if trip.blog:
+                wpapi = API(
+                    url=trip.blog,
+                    consumer_key=get_secret("CONSUMER_KEY"),
+                    consumer_secret=get_secret("CONSUMER_SECRET"),
+                    api="wp-json",
+                    version="wp/v2",
+                    wp_user=get_secret("WP_USER"),
+                    wp_pass=get_secret("WP_PASS"),
+                    oauth1a_3leg=True,
+                    creds_store="",
+                    callback=trip.blog+'/oauth1_callback'
+                )
 
-            r = wpapi.get("posts?categories=23&per_page=6")
+                r = wpapi.get("posts?categories=23&per_page=6")
 
-            context['wp'] = json.loads(r.text)
+                wp = json.loads(r.text)
 
+        except Exception as ex:
+            template = "An exception of type {0} occurred. Arguments:\n{1!r}"
+            wp['error'] = template.format(type(ex).__name__, ex.args)
+
+        try:
             stats = models.Statistic.objects.filter(track__trip__pk=1).filter(track__date__range=(trip.start_date, trip.end_date)).filter(track__activity_type__icontains='cycling')
 
-            context['total_km'] = stats.aggregate(Sum('total_km'))['total_km__sum']
-            context['total_time'] = stats.aggregate(Sum('total_time_seconds'))['total_time_seconds__sum']
-            context['total_days'] = (datetime.date.today() - trip.start_date).days
+            total_km = stats.aggregate(Sum('total_km'))['total_km__sum']
+            total_time = stats.aggregate(Sum('total_time_seconds'))['total_time_seconds__sum']
+        except:
+            total_km = 0.0
+            total_time = 0.0
+
+        context['st'] = {'total_km': total_km, 'total_time': total_time, 'total_days': (datetime.date.today() - trip.start_date).days}
+        context['wp'] = wp
+        context['trip'] = trip
 
         return context
 
