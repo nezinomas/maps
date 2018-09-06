@@ -33,7 +33,7 @@ class GenerateMaps(TemplateView):
                 wp_user=get_secret("WP_USER"),
                 wp_pass=get_secret("WP_PASS"),
                 oauth1a_3leg=True,
-                creds_store="~/.wc-api-creds.json",
+                creds_store="",
                 callback=trip.blog+'/oauth1_callback'
             )
 
