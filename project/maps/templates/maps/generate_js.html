@@ -3,11 +3,11 @@
 var map;
 $(document).ready(function () {
     s = [
-        {% for item in tracks %}["{{ item.date|date:'Y-m-d' }}", {{ item.stats.total_km | floatformat:2 }}, "{{ item.stats.total_time_seconds|format_datetime }}", "{{ item.stats.avg_speed|floatformat:2 }}",], {% endfor %}
+        {% for item in tracks %}["{{ item.date|date:'Y-m-d' }}", {{ item.stats.total_km|floatformat:2 }}, "{{ item.stats.total_time_seconds|format_datetime }}", "{{ item.stats.avg_speed|floatformat:2 }}",], {% endfor %}
     ];
 
     p = [
-        {% for item in tracks %}[{% for point in item.points.all %}[{{ point.latitude | safe }}, {{ point.longitude | safe }}], {% endfor %}], {% endfor %}
+        {% for item in tracks %}[{% for point in item.points.all %}[{{ point.latitude|safe }}, {{ point.longitude|safe }}], {% endfor %}], {% endfor %}
     ];
 
     var last0 = p.length - 1;
