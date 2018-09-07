@@ -57,7 +57,7 @@ class GenerateMaps(TemplateView):
             wp['error'] = template.format(type(ex).__name__, ex.args)
 
         try:
-            stats = models.Statistic.objects.filter(track__trip__pk=1).filter(track__date__range=(trip.start_date, trip.end_date)).filter(track__activity_type__icontains='cycling')
+            stats = models.Statistic.objects.filter(track__trip__pk=trip.pk).filter(track__date__range=(trip.start_date, trip.end_date)).filter(track__activity_type__icontains='cycling')
 
             total_km = stats.aggregate(Sum('total_km'))['total_km__sum']
             total_time = stats.aggregate(Sum('total_time_seconds'))['total_time_seconds__sum']

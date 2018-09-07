@@ -1,3 +1,5 @@
+import datetime as dt
+
 from django.conf import settings
 from django.template.loader import render_to_string
 
@@ -29,7 +31,7 @@ def update_track_points(trip):
 
     context = {'message': 'ok'}
     tracks = ''
-    get_data = False
+    get_data = True
     pk = trip.pk
 
     if trip.pk is not None:
@@ -38,6 +40,10 @@ def update_track_points(trip):
             activity_type__icontains='cycling')
     else:
         pk = new_pk(trip)
+        get_data = False
+
+    if tracks.count() <= 0:
+        get_data = False
 
     try:
         with open('{}/points/{}-points.js'.format(settings.MEDIA_ROOT, pk), 'w') as the_file:
@@ -49,3 +55,10 @@ def update_track_points(trip):
         context = {'message': template.format(type(ex).__name__, ex.args)}
 
     return context
+
+
+def update_all_trips():
+    trips = models.Trip.objects.filter(end_date__gte=dt.date.today())
+
+    for trip in trips:
+        update_track_points(trip)
