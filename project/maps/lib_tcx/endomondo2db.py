@@ -30,9 +30,7 @@ def create_filename(workout):
     return ret
 
 
-# create the TCX file for the specified workout
 def create_tcx_file(workout):
-    # directory_name='D:/e'
     activity = workout.get_activity()
 
     name = create_filename(workout)
@@ -42,7 +40,7 @@ def create_tcx_file(workout):
     track = trip.tracks.filter(title=name)
 
     if track:
-        return
+        return 0
 
     dt = workout.start_time
     track = models.Track.objects.create(title=name, date=dt, activity_type=activity.sport, trip=trip)
@@ -98,6 +96,8 @@ def create_tcx_file(workout):
         message = template.format(type(ex).__name__, ex.args)
         print(message)
 
+    return track.pk
+
 
 def credenciales():
     txt = [""]
@@ -127,19 +127,19 @@ def main():
             email = get_secret("ENDOMONDO_USER")
             password = get_secret("ENDOMONDO_PASS")
 
-        # maximum_workouts=input("Maximum number of workouts (press Enter to ignore) ")
-        maximum_workouts = MAX_WORKOUTS
         endomondo = e.Endomondo(email, password)
 
-        workouts = endomondo.get_workouts(maximum_workouts)
-        print("Fetched latest", len(workouts), "workouts")
+        workouts = endomondo.get_workouts(MAX_WORKOUTS)
+
+        inserted_workouts = []
         for workout in workouts:
-            create_tcx_file(workout)
-        print("Export done!!")
-        return 0
+            track_id = create_tcx_file(workout)
+            if track_id > 0:
+                inserted_workouts.append(track_id)
+
+        return inserted_workouts
 
     except Exception as ex:
         template = "An exception of type {0} occurred. Arguments:\n{1!r}"
         message = template.format(type(ex).__name__, ex.args)
         print(message)
-        return 1
