@@ -5,10 +5,11 @@ from ..lib_tcx import endomondo2db as importer
 from .. import models
 
 
-def update_track_points():
+def update_track_points(get_data=True):
     pk = 1
 
-    importer.main()
+    if get_data:
+        importer.main()
 
     context = {'message': 'ok'}
 
