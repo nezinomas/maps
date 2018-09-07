@@ -24,7 +24,7 @@ def new_pk(instance):
     return new_id
 
 
-def update_track_points(trip):
+def _write_points_file(trip):
 
     if not trip:
         return
@@ -34,8 +34,7 @@ def update_track_points(trip):
     pk = trip.pk
 
     if trip.pk is not None:
-        tracks = trip.tracks.filter(date__range=(trip.start_date, trip.end_date)).filter(
-            activity_type__icontains='cycling')
+        tracks = trip.tracks.filter(date__range=(trip.start_date, trip.end_date)).filter(activity_type__icontains='cycling')
     else:
         pk = new_pk(trip)
         get_data = False
@@ -50,21 +49,18 @@ def update_track_points(trip):
 
 def update_single_trip(trip):
     if trip.pk is not None:
-        up = importer.main()
+        up = importer.main(trip)
 
-    context = {'message': 'nothing to update'}
+    msg = 'nothing to update'
     if up and len(up) > 0:
-        update_track_points(trip)
-        context = {'message': 'inserted {} new tracks and updated points.js file'.format(len(up))}
+        _write_points_file(trip)
+        msg = 'inserted {} new tracks and updated points.js file'.format(len(up))
 
-    return context
+    return msg
 
 
 def update_all_trips():
-    up = importer.main()
+    trips = models.Trip.objects.filter(end_date__gte=dt.date.today())
 
-    if up and len(up) > 0:
-        trips = models.Trip.objects.filter(end_date__gte=dt.date.today())
-
-        for trip in trips:
-            update_track_points(trip)
+    for trip in trips:
+        update_track_points(trip)
