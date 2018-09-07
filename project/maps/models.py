@@ -51,7 +51,7 @@ class Track(models.Model):
     )
 
     class Meta:
-        ordering = ['date', ]
+        ordering = ['-date', ]
 
     def __str__(self):
         return self.title
