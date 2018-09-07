@@ -59,6 +59,16 @@ def update_single_trip(trip):
     return msg
 
 
+def recalc_single_trip(trip):
+    if trip.pk is not None:
+        up = importer.main(trip)
+
+    _write_points_file(trip)
+    msg = 'recalculated'
+
+    return msg
+
+
 def update_all_trips():
     trips = models.Trip.objects.filter(end_date__gte=dt.date.today())
 

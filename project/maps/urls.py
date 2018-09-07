@@ -10,6 +10,7 @@ urlpatterns = [
     path('', views.index, name='first'),
     path('<slug:trip>/', views.GenerateMaps.as_view(), name='index'),
     path('<slug:trip>/up/', views.UpdateMaps.as_view(), name='update'),
+    path('<slug:trip>/recalc/', views.RecalcMaps.as_view(), name='recalc'),
 ]
 
 if settings.DEBUG:
