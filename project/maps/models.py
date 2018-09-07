@@ -30,7 +30,7 @@ class Trip(models.Model):
         self.slug = slugify(self.title)
 
         if self.pk is None:
-            importer.update_track_points(self)
+            importer.update_single_trip(self)
 
         super().save(*args, **kwargs)
 
@@ -51,7 +51,7 @@ class Track(models.Model):
     )
 
     class Meta:
-        ordering = ['date', ]
+        ordering = ['-date', ]
 
     def __str__(self):
         return self.title
