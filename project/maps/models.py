@@ -1,6 +1,6 @@
 from django.db import models
 from django.utils.text import slugify
-
+from .utils import update_track_points as importer
 
 class Trip(models.Model):
     title = models.CharField(
@@ -28,6 +28,10 @@ class Trip(models.Model):
 
     def save(self, *args, **kwargs):
         self.slug = slugify(self.title)
+
+        if self.pk is None:
+            importer.update_track_points(self)
+
         super().save(*args, **kwargs)
 
 

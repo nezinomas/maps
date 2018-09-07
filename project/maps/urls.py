@@ -7,8 +7,9 @@ from . import views
 app_name = 'maps'
 
 urlpatterns = [
-    path('', views.GenerateMaps.as_view(), name='index'),
-    path('up/', views.UpdateMaps.as_view(), name='update')
+    path('', views.index, name='first'),
+    path('<slug:trip>/', views.GenerateMaps.as_view(), name='index'),
+    path('<slug:trip>/up/', views.UpdateMaps.as_view(), name='update'),
 ]
 
 if settings.DEBUG:
