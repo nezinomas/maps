@@ -75,10 +75,13 @@ class GenerateMaps(TemplateView):
 
 class UpdateMaps(LoginRequiredMixin, TemplateView):
     login_url = '/admin/'
+    template_name = 'maps/generate_js_message.html'
 
-    def get(self, request, *args, **kwargs):
+    def get_context_data(self, *args, **kwargs):
+        context = super().get_context_data(*args, **kwargs)
+
         trip = get_object_or_404(models.Trip, slug=self.kwargs.get('trip'))
 
-        context = importer.update_single_trip(trip)
+        context['message'] = importer.update_single_trip(trip)
 
-        return render(request, 'maps/generate_js_message.html', context)
+        return context
