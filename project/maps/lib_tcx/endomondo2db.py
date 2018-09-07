@@ -13,7 +13,7 @@ nl = "\n"
 CREDENCIALES = "endomondo_data.txt"
 sesion = requests.Session()
 ERROR_NO_INTERNET = "ERROR"
-MAX_WORKOUTS = 15
+MAX_WORKOUTS = 7
 
 
 # create a somewhat useful filename for the specified workout
