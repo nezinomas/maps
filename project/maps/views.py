@@ -85,3 +85,17 @@ class UpdateMaps(LoginRequiredMixin, TemplateView):
         context['message'] = importer.update_single_trip(trip)
 
         return context
+
+
+class RecalcMaps(LoginRequiredMixin, TemplateView):
+    login_url = '/admin/'
+    template_name = 'maps/generate_js_message.html'
+
+    def get_context_data(self, *args, **kwargs):
+        context = super().get_context_data(*args, **kwargs)
+
+        trip = get_object_or_404(models.Trip, slug=self.kwargs.get('trip'))
+
+        context['message'] = importer.recalc_single_trip(trip)
+
+        return context
