@@ -30,7 +30,7 @@ class Trip(models.Model):
         self.slug = slugify(self.title)
 
         if self.pk is None:
-            importer.update_single_trip(self)
+            importer._write_points_file(self)
 
         super().save(*args, **kwargs)
 
