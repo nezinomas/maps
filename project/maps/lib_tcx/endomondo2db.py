@@ -30,12 +30,10 @@ def create_filename(workout):
     return ret
 
 
-def create_tcx_file(workout):
+def create_tcx_file(trip, workout):
     activity = workout.get_activity()
 
     name = create_filename(workout)
-
-    trip = models.Trip.objects.get(pk=1)
 
     track = trip.tracks.filter(title=name)
 
@@ -112,17 +110,12 @@ def credenciales():
     return txt
 
 
-def main():
+def main(trip):
     try:
-        print("Endomondo: export most recent workouts as TCX files")
         cred = credenciales()
 
         if len(cred) > 1:
             email, password = cred  # cred[0], cred[1]
-            # s_proxy=necesita_proxy(proxy)
-            # if s_proxy == ERROR_NO_INTERNET:
-            #     print ("No Internet Access. Impossible to continue!")
-            #     return 0
         else:
             email = get_secret("ENDOMONDO_USER")
             password = get_secret("ENDOMONDO_PASS")
@@ -133,7 +126,7 @@ def main():
 
         inserted_workouts = []
         for workout in workouts:
-            track_id = create_tcx_file(workout)
+            track_id = create_tcx_file(trip, workout)
             if track_id > 0:
                 inserted_workouts.append(track_id)
 
