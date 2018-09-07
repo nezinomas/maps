@@ -5,22 +5,43 @@ from ..lib_tcx import endomondo2db as importer
 from .. import models
 
 
-def update_track_points(get_data=True):
-    pk = 1
+def new_pk(instance):
+    if not instance.pk:
+        model = instance.__class__
+        try:
+            new_id = model.objects.latest('pk').pk
+            if new_id:
+                new_id += 1
+            else:
+                new_id = 1
+        except:
+            new_id = 1
+    else:
+        new_id = instance.pk
 
-    if get_data:
-        importer.main()
+    return new_id
+
+
+def update_track_points(trip):
+
+    if not trip:
+        return {'message': 'No trip!'}
 
     context = {'message': 'ok'}
+    tracks = ''
+    get_data = False
+    pk = trip.pk
+
+    if trip.pk is not None:
+        importer.main()
+        tracks = trip.tracks.filter(date__range=(trip.start_date, trip.end_date)).filter(
+            activity_type__icontains='cycling')
+    else:
+        pk = new_pk(trip)
 
     try:
         with open('{}/points/{}-points.js'.format(settings.MEDIA_ROOT, pk), 'w') as the_file:
-            trip = models.Trip.objects.get(pk=pk)
-            content = render_to_string(
-                'maps/generate_js.html',
-                {
-                    'tracks': trip.tracks.filter(date__range=(trip.start_date, trip.end_date)).filter(activity_type__icontains='cycling')
-                })
+            content = render_to_string('maps/generate_js.html', {'tracks': tracks, 'get_data': get_data})
             the_file.write(content)
 
     except Exception as ex:
