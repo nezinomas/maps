@@ -1,10 +1,10 @@
 from django.db import models
 from django.utils.text import slugify
-
+from .utils import update_track_points as importer
 
 class Trip(models.Model):
     title = models.CharField(
-        max_length = 254
+        max_length=254
     )
     slug = models.SlugField(editable=False)
     description = models.TextField(
@@ -20,39 +20,41 @@ class Trip(models.Model):
     blog_category = models.CharField(
         blank=True,
         null=True,
-        max_length = 20,
+        max_length=20,
     )
-
 
     def __str__(self):
         return str(self.title)
 
     def save(self, *args, **kwargs):
         self.slug = slugify(self.title)
+
+        if self.pk is None:
+            importer.update_track_points(self)
+
         super().save(*args, **kwargs)
 
 
 class Track(models.Model):
     title = models.CharField(
-        max_length = 254
+        max_length=254
     )
     date = models.DateTimeField()
     activity_type = models.CharField(
-        max_length = 30,
+        max_length=30,
     )
 
     trip = models.ForeignKey(
         Trip,
-        related_name = 'tracks',
+        related_name='tracks',
         on_delete=models.CASCADE,
     )
 
     class Meta:
-        ordering = ['date',]
+        ordering = ['date', ]
 
     def __str__(self):
         return str(self.title)
-
 
 
 class Point(models.Model):
@@ -134,8 +136,8 @@ class Statistic(models.Model):
 
     track = models.OneToOneField(
         Track,
-        related_name = 'stats',
-        on_delete = models.CASCADE
+        related_name='stats',
+        on_delete=models.CASCADE
     )
 
 
@@ -149,7 +151,7 @@ class Note(models.Model):
 
     track = models.ForeignKey(
         Track,
-        related_name = 'notes',
+        related_name='notes',
         on_delete=models.CASCADE,
         blank=True,
         null=True
