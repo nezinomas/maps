@@ -39,7 +39,7 @@ def _write_points_file(trip):
         pk = new_pk(trip)
         get_data = False
 
-    if tracks.count() <= 0:
+    if len(tracks) <= 0:
         get_data = False
 
     with open('{}/points/{}-points.js'.format(settings.MEDIA_ROOT, pk), 'w') as the_file:
