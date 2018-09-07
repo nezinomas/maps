@@ -6,13 +6,15 @@ from .. import models
 
 
 def update_track_points():
+    pk = 1
+
     importer.main()
 
     context = {'message': 'ok'}
 
     try:
-        with open('{}/js/points.js'.format(settings.STATICFILES_DIRS[0]), 'w') as the_file:
-            trip = models.Trip.objects.get(pk=1)
+        with open('{}/points/{}-points.js'.format(settings.MEDIA_ROOT, pk), 'w') as the_file:
+            trip = models.Trip.objects.get(pk=pk)
             content = render_to_string(
                 'maps/generate_js.html',
                 {
