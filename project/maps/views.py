@@ -1,7 +1,7 @@
 import datetime
 import json
 
-from django.shortcuts import render
+from django.shortcuts import render, redirect, reverse, get_object_or_404
 from django.views.generic import TemplateView
 from django.db.models import Sum
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -13,14 +13,26 @@ from .utils import update_track_points as importer
 from . import models
 
 
+def index(request):
+    queryset = models.Trip.objects.all().order_by('-pk')[:1]
+    content = get_object_or_404(queryset)
+    return redirect(
+        reverse(
+            'maps:index',
+            kwargs={'trip': content.slug}
+        )
+    )
+
+
 class GenerateMaps(TemplateView):
     template_name = 'maps/generate_map.html'
 
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)
 
-        trip = models.Trip.objects.get(pk=1)
+        trip = get_object_or_404(models.Trip, slug=self.kwargs.get('trip'))
         wp = {}
+
         try:
             if trip.blog:
                 wpapi = API(
@@ -65,6 +77,8 @@ class UpdateMaps(LoginRequiredMixin, TemplateView):
     login_url = '/admin/'
 
     def get(self, request, *args, **kwargs):
-        context = importer.update_track_points()
+        trip = get_object_or_404(models.Trip, slug=self.kwargs.get('trip'))
+
+        context = importer.update_track_points(trip=trip)
 
         return render(request, 'maps/generate_js_message.html', context)
