@@ -79,6 +79,6 @@ class UpdateMaps(LoginRequiredMixin, TemplateView):
     def get(self, request, *args, **kwargs):
         trip = get_object_or_404(models.Trip, slug=self.kwargs.get('trip'))
 
-        context = importer.update_track_points(trip=trip)
+        context = importer.update_single_trip(trip)
 
         return render(request, 'maps/generate_js_message.html', context)
