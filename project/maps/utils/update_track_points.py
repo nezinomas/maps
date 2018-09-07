@@ -63,4 +63,4 @@ def update_all_trips():
     trips = models.Trip.objects.filter(end_date__gte=dt.date.today())
 
     for trip in trips:
-        update_track_points(trip)
+        update_single_trip(trip)
