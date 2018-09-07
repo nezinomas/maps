@@ -120,17 +120,3 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
-
-
-# ================   TEMPLATE THUMBNAILS CONFIGURATION
-THUMBNAIL_ALIASES = {
-    '': {
-        'cover': {'size': (100, 100), },
-        'cover_big': {'size': (300, 300), },
-        'drawing': {'size': (900, 400), },
-    },
-}
-
-
-# ================   TEMPLATE THUMBNAILS CONFIGURATION
-TAGGIT_CASE_INSENSITIVE = True
