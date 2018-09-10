@@ -99,11 +99,15 @@ class Comments(TemplateView):
 
     def get(self, request, *args, **kwargs):
         post_id = request.GET.get('post_id', False)
-        trip = get_object_or_404(models.Trip, slug=self.kwargs.get('trip'))
-        wp = wpContent.get_content(
-            trip.blog,
-            "comments?post={}&per_page=50".format(post_id)
-        )
+        get_remote = request.GET.get('get_remote', False)
+
+        wp = []
+        if get_remote == 'true':
+            trip = get_object_or_404(models.Trip, slug=self.kwargs.get('trip'))
+            wp = wpContent.get_content(
+                trip.blog,
+                "comments?post={}&per_page=50".format(post_id)
+            )
 
         rendered_page = loader.render_to_string('maps/comments.html', {'comments': wp})
         output_data = {'html': rendered_page }
