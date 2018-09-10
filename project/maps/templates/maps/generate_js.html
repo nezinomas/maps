@@ -11,7 +11,7 @@ $(document).ready(function () {
         {% for item in tracks %}[{% for point in item.points.all %}[{{ point.latitude|safe }}, {{ point.longitude|safe }}], {% endfor %}], {% endfor %}
     ];
 
-    var last0 = p.length - 1;
+    var last0 = 0;
     var last1 = p[last0].length - 1;
     {% endif %}
     prettyPrint();
