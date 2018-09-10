@@ -45,7 +45,7 @@
                 <h2 class="post-title "><a href="{{ w.link }} " rel="bookmark ">{{ w.title.rendered }}</a></h2>
                 <p class="post-date">{{ w.date|parse_date|date:'Y-m-d  H:m' }}</p>
 
-                {{ w.content.rendered|safe }}
+                <div class="post-content">{{ w.content.rendered|safe }}</div>
 
                 <p><a href="javascript:void(0);" class="com mr-2" id="link_{{ w.id }}" value1="/{{ trip.slug }}/{{ w.slug }}/comments/" value2="{{ w.id }}" value3="not-clicked">Rodyti komentarus</a> <a href="{{ w.link }}#respond" class="ml-2">Rašyti komentarą</a></p>
 
