@@ -40,7 +40,8 @@ class GenerateMaps(TemplateView):
             if trip.blog:
                 wp = wpContent.get_content(
                     trip.blog,
-                    "posts?categories={}&per_page=5".format(trip.blog_category)
+                    "posts?categories={}&per_page=70".format(
+                        trip.blog_category)
                 )
 
         except Exception as ex:
@@ -101,7 +102,7 @@ class Comments(TemplateView):
         trip = get_object_or_404(models.Trip, slug=self.kwargs.get('trip'))
         wp = wpContent.get_content(
             trip.blog,
-            "comments?post={}&per_page=5".format(post_id)
+            "comments?post={}&per_page=50".format(post_id)
         )
 
         rendered_page = loader.render_to_string('maps/comments.html', {'comments': wp})
