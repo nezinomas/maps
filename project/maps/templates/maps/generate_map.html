@@ -9,6 +9,7 @@
     <!-- <script type="text/javascript" src="//maps.google.com/maps/api/js?sensor=true"></script> -->
     <script type="text/javascript" src="{% static 'js/gmaps.js' %}"></script>
     <script type="text/javascript" src="{% static 'js/prettify.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/ajax_comments.js' %}"></script>
     <link rel='stylesheet' id='google-font-playfair-display-css' href='//fonts.googleapis.com/css?family=Playfair+Display:400,%20%20%20%20400italic,700,700italic,900,900italic'
         type='text/css' media='all' />
     <link rel='stylesheet' id='google-font-lora-css'  href='//fonts.googleapis.com/css?family=Lora:400,400italic,700,700italic' type='text/css' media='all' />
@@ -37,7 +38,7 @@
                 <p class="stats"><b>{{ st.total_days }}</b> diena kelyje. Nuvažiavau <b>{{ st.total_km|floatformat:2 }}</b>km per <b>{{ st.total_time|format_datetime }}</b></p>
             </div>
         </div>
-        {% if not wp.error %}
+        {% if not wp_error %}
         {% for w in wp %}
         <div class="row mx-auto pt-5">
             <div class="col-sm-8 mx-auto text-center">
@@ -47,12 +48,14 @@
         </div>
         <div class="row mt-2">
             <div class="col-sm-8 mx-auto post">
-                 {{ w.content.rendered|safe }}
+                {{ w.content.rendered|safe }}
+                <a href="javascript:void(0);" class="com" id="link_{{ w.id }}" value1="/{{ trip.slug }}/{{ w.slug }}/comments/" value2="{{ w.id }}" value3="not-clicked">Rodyti komentarus</a>
+            <div class="com" id="{{ w.id }}" style="display: none;"></div>
             </div>
         </div> {% endfor %}
         {% else %}
         <div class="row mx-auto pt-5">
-            <div class="col-sm-8 mx-auto text-center">{{ wp.error }}</div>
+            <div class="col-sm-8 mx-auto text-center">{{ wp_error }}</div>
         </div>
         {% endif %}
     </div>
