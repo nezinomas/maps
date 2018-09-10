@@ -146,9 +146,15 @@ article.large-post{
     margin-bottom: 28px;
 }
 
+img[class*="wp-image-"] {
+    max-width: 100%;
+}
+
 .wp-block-image, .wp-block-image img {
     max-width: 100%;
 }
+
+
 
 .post img {
     max-width: 100%;
