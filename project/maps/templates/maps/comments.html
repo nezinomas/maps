@@ -1,0 +1,4 @@
+{% for c in comments  %}
+    <p>autorius: {{ c.author_name }} - {{ c.content.rendered|safe }}</p>
+{% endfor %}
+
