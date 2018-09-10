@@ -65,7 +65,7 @@ class GenerateMaps(TemplateView):
             total_km = 0.0
             total_time = 0.0
 
-        context['st'] = {'total_km': total_km, 'total_time': total_time, 'total_days': (datetime.date.today() - trip.start_date).days}
+        context['st'] = {'total_km': total_km, 'total_time': total_time, 'total_days': ((datetime.date.today() - trip.start_date).days)+1}
         context['wp'] = wp
         context['trip'] = trip
         context['google_api_key'] = get_secret("GOOGLE_API_KEY")
