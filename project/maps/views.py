@@ -1,10 +1,12 @@
 import datetime
 import json
+import os
 
 from django.shortcuts import render, redirect, reverse, get_object_or_404
 from django.views.generic import TemplateView
 from django.db.models import Sum
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.conf import settings
 
 from wordpress import API
 
@@ -69,6 +71,7 @@ class GenerateMaps(TemplateView):
         context['wp'] = wp
         context['trip'] = trip
         context['google_api_key'] = get_secret("GOOGLE_API_KEY")
+        context['js_version'] = os.path.getmtime('{}/points/{}-points.js'.format(settings.MEDIA_ROOT, trip.pk))
 
         return context
 
