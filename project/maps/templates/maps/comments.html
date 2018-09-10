@@ -9,4 +9,8 @@
             <div class="comment-content">
                 {{ c.content.rendered|safe }}
             </div>
+            {% empty %}
+            <div class="comment-context media-body my-3 pt-3 text-center">
+                Komentarų nėra.
+            </div>
 {% endfor %}
