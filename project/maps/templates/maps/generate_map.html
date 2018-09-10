@@ -44,15 +44,15 @@
             <div class="col-sm-8 mx-auto text-center">
                 <h2 class="post-title "><a href="{{ w.link }} " rel="bookmark ">{{ w.title.rendered }}</a></h2>
                 <p class="post-date">{{ w.date|parse_date|date:'Y-m-d  H:m' }}</p>
-            </div>
-        </div>
-        <div class="row mt-2">
-            <div class="col-sm-8 mx-auto post">
+
                 {{ w.content.rendered|safe }}
-                <a href="javascript:void(0);" class="com" id="link_{{ w.id }}" value1="/{{ trip.slug }}/{{ w.slug }}/comments/" value2="{{ w.id }}" value3="not-clicked">Rodyti komentarus</a>
-            <div class="com" id="{{ w.id }}" style="display: none;"></div>
+
+                <p><a href="javascript:void(0);" class="com" id="link_{{ w.id }}" value1="/{{ trip.slug }}/{{ w.slug }}/comments/" value2="{{ w.id }}" value3="not-clicked">Rodyti komentarus</a></p>
+
+                <div class="com comments-area comments" id="{{ w.id }}" style="display: none;"></div>
+
             </div>
-        </div> {% endfor %}
+        </div>{% endfor %}
         {% else %}
         <div class="row mx-auto pt-5">
             <div class="col-sm-8 mx-auto text-center">{{ wp_error }}</div>
