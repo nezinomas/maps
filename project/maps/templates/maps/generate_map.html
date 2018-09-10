@@ -47,7 +47,7 @@
 
                 {{ w.content.rendered|safe }}
 
-                <p><a href="javascript:void(0);" class="com" id="link_{{ w.id }}" value1="/{{ trip.slug }}/{{ w.slug }}/comments/" value2="{{ w.id }}" value3="not-clicked">Rodyti komentarus</a></p>
+                <p><a href="javascript:void(0);" class="com mr-2" id="link_{{ w.id }}" value1="/{{ trip.slug }}/{{ w.slug }}/comments/" value2="{{ w.id }}" value3="not-clicked">Rodyti komentarus</a> <a href="{{ w.link }}#respond" class="ml-2">Rašyti komentarą</a></p>
 
                 <div class="com comments-area comments mt-2" id="{{ w.id }}" style="display: none;"></div>
 
