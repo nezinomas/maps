@@ -155,8 +155,28 @@ img[class*="wp-image-"] {
 }
 
 
-
 .post img {
     max-width: 100%;
     height: auto;
+}
+
+.comments {
+    text-align: left;
+}
+
+.comment-author{
+    margin-top: 0;
+    margin-bottom: 5px;
+    font-family: 'Playfair Display', serif;
+    font-size: 14px;
+    letter-spacing: .30px;
+}
+
+.comment-date{
+    color: #AAAAAA;
+    font-size: 11px;
+}
+
+.comment-content{
+    margin-top: 5px;
 }
