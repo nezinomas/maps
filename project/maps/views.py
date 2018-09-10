@@ -58,6 +58,7 @@ class GenerateMaps(TemplateView):
 
         context['st'] = {'total_km': total_km, 'total_time': total_time, 'total_days': ((datetime.date.today() - trip.start_date).days)+1}
         context['wp'] = wp
+        context['wp_error'] = wp_error
         context['trip'] = trip
         context['google_api_key'] = get_secret("GOOGLE_API_KEY")
         context['js_version'] = os.path.getmtime('{}/points/{}-points.js'.format(settings.MEDIA_ROOT, trip.pk))
@@ -91,3 +92,19 @@ class RecalcMaps(LoginRequiredMixin, TemplateView):
         context['message'] = importer.recalc_single_trip(trip)
 
         return context
+
+
+class Comments(TemplateView):
+
+    def get(self, request, *args, **kwargs):
+        post_id = request.GET.get('post_id', False)
+        trip = get_object_or_404(models.Trip, slug=self.kwargs.get('trip'))
+        wp = wpContent.get_content(
+            trip.blog,
+            "comments?post={}&per_page=5".format(post_id)
+        )
+
+        rendered_page = loader.render_to_string('maps/comments.html', {'comments': wp})
+        output_data = {'html': rendered_page }
+
+        return JsonResponse(output_data)
