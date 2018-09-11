@@ -53,11 +53,19 @@ class GenerateMaps(TemplateView):
 
             total_km = stats.aggregate(Sum('total_km'))['total_km__sum']
             total_time = stats.aggregate(Sum('total_time_seconds'))['total_time_seconds__sum']
+            total_ascent = stats.aggregate(Sum('ascent'))['ascent__sum']
+            total_descent = stats.aggregate(Sum('descent'))['descent__sum']
         except:
             total_km = 0.0
             total_time = 0.0
 
-        context['st'] = {'total_km': total_km, 'total_time': total_time, 'total_days': ((datetime.date.today() - trip.start_date).days)+1}
+        context['st'] = {
+            'total_km': total_km,
+            'total_time': total_time,
+            'total_days': ((datetime.date.today() - trip.start_date).days)+1,
+            'total_ascent': total_ascent,
+            'total_descent': total_descent,
+        }
         context['wp'] = wp
         context['wp_error'] = wp_error
         context['trip'] = trip
