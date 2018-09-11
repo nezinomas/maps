@@ -2,10 +2,10 @@
         $('.com').on('click', function () {
             var post_link = $(this).attr("value1");
             var post_id = $(this).attr("value2");
-            var v = $('#link_' + post_id).attr('value3')
+            var click_status = $('#link_' + post_id).attr('value3')
 
             var get_remote = false;
-            if (v == 'not-clicked') {
+            if (click_status == 'not-clicked') {
                 get_remote = true;
             }
 
@@ -15,7 +15,7 @@
                 data: { post_id: post_id, get_remote: get_remote },
                 success: function (data) {
 
-                    if (v == 'not-clicked') {
+                    if (click_status == 'not-clicked') {
 
                         $('#'+post_id).html(data.html);
                         $('#'+post_id).show();
