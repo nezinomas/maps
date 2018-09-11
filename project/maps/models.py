@@ -125,11 +125,11 @@ class Statistic(models.Model):
         null=True,
         blank=True
     )
-    ascend = models.FloatField(
+    ascent = models.FloatField(
         null=True,
         blank=True
     )
-    descend = models.FloatField(
+    descent = models.FloatField(
         null=True,
         blank=True
     )
