@@ -1,7 +1,6 @@
-import datetime
 import os
 
-from django.shortcuts import render, redirect, reverse, get_object_or_404
+from django.shortcuts import redirect, reverse, get_object_or_404
 from django.views.generic import TemplateView
 
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -102,6 +101,6 @@ class Comments(TemplateView):
             )
 
         rendered_page = loader.render_to_string('maps/comments.html', {'comments': wp})
-        output_data = {'html': rendered_page }
+        output_data = {'html': rendered_page}
 
         return JsonResponse(output_data)

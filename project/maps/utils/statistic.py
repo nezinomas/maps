@@ -5,8 +5,7 @@ from django.db.models import Sum
 from .. import models
 
 
-def get_statistic(trip):       
-    
+def get_statistic(trip):
     total_km = 0.0
     total_time = 0.0
     total_ascent = 0.0
@@ -25,7 +24,7 @@ def get_statistic(trip):
     context = {
         'total_km': total_km,
         'total_time': total_time,
-        'total_days': ((datetime.date.today() - trip.start_date).days)+1,
+        'total_days': ((datetime.date.today() - trip.start_date).days) + 1,
         'total_ascent': total_ascent,
         'total_descent': total_descent,
     }

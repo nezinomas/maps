@@ -4,6 +4,7 @@ from wordpress import API
 
 from ...config.secrets import get_secret
 
+
 def get_content(blog_url, link_end):
     wpapi = API(
         url=blog_url,

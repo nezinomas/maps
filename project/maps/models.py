@@ -2,6 +2,7 @@ from django.db import models
 from django.utils.text import slugify
 from .utils import update_track_points as importer
 
+
 class Trip(models.Model):
     title = models.CharField(
         max_length=254

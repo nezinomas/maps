@@ -1,6 +1,5 @@
 import re
 import requests  # Verifica PROXY
-import json
 
 from ...config.secrets import get_secret
 from .. import models
@@ -136,7 +135,7 @@ def main(trip):
             r = workout.parent.request.get(url)
 
             data = r.json()
-            params = {'ascent': 0.0, 'descent': 0.0 }
+            params = {'ascent': 0.0, 'descent': 0.0}
 
             if data['ascent']:
                 params['ascent'] = float(data['ascent'])
@@ -147,9 +146,6 @@ def main(trip):
             track_id = create_tcx_file(trip, workout, params)
             if track_id > 0:
                 inserted_workouts.append(track_id)
-
-
-
         return inserted_workouts
 
     except Exception as ex:
