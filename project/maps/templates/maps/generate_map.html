@@ -34,7 +34,7 @@
         </div>
 
         <div class="row mx-auto">
-            <div class="col-sm-8 mx-auto pt-3 text-center">
+            <div class="col- mx-auto pt-3 text-center">
                 <p class="stats">
                     <b>{{ st.total_days }}</b> diena kelyje. Nuvažiavau <b>{{ st.total_km|floatformat:2 }}</b>km per <b>{{ st.total_time|format_datetime }}</b>. Pakilau <b>{{ st.total_ascent|floatformat:0|intcomma }}</b>m. Nusileidau <b>{{ st.total_descent|floatformat:0|intcomma }}</b>m</p>
             </div>
@@ -42,7 +42,7 @@
         {% if not wp_error %}
         {% for w in wp %}
         <div class="row mx-auto pt-5">
-            <div class="col-sm-8 mx-auto text-center">
+            <div class="col- mx-auto text-center">
                 <h2 class="post-title "><a href="{{ w.link }} " rel="bookmark ">{{ w.title.rendered }}</a></h2>
                 <p class="post-date">{{ w.date|parse_date|date:'Y-m-d  H:m' }}</p>
 
@@ -56,7 +56,7 @@
         </div>{% endfor %}
         {% else %}
         <div class="row mx-auto pt-5">
-            <div class="col-sm-8 mx-auto text-center">{{ wp_error }}</div>
+            <div class="col- mx-auto text-center">{{ wp_error }}</div>
         </div>
         {% endif %}
     </div>
