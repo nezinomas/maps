@@ -2,16 +2,21 @@
         $('.com').on('click', function () {
             var post_link = $(this).attr("value1");
             var post_id = $(this).attr("value2");
+            var v = $('#link_' + post_id).attr('value3')
+
+            var get_remote = false;
+            if (v == 'not-clicked') {
+                get_remote = true;
+            }
 
             $.ajax({
                 type: 'get',
                 url: post_link,
-                data: { post_id: post_id },
+                data: { post_id: post_id, get_remote: get_remote },
                 success: function (data) {
 
-                    var v = $('#link_'+post_id).attr('value3')
-
                     if (v == 'not-clicked') {
+
                         $('#'+post_id).html(data.html);
                         $('#'+post_id).show();
 
@@ -25,6 +30,9 @@
                     }
 
                 },
+                error: function (xhr, status, error) {
+                    // shit happens friends!
+                }
             });
         });
     });

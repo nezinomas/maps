@@ -60,6 +60,10 @@ p{
 }
 
 /* Post */
+.post-content {
+    text-align: left;
+}
+
 .post-in{
     margin-top: -5px;
 }
