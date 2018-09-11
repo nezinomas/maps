@@ -1,5 +1,6 @@
 import re
 import requests  # Verifica PROXY
+import json
 
 from ...config.secrets import get_secret
 from .. import models
@@ -30,7 +31,7 @@ def create_filename(workout):
     return ret
 
 
-def create_tcx_file(trip, workout):
+def create_tcx_file(trip, workout, params):
     activity = workout.get_activity()
 
     name = create_filename(workout)
@@ -59,6 +60,8 @@ def create_tcx_file(trip, workout):
             avg_temperature=0.0,
             min_altitude=lap.min_altitude,
             max_altitude=lap.max_altitude,
+            ascent=params['ascent'],
+            descent=params['descent'],
             track=track
         )
     except Exception as ex:
@@ -126,9 +129,26 @@ def main(trip):
 
         inserted_workouts = []
         for workout in workouts:
-            track_id = create_tcx_file(trip, workout)
+            id = workout.properties['id']
+
+            url = 'https://www.endomondo.com/rest/v1/users/{}/workouts/{}'.format(get_secret("ENDOMONDO_USER_ID"), id)
+
+            r = workout.parent.request.get(url)
+
+            data = r.json()
+            params = {'ascent': 0.0, 'descent': 0.0 }
+
+            if data['ascent']:
+                params['ascent'] = float(data['ascent'])
+
+            if data['descent']:
+                params['descent'] = float(data['descent'])
+
+            track_id = create_tcx_file(trip, workout, params)
             if track_id > 0:
                 inserted_workouts.append(track_id)
+
+
 
         return inserted_workouts
 

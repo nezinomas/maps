@@ -1,4 +1,4 @@
-{% load static %}{% load parse_date_filter %} {% load datetime_filter %}<!DOCTYPE html>
+{% load static %}{% load parse_date_filter %} {% load datetime_filter %}{% load humanize %}<!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8">
@@ -35,7 +35,8 @@
 
         <div class="row mx-auto">
             <div class="col-sm-8 mx-auto pt-3 text-center">
-                <p class="stats"><b>{{ st.total_days }}</b> diena kelyje. Nuvažiavau <b>{{ st.total_km|floatformat:2 }}</b>km per <b>{{ st.total_time|format_datetime }}</b></p>
+                <p class="stats">
+                    <b>{{ st.total_days }}</b> diena kelyje. Nuvažiavau <b>{{ st.total_km|floatformat:2 }}</b>km per <b>{{ st.total_time|format_datetime }}</b>. Pakilau <b>{{ st.total_ascent|floatformat:0|intcomma }}</b>m. Nusileidau <b>{{ st.total_descent|floatformat:0|intcomma }}</b>m</p>
             </div>
         </div>
         {% if not wp_error %}
