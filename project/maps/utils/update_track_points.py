@@ -61,7 +61,7 @@ def update_single_trip(trip):
 
 def recalc_single_trip(trip):
     if trip.pk is not None:
-        up = importer.main(trip)
+        importer.main(trip)
 
     _write_points_file(trip)
     msg = 'recalculated'

@@ -36,7 +36,14 @@
         <div class="row mx-auto">
             <div class="col- mx-auto pt-3 text-center">
                 <p class="stats">
+                    {% now "Y-m-d" as todays_date %}
+                    {% if todays_date < trip.start_date|date:"Y-m-d" %}
+                    Kelionė dar neprasidėjo.
+                    {% elif todays_date > trip.end_date|date:"Y-m-d" %}
+                    Kelionė jau pasibaigusi.
+                    {% else %}
                     <b>{{ st.total_days }}</b> diena kelyje. Nuvažiavau <b>{{ st.total_km|floatformat:2 }}</b>km per <b>{{ st.total_time|format_datetime }}</b>. Pakilau <b>{{ st.total_ascent|floatformat:0|intcomma }}</b>m. Nusileidau <b>{{ st.total_descent|floatformat:0|intcomma }}</b>m</p>
+                    {% endif %}
             </div>
         </div>
         {% if not wp_error %}
