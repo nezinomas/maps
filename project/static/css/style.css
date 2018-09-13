@@ -184,3 +184,9 @@ img[class*="wp-image-"] {
 .comment-content{
     margin-top: 5px;
 }
+
+.ajaxProgress {
+    display: none;
+    text-align: center;
+    margin: 0 auto;
+}
