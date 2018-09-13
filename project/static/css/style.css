@@ -188,6 +188,5 @@ img[class*="wp-image-"] {
 .ajaxProgress {
     display: none;
     text-align: center;
-    padding: 20px;
-    width: 100%;
+    margin: 0 auto;
 }
