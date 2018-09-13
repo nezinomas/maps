@@ -8,7 +8,7 @@
             if (click_status == 'not-clicked') {
                 get_remote = true;
             }
-
+            $('.ajaxProgress').show();
             $.ajax({
                 type: 'get',
                 url: post_link,
@@ -28,6 +28,7 @@
                         $('#link_'+post_id).attr('value3', 'not-clicked');
                         $('#link_'+post_id).html('Rodyti komentarus')
                     }
+                    $('.ajaxProgress').hide();
 
                 },
                 error: function (xhr, status, error) {

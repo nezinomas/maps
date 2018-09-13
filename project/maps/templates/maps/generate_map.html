@@ -55,8 +55,12 @@
 
                 <div class="post-content">{{ w.content.rendered|safe }}</div>
 
-                <p><a href="javascript:void(0);" class="com mr-2" id="link_{{ w.id }}" value1="/{{ trip.slug }}/{{ w.slug }}/comments/" value2="{{ w.id }}" value3="not-clicked">Rodyti komentarus</a> <a href="{{ w.link }}#respond" class="ml-2">Rašyti komentarą</a></p>
+                <div class="ajaxProgress">
+                    <h6>Please wait...</h6>
+                    <img src="{% static 'images/ajax-loader.gif' %}" alt="loading" />
+                </div>
 
+                <p><a href="javascript:void(0);" class="com mr-2" id="link_{{ w.id }}" value1="/{{ trip.slug }}/{{ w.slug }}/comments/" value2="{{ w.id }}" value3="not-clicked">Rodyti komentarus</a> <a href="{{ w.link }}#respond" class="ml-2">Rašyti komentarą</a></p>
                 <div class="com comments-area comments mt-2" id="{{ w.id }}" style="display: none;"></div>
 
             </div>
