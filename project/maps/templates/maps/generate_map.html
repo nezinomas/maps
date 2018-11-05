@@ -42,8 +42,8 @@
                     {% elif todays_date > trip.end_date|date:"Y-m-d" %}
                     Kelionė jau pasibaigusi.
                     {% else %}
-                    <b>{{ st.total_days }}</b> diena kelyje. Nuvažiavau <b>{{ st.total_km|floatformat:2 }}</b>km per <b>{{ st.total_time|format_datetime }}</b>. Pakilau <b>{{ st.total_ascent|floatformat:0|intcomma }}</b>m. Nusileidau <b>{{ st.total_descent|floatformat:0|intcomma }}</b>m</p>
-                    {% endif %}
+                    <b>{{ st.total_days }}</b> diena kelyje.{% endif %}
+                    Nuvažiavau <b>{{ st.total_km|floatformat:2 }}</b>km per <b>{{ st.total_time|format_datetime }}</b>. Pakilau <b>{{ st.total_ascent|floatformat:0|intcomma }}</b>m. Nusileidau <b>{{ st.total_descent|floatformat:0|intcomma }}</b>m</p>
             </div>
         </div>
         {% if not wp_error %}
