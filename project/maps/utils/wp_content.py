@@ -32,7 +32,7 @@ def get_posts(trip):
     )
 
 
-def get_comments(trip, post_id):
+def get_post_comments(trip, post_id):
     return get_content(
         trip.blog,
         "comments?post={}&per_page=50".format(post_id)
