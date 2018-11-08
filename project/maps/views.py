@@ -12,6 +12,7 @@ from ..config.secrets import get_secret
 from .utils import update_track_points as importer
 from .utils import wp_content as wpContent
 from .utils import statistic
+from .utils import wp_comments_qty as wpQty
 
 from . import models
 
@@ -111,26 +112,8 @@ class CommentQty(TemplateView):
 
         trip = get_object_or_404(models.Trip, slug=self.kwargs.get('trip'))
 
-        from django.db import transaction
+        wpQty.push_post_comment_qty(trip)
 
-        with transaction.atomic():
-            _wp = wpContent.get_all_comments(trip)
-
-            _dict = {}
-
-            for item in _wp:
-                id = item['post']
-
-                if id in _dict:
-                    _dict[id] += 1
-                else:
-                    _dict[id] = 1
-
-            for post_id, qty in _dict.items():
-                obj, created = models.CommentQty.objects.update_or_create(
-                    trip_id=trip.pk,
-                    post_id=post_id,
-                    defaults={'qty': qty}
-                )
+        context['message'] = 'done'
 
         return context
