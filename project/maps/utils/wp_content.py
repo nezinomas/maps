@@ -39,6 +39,13 @@ def get_comments(trip, post_id):
     )
 
 
+def get_all_comments(trip):
+    return get_content(
+        trip.blog,
+        "comments?per_page=100"
+    )
+
+
 def get_comment_qty(trip):
     qty = {}
 

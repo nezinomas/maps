@@ -101,3 +101,36 @@ class Comments(TemplateView):
         output_data = {'html': rendered_page}
 
         return JsonResponse(output_data)
+
+
+class CommentQty(TemplateView):
+    template_name = 'maps/generate_js_message.html'
+
+    def get_context_data(self, *args, **kwargs):
+        context = super().get_context_data(*args, **kwargs)
+
+        trip = get_object_or_404(models.Trip, slug=self.kwargs.get('trip'))
+
+        from django.db import transaction
+
+        with transaction.atomic():
+            _wp = wpContent.get_all_comments(trip)
+
+            _dict = {}
+
+            for item in _wp:
+                id = item['post']
+
+                if id in _dict:
+                    _dict[id] += 1
+                else:
+                    _dict[id] = 1
+
+            for post_id, qty in _dict.items():
+                obj, created = models.CommentQty.objects.update_or_create(
+                    trip_id=trip.pk,
+                    post_id=post_id,
+                    defaults={'qty': qty}
+                )
+
+        return context
