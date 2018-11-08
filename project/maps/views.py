@@ -39,17 +39,8 @@ class GenerateMaps(TemplateView):
         comments = None
         try:
             if trip.blog:
-                wp = wpContent.get_content(
-                    trip.blog,
-                    "posts?categories={}&per_page=70".format(
-                        trip.blog_category)
-                )
-
-                c = trip.comment_qty.all().values('post_id', 'qty')
-
-                comments = {}
-                for i in c:
-                    comments[i['post_id']] = i['qty']
+                wp = wpContent.get_posts(trip)
+                comments = wpContent.get_comment_qty(trip)
 
         except Exception as ex:
             template = "An exception of type {0} occurred. Arguments:\n{1!r}"
