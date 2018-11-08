@@ -22,3 +22,36 @@ def get_content(blog_url, link_end):
     r = wpapi.get(link_end)
 
     return json.loads(r.text)
+
+
+def get_posts(trip):
+    return get_content(
+        trip.blog,
+        "posts?categories={}&per_page=70".format(
+            trip.blog_category)
+    )
+
+
+def get_post_comments(trip, post_id):
+    return get_content(
+        trip.blog,
+        "comments?post={}&per_page=50".format(post_id)
+    )
+
+
+def get_all_comments(trip):
+    return get_content(
+        trip.blog,
+        "comments?per_page=100"
+    )
+
+
+def get_comment_qty(trip):
+    qty = {}
+
+    _list = trip.comment_qty.all().values('post_id', 'qty')
+
+    for i in _list:
+        qty[i['post_id']] = i['qty']
+
+    return qty

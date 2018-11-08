@@ -1,4 +1,9 @@
-{% load static %}{% load parse_date_filter %} {% load datetime_filter %}{% load humanize %}<!DOCTYPE html>
+{% load static %}
+{% load parse_date_filter %}
+{% load datetime_filter %}
+{% load humanize %}
+{% load comment_qty %}
+<!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8">
@@ -60,7 +65,7 @@
                     <img src="{% static 'images/ajax-loader.gif' %}" alt="loading" />
                 </div>
 
-                <p><a href="javascript:void(0);" class="com mr-2" id="link_{{ w.id }}" value1="/{{ trip.slug }}/{{ w.slug }}/comments/" value2="{{ w.id }}" value3="not-clicked">Rodyti komentarus</a> <a href="{{ w.link }}#respond" class="ml-2">Rašyti komentarą</a></p>
+                <p><a href="javascript:void(0);" class="com mr-2" id="link_{{ w.id }}" value1="/{{ trip.slug }}/{{ w.slug }}/comments/" value2="{{ w.id }}" value3="not-clicked">Rodyti komentarus ({% comment_qty qty w.id %})</a> <a href="{{ w.link }}#respond" class="ml-2">Rašyti komentarą</a></p>
                 <div class="com comments-area comments mt-2" id="{{ w.id }}" style="display: none;"></div>
             </div>
         </div>{% endfor %}

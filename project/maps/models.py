@@ -36,6 +36,28 @@ class Trip(models.Model):
         super().save(*args, **kwargs)
 
 
+class CommentQty(models.Model):
+    post_id = models.IntegerField(
+        null=True,
+        blank=True,
+    )
+    qty = models.IntegerField(
+        default=0
+    )
+
+    trip = models.ForeignKey(
+        Trip,
+        related_name='comment_qty',
+        on_delete=models.CASCADE,
+    )
+
+    class Meta:
+        unique_together = (("post_id", "trip"),)
+
+    def __str__(self):
+        return str(self.post_id)
+
+
 class Track(models.Model):
     title = models.CharField(
         max_length=254
