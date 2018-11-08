@@ -31,12 +31,13 @@ class GenerateMaps(TemplateView):
     template_name = 'maps/generate_map.html'
 
     def get_context_data(self, *args, **kwargs):
-        context = super().get_context_data(*args, **kwargs)
-
-        trip = get_object_or_404(models.Trip, slug=self.kwargs.get('trip'))
-        wp_error = False
         wp = None
+        wp_error = False
         comments = None
+
+        context = super().get_context_data(*args, **kwargs)
+        trip = get_object_or_404(models.Trip, slug=self.kwargs.get('trip'))
+
         try:
             if trip.blog:
                 wp = wpContent.get_posts(trip)
