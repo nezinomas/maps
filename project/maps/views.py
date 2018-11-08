@@ -36,6 +36,7 @@ class GenerateMaps(TemplateView):
         trip = get_object_or_404(models.Trip, slug=self.kwargs.get('trip'))
         wp_error = False
         wp = None
+        comments = None
         try:
             if trip.blog:
                 wp = wpContent.get_content(
@@ -44,6 +45,12 @@ class GenerateMaps(TemplateView):
                         trip.blog_category)
                 )
 
+                c = trip.comment_qty.all().values('post_id', 'qty')
+
+                comments = {}
+                for i in c:
+                    comments[i['post_id']] = i['qty']
+
         except Exception as ex:
             template = "An exception of type {0} occurred. Arguments:\n{1!r}"
             wp_error = template.format(type(ex).__name__, ex.args)
@@ -51,6 +58,7 @@ class GenerateMaps(TemplateView):
         context['wp'] = wp
         context['wp_error'] = wp_error
         context['trip'] = trip
+        context['qty'] = comments
         context['st'] = statistic.get_statistic(trip)
         context['google_api_key'] = get_secret("GOOGLE_API_KEY")
         context['js_version'] = os.path.getmtime('{}/points/{}-points.js'.format(settings.MEDIA_ROOT, trip.pk))
