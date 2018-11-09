@@ -12,6 +12,7 @@ from ..config.secrets import get_secret
 from .utils import update_track_points as importer
 from .utils import wp_content as wpContent
 from .utils import statistic
+from .utils import wp_comments_qty as wpQty
 
 from . import models
 
@@ -31,18 +32,17 @@ class GenerateMaps(TemplateView):
     template_name = 'maps/generate_map.html'
 
     def get_context_data(self, *args, **kwargs):
-        context = super().get_context_data(*args, **kwargs)
-
-        trip = get_object_or_404(models.Trip, slug=self.kwargs.get('trip'))
-        wp_error = False
         wp = None
+        wp_error = False
+        comments = None
+
+        context = super().get_context_data(*args, **kwargs)
+        trip = get_object_or_404(models.Trip, slug=self.kwargs.get('trip'))
+
         try:
             if trip.blog:
-                wp = wpContent.get_content(
-                    trip.blog,
-                    "posts?categories={}&per_page=70".format(
-                        trip.blog_category)
-                )
+                wp = wpContent.get_posts(trip)
+                comments = wpContent.get_comment_qty(trip)
 
         except Exception as ex:
             template = "An exception of type {0} occurred. Arguments:\n{1!r}"
@@ -51,6 +51,7 @@ class GenerateMaps(TemplateView):
         context['wp'] = wp
         context['wp_error'] = wp_error
         context['trip'] = trip
+        context['qty'] = comments
         context['st'] = statistic.get_statistic(trip)
         context['google_api_key'] = get_secret("GOOGLE_API_KEY")
         context['js_version'] = os.path.getmtime('{}/points/{}-points.js'.format(settings.MEDIA_ROOT, trip.pk))
@@ -95,12 +96,24 @@ class Comments(TemplateView):
         wp = []
         if get_remote == 'true':
             trip = get_object_or_404(models.Trip, slug=self.kwargs.get('trip'))
-            wp = wpContent.get_content(
-                trip.blog,
-                "comments?post={}&per_page=50".format(post_id)
-            )
+            wp = wpContent.get_post_comments(trip, post_id)
 
         rendered_page = loader.render_to_string('maps/comments.html', {'comments': wp})
         output_data = {'html': rendered_page}
 
         return JsonResponse(output_data)
+
+
+class CommentQty(TemplateView):
+    template_name = 'maps/generate_js_message.html'
+
+    def get_context_data(self, *args, **kwargs):
+        context = super().get_context_data(*args, **kwargs)
+
+        trip = get_object_or_404(models.Trip, slug=self.kwargs.get('trip'))
+
+        wpQty.push_post_comment_qty(trip)
+
+        context['message'] = 'done'
+
+        return context
