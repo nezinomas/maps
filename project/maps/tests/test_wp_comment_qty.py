@@ -17,7 +17,7 @@ class WpCommentsQtyTest(TestCase):
 
     @patch(
         'project.maps.utils.wp_content.get_content',
-        return_value=[{'post': 101}, {'post':102}, {'post':102}]
+        return_value=[{'post': 101}, {'post': 102}, {'post': 102}]
     )
     def test_count_comments_01(self, mock_call):
         q = qty._count_comments(self.trip)
