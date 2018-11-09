@@ -14,6 +14,7 @@ class WpCommentsQtyTest(TestCase):
             end_date='2018-02-01'
         )
 
+
     @patch(
         'project.maps.utils.wp_content.get_content',
         return_value=[{'post': 101}, {'post':102}, {'post':102}]
@@ -24,6 +25,7 @@ class WpCommentsQtyTest(TestCase):
         self.assertEqual(len(q), 2)
         self.assertDictEqual(q, {101: 1, 102: 2})
         self.assertEqual(mock_call.call_count, 1)
+
 
     @patch(
         'project.maps.utils.wp_comments_qty._get_wp_content',
