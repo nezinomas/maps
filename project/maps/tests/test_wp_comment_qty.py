@@ -1,4 +1,5 @@
 from mock import patch
+from freezegun import freeze_time
 
 from django.test import TestCase
 
@@ -10,8 +11,8 @@ class WpCommentsQtyTest(TestCase):
     def setUp(self):
         self.trip = Trip.objects.create(
             title='Trip',
-            start_date='2018-01-01',
-            end_date='2018-02-01'
+            start_date='2000-01-01',
+            end_date='2000-06-01'
         )
 
         patcher = patch('project.maps.utils.wp_content.get_content')
@@ -48,3 +49,22 @@ class WpCommentsQtyTest(TestCase):
         self.assertEqual(len(q), 2)
         self.assertQuerysetEqual(q, ["<CommentQty: 101>", "<CommentQty: 102>"], ordered=False)
         self.assertEqual(self.mock_call.call_count, 1)
+
+
+    @freeze_time("2000-06-01")
+    def test_push_all_comment_qty_01(self):
+        qty.push_all_comment_qty()
+
+        q = CommentQty.objects.all()
+
+        self.assertEqual(len(q), 0)
+
+
+    @freeze_time("2000-03-01")
+    def test_push_all_comment_qty_02(self):
+        qty.push_all_comment_qty()
+
+        q = CommentQty.objects.all()
+
+        self.assertEqual(len(q), 2)
+        self.assertQuerysetEqual(q, ["<CommentQty: 101>", "<CommentQty: 102>"], ordered=False)
