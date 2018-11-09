@@ -43,7 +43,7 @@ def push_post_comment_qty(trip):
 
 def push_all_comment_qty():
     trips = Trip.objects.filter(
-        end_date__lte=dt.date.today() + relativedelta(months=+3))
+        end_date__gte=dt.date.today() + relativedelta(months=+3))
 
     for trip in trips:
         push_post_comment_qty(trip)
