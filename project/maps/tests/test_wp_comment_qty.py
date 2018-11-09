@@ -1,8 +1,8 @@
-from django.test import TestCase
 from mock import patch
 
-from ..models import Trip, CommentQty
+from django.test import TestCase
 
+from ..models import Trip, CommentQty
 from ..utils import wp_comments_qty as qty
 
 
