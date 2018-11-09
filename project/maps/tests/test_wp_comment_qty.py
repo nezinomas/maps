@@ -1,7 +1,7 @@
 from django.test import TestCase
 from mock import patch
 
-from ..models import Trip
+from ..models import Trip, CommentQty
 
 from ..utils import wp_comments_qty as qty
 
@@ -36,4 +36,18 @@ class WpCommentsQtyTest(TestCase):
 
         self.assertEqual(len(q), 0)
         self.assertDictEqual(q, {})
+        self.assertEqual(mock_call.call_count, 1)
+
+
+    @patch(
+        'project.maps.utils.wp_content.get_content',
+        return_value=[{'post': 101}, {'post': 102}, {'post': 102}]
+    )
+    def test_push_post_comment_qty(self, mock_call):
+        qty.push_post_comment_qty(self.trip)
+
+        q = CommentQty.objects.all()
+
+        self.assertEqual(len(q), 2)
+        self.assertQuerysetEqual(q, ["<CommentQty: 101>", "<CommentQty: 102>"], ordered=False)
         self.assertEqual(mock_call.call_count, 1)
