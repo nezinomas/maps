@@ -18,5 +18,6 @@ INSTALLED_APPS += [
 
 # ================   CRONJOBS
 CRONJOBS = [
-    ('0,30 * * * *', 'project.maps.cron.my_scheduled_job', '> /dev/null 2>&1')
+    ('0,30 * * * *', 'project.maps.cron.my_scheduled_job', '> /dev/null 2>&1'),
+    ('5,30 * * * *', 'project.maps.cron.push_comment_qty', '> /dev/null 2>&1'),
 ]
