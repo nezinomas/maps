@@ -14,17 +14,18 @@ class WpCommentsQtyTest(TestCase):
             end_date='2018-02-01'
         )
 
+        patcher = patch('project.maps.utils.wp_content.get_content')
+        self.mock_call = patcher.start()
+        self.mock_call.return_value = [{'post': 101}, {'post': 102}, {'post': 102}]
+        self.addCleanup(patcher.stop)
 
-    @patch(
-        'project.maps.utils.wp_content.get_content',
-        return_value=[{'post': 101}, {'post': 102}, {'post': 102}]
-    )
-    def test_count_comments_01(self, mock_call):
+
+    def test_count_comments_01(self):
         q = qty._count_comments(self.trip)
 
         self.assertEqual(len(q), 2)
         self.assertDictEqual(q, {101: 1, 102: 2})
-        self.assertEqual(mock_call.call_count, 1)
+        self.assertEqual(self.mock_call.call_count, 1)
 
 
     @patch(
@@ -39,15 +40,11 @@ class WpCommentsQtyTest(TestCase):
         self.assertEqual(mock_call.call_count, 1)
 
 
-    @patch(
-        'project.maps.utils.wp_content.get_content',
-        return_value=[{'post': 101}, {'post': 102}, {'post': 102}]
-    )
-    def test_push_post_comment_qty(self, mock_call):
+    def test_push_post_comment_qty(self):
         qty.push_post_comment_qty(self.trip)
 
         q = CommentQty.objects.all()
 
         self.assertEqual(len(q), 2)
         self.assertQuerysetEqual(q, ["<CommentQty: 101>", "<CommentQty: 102>"], ordered=False)
-        self.assertEqual(mock_call.call_count, 1)
+        self.assertEqual(self.mock_call.call_count, 1)
