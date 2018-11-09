@@ -8,9 +8,13 @@ from ..models import Trip, CommentQty
 from . import wp_content as wpContent
 
 
+def _get_wp_content(trip):
+    return wpContent.get_all_comments(trip)
+
+
 def _count_comments(trip):
     dict = {}
-    wp = wpContent.get_all_comments(trip)
+    wp = _get_wp_content(trip)
 
     for item in wp:
         id = item['post']
