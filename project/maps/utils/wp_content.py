@@ -32,6 +32,16 @@ def get_posts(trip):
     )
 
 
+def create_post_id_dictionary(trip):
+    posts = get_posts(trip)
+
+    dict = {}
+    for post in posts:
+        dict[post['id']] = 0
+
+    return dict
+
+
 def get_post_comments(trip, post_id):
     return get_content(
         trip.blog,
@@ -39,10 +49,19 @@ def get_post_comments(trip, post_id):
     )
 
 
-def get_all_comments(trip):
+def get_all_comments(trip, post_id_dict):
+    # comments?post=7363&post=7352&per_page=100'
+    _str = ''
+    for id in post_id_dict:
+        _str += '&post={}'.format(id)
+
+    _list = list(_str)
+    _list[0] = '?'
+    _str = ''.join(_list)
+
     return get_content(
         trip.blog,
-        "comments?per_page=100"
+        "comments{}&per_page=100".format(_str)
     )
 
 
