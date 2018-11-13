@@ -9,7 +9,7 @@ from . import wp_content as wpContent
 
 
 def _get_wp_content(trip, post_id_dict):
-    return wpContent.get_comments(trip, post_id_dict)
+    return wpContent.get_comments(trip, **post_id_dict)
 
 
 def _count_comments(trip):
@@ -17,7 +17,7 @@ def _count_comments(trip):
     wp = _get_wp_content(trip, dict)
 
     for item in wp:
-        id = item['post']
+        id = str(item['post'])
 
         if id in dict:
             dict[id] += 1
