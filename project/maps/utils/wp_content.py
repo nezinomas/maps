@@ -37,23 +37,30 @@ def create_post_id_dictionary(trip):
 
     dict = {}
     for post in posts:
-        dict[post['id']] = 0
+        dict[str(post['id'])] = 0
 
     return dict
 
 
-def create_comment_rest_link(post_id_dict):
+def post_link(arg):
+    return '&post={}'.format(arg)
+
+
+def create_comment_rest_link(*args, **kwargs):
     _str = ''
-    if post_id_dict:
-        for id in post_id_dict:
-            _str += '&post={}'.format(id)
+
+    if args:
+        _str += ''.join([post_link(arg) for arg in args])
+
+    if kwargs:
+        _str += ''.join([post_link(key) for key in kwargs.keys()])
 
     return 'comments?per_page=100{}'.format(_str)
 
 
-def get_comments(trip, post_id_dict):
+def get_comments(trip, *args, **kwargs):
     # comments?post=7363&post=7352&per_page=100'
-    link = create_comment_rest_link(post_id_dict)
+    link = create_comment_rest_link(*args, **kwargs)
 
     return get_content(trip.blog, link)
 
