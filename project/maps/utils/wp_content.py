@@ -42,13 +42,6 @@ def create_post_id_dictionary(trip):
     return dict
 
 
-def get_post_comments(trip, post_id):
-    return get_content(
-        trip.blog,
-        "comments?post={}&per_page=100".format(post_id)
-    )
-
-
 def create_comment_rest_link(post_id_dict):
     _str = ''
     if post_id_dict:

@@ -96,7 +96,7 @@ class Comments(TemplateView):
         wp = []
         if get_remote == 'true':
             trip = get_object_or_404(models.Trip, slug=self.kwargs.get('trip'))
-            wp = wpContent.get_post_comments(trip, post_id)
+            wp = wpContent.get_comments(trip, {post_id: 0})
 
         rendered_page = loader.render_to_string('maps/comments.html', {'comments': wp})
         output_data = {'html': rendered_page}
