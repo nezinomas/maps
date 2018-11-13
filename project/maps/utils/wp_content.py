@@ -58,7 +58,7 @@ def create_comment_rest_link(post_id_dict):
     return 'comments?per_page=100{}'.format(_str)
 
 
-def get_all_comments(trip, post_id_dict):
+def get_comments(trip, post_id_dict):
     # comments?post=7363&post=7352&per_page=100'
     link = create_comment_rest_link(post_id_dict)
 
