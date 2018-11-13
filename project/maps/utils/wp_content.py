@@ -49,20 +49,20 @@ def get_post_comments(trip, post_id):
     )
 
 
+def create_comment_rest_link(post_id_dict):
+    _str = ''
+    if post_id_dict:
+        for id in post_id_dict:
+            _str += '&post={}'.format(id)
+
+    return 'comments?per_page=100{}'.format(_str)
+
+
 def get_all_comments(trip, post_id_dict):
     # comments?post=7363&post=7352&per_page=100'
-    _str = ''
-    for id in post_id_dict:
-        _str += '&post={}'.format(id)
+    link = create_comment_rest_link(post_id_dict)
 
-    _list = list(_str)
-    _list[0] = '?'
-    _str = ''.join(_list)
-
-    return get_content(
-        trip.blog,
-        "comments{}&per_page=100".format(_str)
-    )
+    return get_content(trip.blog, link)
 
 
 def get_comment_qty(trip):
