@@ -22,16 +22,34 @@ class WpContentTest(TestCase):
     def test_create_post_id_dictionary(self):
         dict = wp.create_post_id_dictionary(self.trip)
 
-        self.assertDictEqual(dict, {101: 0, 102: 0})
+        self.assertDictEqual(dict, {'101': 0, '102': 0})
 
 
     def test_comment_rest_link_01(self):
-        link = wp.create_comment_rest_link({101: 0, 102: 0})
+        link = wp.create_comment_rest_link(**{'101': 0, '102': 0})
 
         self.assertEqual(link, 'comments?per_page=100&post=101&post=102')
 
 
     def test_comment_rest_link_02(self):
-        link = wp.create_comment_rest_link({})
+        link = wp.create_comment_rest_link(**{})
 
         self.assertEqual(link, 'comments?per_page=100')
+
+
+    def test_comment_rest_link_03(self):
+        link = wp.create_comment_rest_link('101')
+
+        self.assertEqual(link, 'comments?per_page=100&post=101')
+
+
+    def test_comment_rest_link_04(self):
+        link = wp.create_comment_rest_link('101', '102')
+
+        self.assertEqual(link, 'comments?per_page=100&post=101&post=102')
+
+
+    def test_comment_rest_link_05(self):
+        link = wp.create_comment_rest_link('101', **{'102': 0})
+
+        self.assertEqual(link, 'comments?per_page=100&post=101&post=102')

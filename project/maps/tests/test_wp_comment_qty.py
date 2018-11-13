@@ -30,7 +30,7 @@ class WpCommentsQtyTest(TestCase):
         q = qty._count_comments(self.trip)
 
         self.assertEqual(len(q), 2)
-        self.assertDictEqual(q, {101: 1, 102: 2})
+        self.assertDictEqual(q, {'101': 1, '102': 2})
         self.assertEqual(self.mock_call.call_count, 1)
 
 
@@ -42,7 +42,7 @@ class WpCommentsQtyTest(TestCase):
         q = qty._count_comments(self.trip)
 
         self.assertEqual(len(q), 2)
-        self.assertDictEqual(q, {101: 0, 102: 0})
+        self.assertDictEqual(q, {'101': 0, '102': 0})
         self.assertEqual(mock_call.call_count, 1)
 
 
