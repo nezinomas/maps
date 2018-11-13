@@ -50,7 +50,7 @@ def create_comment_rest_link(*args, **kwargs):
     _str = ''
 
     if args:
-        _str += ''.join([post_link(arg) for arg in args])
+        _str += ''.join([post_link(arg) if arg else '' for arg in args])
 
     if kwargs:
         _str += ''.join([post_link(key) for key in kwargs.keys()])
