@@ -37,6 +37,18 @@ class WpContentTest(TestCase):
         self.assertEqual(link, 'comments?per_page=100')
 
 
+    def test_comment_rest_link_06(self):
+        link = wp.create_comment_rest_link('', **{})
+
+        self.assertEqual(link, 'comments?per_page=100')
+
+
+    def test_comment_rest_link_07(self):
+        link = wp.create_comment_rest_link('')
+
+        self.assertEqual(link, 'comments?per_page=100')
+
+
     def test_comment_rest_link_03(self):
         link = wp.create_comment_rest_link('101')
 
