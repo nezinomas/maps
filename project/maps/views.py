@@ -1,72 +1,119 @@
-import datetime
-import json
+import os
 
-from django.shortcuts import render
+from django.shortcuts import redirect, reverse, get_object_or_404
 from django.views.generic import TemplateView
-from django.template.loader import render_to_string
-from django.conf import settings
-from django.db.models import Avg, Count, Min, Sum
-import datetime
 
-from wordpress import API
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.conf import settings
+from django.template import loader
+from django.http import JsonResponse
 
 from ..config.secrets import get_secret
-from .lib_tcx import endomondo2db as importer
+from .utils import update_track_points as importer
+from .utils import wp_content as wpContent
+from .utils import statistic
+from .utils import wp_comments_qty as wpQty
+
 from . import models
+
+
+def index(request):
+    queryset = models.Trip.objects.all().order_by('-pk')[:1]
+    content = get_object_or_404(queryset)
+    return redirect(
+        reverse(
+            'maps:index',
+            kwargs={'trip': content.slug}
+        )
+    )
 
 
 class GenerateMaps(TemplateView):
     template_name = 'maps/generate_map.html'
 
     def get_context_data(self, *args, **kwargs):
+        wp = None
+        wp_error = False
+        comments = None
+
         context = super().get_context_data(*args, **kwargs)
+        trip = get_object_or_404(models.Trip, slug=self.kwargs.get('trip'))
 
-        trip = models.Trip.objects.get(pk=1)
+        try:
+            if trip.blog:
+                wp = wpContent.get_posts(trip)
+                comments = wpContent.get_comment_qty(trip)
+
+        except Exception as ex:
+            template = "An exception of type {0} occurred. Arguments:\n{1!r}"
+            wp_error = template.format(type(ex).__name__, ex.args)
+
+        context['wp'] = wp
+        context['wp_error'] = wp_error
         context['trip'] = trip
-
-        if trip.blog:
-            wpapi = API(
-                url=trip.blog,
-                consumer_key=get_secret("CONSUMER_KEY"),
-                consumer_secret=get_secret("CONSUMER_SECRET"),
-                api="wp-json",
-                version="wp/v2",
-                wp_user=get_secret("WP_USER"),
-                wp_pass=get_secret("WP_PASS"),
-                oauth1a_3leg=True,
-                creds_store="~/.wc-api-creds.json",
-                callback=trip.blog+'/oauth1_callback'
-            )
-
-            r = wpapi.get("posts?categories=23&per_page=6")
-
-            context['wp'] = json.loads(r.text)
-
-            stats = models.Statistic.objects.filter(track__trip__pk=1).filter(track__date__range=(trip.start_date, trip.end_date)).filter(track__activity_type__icontains='cycling')
-
-            context['total_km'] = stats.aggregate(Sum('total_km'))['total_km__sum']
-            context['total_time'] = stats.aggregate(Sum('total_time_seconds'))['total_time_seconds__sum']
-            context['total_days'] = (datetime.date.today() - trip.start_date).days
+        context['qty'] = comments
+        context['st'] = statistic.get_statistic(trip)
+        context['google_api_key'] = get_secret("GOOGLE_API_KEY")
+        context['js_version'] = os.path.getmtime('{}/points/{}-points.js'.format(settings.MEDIA_ROOT, trip.pk))
 
         return context
 
 
-def update_data(request):
-    importer.main()
-    context = {'message': 'ok'}
+class UpdateMaps(LoginRequiredMixin, TemplateView):
+    login_url = '/admin/'
+    template_name = 'maps/generate_js_message.html'
 
-    try:
-        with open('{}/js/points.js'.format(settings.STATICFILES_DIRS[0]), 'w') as the_file:
-            trip = models.Trip.objects.get(pk=1)
-            content = render_to_string(
-                'maps/generate_js.html',
-                {
-                    'tracks': trip.tracks.filter(date__range=(trip.start_date, trip.end_date)).filter(activity_type__icontains='cycling')
-                })
-            the_file.write(content)
+    def get_context_data(self, *args, **kwargs):
+        context = super().get_context_data(*args, **kwargs)
 
-    except Exception as ex:
-        template = "An exception of type {0} occurred. Arguments:\n{1!r}"
-        context = {'message': template.format(type(ex).__name__, ex.args)}
+        trip = get_object_or_404(models.Trip, slug=self.kwargs.get('trip'))
 
-    return render(request, 'maps/generate_js_message.html',context)
+        context['message'] = importer.update_single_trip(trip)
+
+        return context
+
+
+class RecalcMaps(LoginRequiredMixin, TemplateView):
+    login_url = '/admin/'
+    template_name = 'maps/generate_js_message.html'
+
+    def get_context_data(self, *args, **kwargs):
+        context = super().get_context_data(*args, **kwargs)
+
+        trip = get_object_or_404(models.Trip, slug=self.kwargs.get('trip'))
+
+        context['message'] = importer.recalc_single_trip(trip)
+
+        return context
+
+
+class Comments(TemplateView):
+
+    def get(self, request, *args, **kwargs):
+        post_id = request.GET.get('post_id', False)
+        get_remote = request.GET.get('get_remote', False)
+
+        wp = []
+        if get_remote == 'true':
+            trip = get_object_or_404(models.Trip, slug=self.kwargs.get('trip'))
+            wp = wpContent.get_post_comments(trip, post_id)
+
+        rendered_page = loader.render_to_string('maps/comments.html', {'comments': wp})
+        output_data = {'html': rendered_page}
+
+        return JsonResponse(output_data)
+
+
+class CommentQty(TemplateView):
+    template_name = 'maps/generate_js_message.html'
+
+    def get_context_data(self, *args, **kwargs):
+        context = super().get_context_data(*args, **kwargs)
+
+        trip = get_object_or_404(models.Trip, slug=self.kwargs.get('trip'))
+
+        wpQty.push_post_comment_qty(trip)
+
+        context['message'] = 'done'
+
+        return context

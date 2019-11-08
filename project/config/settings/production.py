@@ -12,4 +12,12 @@ ALLOWED_HOSTS = ['*']
 
 # ================   APP CONFIGURATION
 INSTALLED_APPS += [
+    'django_crontab',
+]
+
+
+# ================   CRONJOBS
+CRONJOBS = [
+    ('0,30 * * * *', 'project.maps.cron.my_scheduled_job', '> /dev/null 2>&1'),
+    ('5,30 * * * *', 'project.maps.cron.push_comment_qty', '> /dev/null 2>&1'),
 ]

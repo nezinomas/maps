@@ -3,8 +3,8 @@ from ..secrets import get_secret
 
 # ================   PATH CONFIGURATION
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))  # ..\project_project\project\confi
-project_ROOT = os.path.dirname(BASE_DIR)  # ..\project_project\project
-PROJECT_ROOT = os.path.dirname(project_ROOT)  # ..\project_project
+SITE_ROOT = os.path.dirname(BASE_DIR)  # ..\project_project\project
+PROJECT_ROOT = os.path.dirname(SITE_ROOT)  # ..\project_project
 
 
 # ================   MEDIA CONFIGURATION
@@ -15,7 +15,7 @@ MEDIA_URL = "/media/"
 # ================   STATIC FILE CONFIGURATION
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [
-    os.path.join(project_ROOT, 'static'),
+    os.path.join(SITE_ROOT, 'static'),
 ]
 # STATIC_ROOT = os.path.join(project_ROOT, 'static')
 
@@ -56,7 +56,7 @@ USE_TZ = True
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(project_ROOT, 'templates')],
+        'DIRS': [os.path.join(SITE_ROOT, 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -64,6 +64,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'django.template.context_processors.media',
                 # 'project.products.context.show_categories',
                 # 'project.products.context.show_tags',
             ],
@@ -92,6 +93,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.humanize',
     'project.maps'
 ]
 
@@ -119,17 +121,3 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
-
-
-# ================   TEMPLATE THUMBNAILS CONFIGURATION
-THUMBNAIL_ALIASES = {
-    '': {
-        'cover': {'size': (100, 100), },
-        'cover_big': {'size': (300, 300), },
-        'drawing': {'size': (900, 400), },
-    },
-}
-
-
-# ================   TEMPLATE THUMBNAILS CONFIGURATION
-TAGGIT_CASE_INSENSITIVE = True

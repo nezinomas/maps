@@ -11,6 +11,7 @@ project.pyproj*
 project/static/js/points.js
 .vscode/
 *code-workspace
+.htaccess
 # Distribution / packaging
 .Python
 env/

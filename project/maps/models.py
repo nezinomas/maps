@@ -1,10 +1,11 @@
 from django.db import models
 from django.utils.text import slugify
+from .utils import update_track_points as importer
 
 
 class Trip(models.Model):
     title = models.CharField(
-        max_length = 254
+        max_length=254
     )
     slug = models.SlugField(editable=False)
     description = models.TextField(
@@ -20,39 +21,63 @@ class Trip(models.Model):
     blog_category = models.CharField(
         blank=True,
         null=True,
-        max_length = 20,
+        max_length=20,
     )
-
 
     def __str__(self):
         return str(self.title)
 
     def save(self, *args, **kwargs):
         self.slug = slugify(self.title)
+
+        if self.pk is None:
+            importer._write_points_file(self)
+
         super().save(*args, **kwargs)
 
 
-class Track(models.Model):
-    title = models.CharField(
-        max_length = 254
+class CommentQty(models.Model):
+    post_id = models.IntegerField(
+        null=True,
+        blank=True,
     )
-    date = models.DateTimeField()
-    activity_type = models.CharField(
-        max_length = 30,
+    qty = models.IntegerField(
+        default=0
     )
 
     trip = models.ForeignKey(
         Trip,
-        related_name = 'tracks',
+        related_name='comment_qty',
         on_delete=models.CASCADE,
     )
 
     class Meta:
-        ordering = ['date',]
+        unique_together = (("post_id", "trip"),)
 
     def __str__(self):
-        return str(self.title)
+        return str(self.post_id)
 
+
+class Track(models.Model):
+    title = models.CharField(
+        max_length=254
+    )
+    date = models.DateTimeField()
+    activity_type = models.CharField(
+        max_length=30,
+    )
+
+    trip = models.ForeignKey(
+        Trip,
+        related_name='tracks',
+        on_delete=models.CASCADE,
+    )
+
+    class Meta:
+        ordering = ['-date', ]
+
+    def __str__(self):
+        return self.title
 
 
 class Point(models.Model):
@@ -123,19 +148,19 @@ class Statistic(models.Model):
         null=True,
         blank=True
     )
-    ascend = models.FloatField(
+    ascent = models.FloatField(
         null=True,
         blank=True
     )
-    descend = models.FloatField(
+    descent = models.FloatField(
         null=True,
         blank=True
     )
 
     track = models.OneToOneField(
         Track,
-        related_name = 'stats',
-        on_delete = models.CASCADE
+        related_name='stats',
+        on_delete=models.CASCADE
     )
 
 
@@ -149,7 +174,7 @@ class Note(models.Model):
 
     track = models.ForeignKey(
         Track,
-        related_name = 'notes',
+        related_name='notes',
         on_delete=models.CASCADE,
         blank=True,
         null=True
