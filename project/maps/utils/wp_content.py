@@ -16,7 +16,7 @@ def get_content(blog_url, link_end):
         wp_pass=get_secret("WP_PASS"),
         oauth1a_3leg=True,
         creds_store="",
-        callback='{}/oauth1_callback'.format(blog_url)
+        callback=f'{blog_url}/oauth1_callback'
     )
 
     r = wpapi.get(link_end)
