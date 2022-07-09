@@ -3,6 +3,7 @@ __pycache__/
 *.py[cod]
 
 # my folders
+.env
 media/
 .idea/
 _config_db.cnf
@@ -14,7 +15,7 @@ project/static/js/points.js
 .htaccess
 # Distribution / packaging
 .Python
-env/
+ENV/
 build/
 develop-eggs/
 dist/
