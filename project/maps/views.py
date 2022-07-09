@@ -53,7 +53,7 @@ class GenerateMaps(TemplateView):
         context['trip'] = trip
         context['qty'] = comments
         context['st'] = statistic.get_statistic(trip)
-        context['google_api_key'] = get_secret("GOOGLE_API_KEY")
+        context['google_api_key'] = settings.ENV("GOOGLE_API_KEY")
         context['js_version'] = os.path.getmtime('{}/points/{}-points.js'.format(settings.MEDIA_ROOT, trip.pk))
 
         return context

@@ -1,23 +1,24 @@
 import os
-from ..secrets import get_secret
+
+import environ
 
 # ================   PATH CONFIGURATION
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))  # ..\project_project\project\confi
 SITE_ROOT = os.path.dirname(BASE_DIR)  # ..\project_project\project
 PROJECT_ROOT = os.path.dirname(SITE_ROOT)  # ..\project_project
 
+# Take ENVironment variables from .ENV file
+ENV = environ.Env()
+environ.Env.read_env(os.path.join(PROJECT_ROOT, '.env'))
+
 
 # ================   MEDIA CONFIGURATION
-MEDIA_ROOT = os.path.join(PROJECT_ROOT, 'media/')
+MEDIA_ROOT = ENV('MEDIA_ROOT', default=os.path.join(PROJECT_ROOT, 'media'))
 MEDIA_URL = "/media/"
-
 
 # ================   STATIC FILE CONFIGURATION
 STATIC_URL = '/static/'
-STATICFILES_DIRS = [
-    os.path.join(SITE_ROOT, 'static'),
-]
-# STATIC_ROOT = os.path.join(project_ROOT, 'static')
+STATIC_ROOT = os.path.join(SITE_ROOT, 'static')
 
 
 # ================   DEBUG CONFIGURATION
@@ -26,7 +27,7 @@ TEMPLATE_DEBUG = DEBUG
 
 
 # ================   SECRET CONFIGURATION
-SECRET_KEY = get_secret("SECRET_KEY")
+SECRET_KEY = ENV('SECRET_KEY')
 
 
 # ================   project CONFIGURATION
