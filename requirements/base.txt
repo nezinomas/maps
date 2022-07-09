@@ -20,6 +20,7 @@ requests-toolbelt==0.9.1
 six==1.16.0
 soupsieve==2.3.2.post1
 sqlparse==0.4.2
+tcxreader==0.3.14
 tzdata==2022.1
 urllib3==1.26.9
 wordpress-api==1.2.9
