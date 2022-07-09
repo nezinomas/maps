@@ -1,20 +1,40 @@
 import os
 
-from django.shortcuts import redirect, reverse, get_object_or_404
-from django.views.generic import TemplateView
-
-from django.contrib.auth.mixins import LoginRequiredMixin
 from django.conf import settings
-from django.template import loader
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import JsonResponse
-
-from ..config.secrets import get_secret
-from .utils import update_track_points as importer
-from .utils import wp_content as wpContent
-from .utils import statistic
-from .utils import wp_comments_qty as wpQty
+from django.shortcuts import get_object_or_404, redirect, render, reverse
+from django.template import loader
+from django.views.generic import TemplateView
+from tcxreader.tcxreader import TCXReader
 
 from . import models
+from .utils import statistic
+from .utils import update_track_points as importer
+from .utils import wp_comments_qty as wpQty
+from .utils import wp_content as wpContent
+
+
+def test(request):
+    tracks = models.Track.objects.all()
+    for track in tracks:
+        p = models.Point.objects.filter(track=track)
+        if p.exists():
+            print(f'Points Exists: {track.pk}')
+            continue
+
+        print(f'<--------- Not exists {track.pk}')
+
+    file_location = os.path.join(settings.MEDIA_ROOT, 'tracks', '9164520465.tcx')
+    data = TCXReader().read(file_location)
+
+    for point in data.trackpoints:
+        print(point)
+
+    context ={
+        'tracks': tracks,
+    }
+    return render(request, 'maps/test.html', context)
 
 
 def index(request):
