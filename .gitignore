@@ -4,6 +4,7 @@ __pycache__/
 
 # my folders
 .env
+.db
 media/
 .idea/
 _config_db.cnf
