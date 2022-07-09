@@ -25,7 +25,6 @@ def new_pk(instance):
 
 
 def _write_points_file(trip):
-
     if not trip:
         return
 
