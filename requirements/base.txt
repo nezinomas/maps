@@ -4,6 +4,7 @@ certifi==2022.6.15
 charset-normalizer==2.1.0
 cloudscraper==1.2.60
 Django==4.0.5
+environ==1.0
 garminconnect==0.1.45
 idna==3.3
 lxml==4.9.0
