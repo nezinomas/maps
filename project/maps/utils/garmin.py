@@ -1,20 +1,16 @@
-import logging
-from datetime import date, datetime, timezone
-from operator import contains
+import os
+from datetime import date, datetime
+from typing import Dict, List
 
 from django.conf import settings
 from garminconnect import (Garmin, GarminConnectAuthenticationError,
                            GarminConnectConnectionError,
                            GarminConnectTooManyRequestsError)
 
-from ..models import Track, Trip
-
-# Configure debug logging
-logging.basicConfig(level=logging.DEBUG)
-logger = logging.getLogger(__name__)
+from ..models import Statistic, Track, Trip
 
 
-def get_data():
+def get_data() -> str:
     try:
         api = get_api()
     except (
@@ -29,6 +25,12 @@ def get_data():
     except Exception as err:
         return(f'Error occurred during getting garmin activities: {err}')
 
+    # filter non cycling activities
+    activities = filter_non_cycling_activities(activities)
+    if not activities:
+        return('No cycling activities found')
+
+    # get current trip
     try:
         trip = \
             Trip.objects \
@@ -38,39 +40,25 @@ def get_data():
     except Trip.DoesNotExist:
         return('No trip found')
 
+    # download TCX files for all activities
+    try:
+        save_tcx_file(api, activities)
+    except Exception as err:
+        return(f'Error occurred during saving tcx file: {err}')
+
+    # get all tracks for current trip
     tracks = \
         Track.objects \
         .filter(trip=trip) \
         .values_list('title', flat=True)
 
-    id_list = []
+    # create tracks and statistic for all activities
     for activity in activities:
-        activity_id = activity["activityId"]
+        track = create_track(trip, activity, tracks)
+        create_track_statistic(activity, track)
 
-        time = activity.get('startTimeGMT') + ' +0000'
-        time = datetime.strptime(time, '%Y-%m-%d %H:%M:%S %z')
+    return 'Successfully synced data from Garmin Connect'
 
-        # if activity id is in the list of tracks, skip it
-        if str(activity_id) in list(tracks):
-            continue
-
-        # skip not cycling activities
-        activity_type = activity['activityType']['typeKey']
-        if not any(x in activity_type for x in ('biking', 'cycling')):
-            continue
-
-        Track.objects.create(
-            title=activity_id,
-            date=time,
-            activity_type='cycling',
-            trip=trip
-        )
-
-        id_list.append(activity_id)
-
-    # download and save activities
-    for id in id_list:
-        save_tcx_file(api, id)
 
 def get_api():
     api = Garmin(
@@ -80,122 +68,117 @@ def get_api():
     return api
 
 
+def create_track(trip: Trip, activity: Dict, tracks: List) -> Track:
+    activity_id = str(activity["activityId"])
+
+    time = activity.get('startTimeGMT') + ' +0000'
+    time = datetime.strptime(time, '%Y-%m-%d %H:%M:%S %z')
+
+    # if activity id is in the list of tracks, skip it
+    if activity_id in list(tracks):
+        return
+
+    track = Track.objects.create(
+        title=activity_id,
+        date=time,
+        activity_type='cycling',
+        trip=trip
+    )
+
+    return track
+
+
+def create_track_statistic(activity: Dict, track: Track):
+    '''{
+        'activityId': 9164520465,
+        'activityName': 'Vilnius Road Cycling',
+        'startTimeLocal': '2022-07-08 17:38:31',
+        'startTimeGMT': '2022-07-08 14:38:31',
+        'activityType': {
+            'typeId': 10,
+            'typeKey': 'road_biking',
+        },
+        'distance': 12652.849609375, m / 1000 = km
+        'movingDuration': 1918.14599609375, sec
+        'elevationGain': 112.0,
+        'elevationLoss': 112.0,
+        'averageSpeed': 6.586999893188477,  (m/s) * 3.6 = km/h
+        'maxSpeed': 13.222000122070314, (m/s) * 3.6 = km/h
+        'startLatitude': 54.644642416387796,
+        'startLongitude': 25.181482387706637,
+        'calories': 438.0,
+        'averageHR': None,
+        'maxHR': None,
+        'beginTimestamp': 1657291111000,
+        'minElevation': 97.80000305175781,
+        'maxElevation': 176.0,
+        'locationName': 'Vilnius',
+        'lapCount': 3,
+        'endLatitude': 54.698334792628884,
+        'endLongitude': 25.223554093390703,
+    } '''
+
+    stats = {
+        'total_km': float(activity.get("distance")) / 1000,
+        'total_time_seconds': float(activity.get("movingDuration")),
+        'avg_speed': float(activity.get("averageSpeed")) * 3.6,
+        'max_speed': float(activity.get("maxSpeed")) * 3.6,
+        'calories': int(activity.get("calories")),
+        'avg_cadence': None,
+        'avg_heart': None,
+        'max_heart': None,
+        'avg_temperature': None,
+        'min_altitude': float(activity.get("minElevation")),
+        'max_altitude': float(activity.get("maxElevation")),
+        'ascent': float(activity.get("elevationGain")),
+        'descent': float(activity.get("elevationLoss")),
+    }
+
+    try:
+        stats['avg_heart'] = float(activity.get("averageHR"))
+    except (TypeError, ValueError):
+        pass
+
+    try:
+        stats['max_heart'] = float(activity.get("maxHR"))
+    except (TypeError, ValueError):
+        pass
+
+    try:
+        stats['avg_cadence'] = float(activity.get("averageBikingCadenceInRevPerMinute"))
+    except (TypeError, ValueError):
+        pass
+
+    Statistic.objects.create(track=track, **stats)
+
+
+def filter_non_cycling_activities(activities: List[Dict]) -> List[Dict]:
+    _activities = []
+
+    # skip not cycling activities
+    for activity in activities:
+        activity_type = activity['activityType']['typeKey']
+        if not any(x in activity_type for x in ('biking', 'cycling')):
+            continue
+
+        _activities.append(activity)
+
+    return _activities
+
+
 def get_activities(api):
     return api.get_activities(0, 1)  # 0=start, 1=limit
 
-#     try:
-#         # API
 
-#         ## Initialize Garmin api with your credentials
-#         api = Garmin(
-#             settings.ENV('GARMIN_USER'),
-#             settings.ENV('GARMIN_PASS')
-#         )
+def save_tcx_file(api, activities):
+    for activity in activities:
+        activity_id = activity["activityId"]
+        output_file = os.path.join(settings.MEDIA_ROOT, 'tracks', f'{activity_id}.tcx')
 
-#         ## Login to Garmin Connect portal
-#         api.login()
+        if os.path.exists(output_file):
+            continue
 
-#         activities = api.get_activities(0,1) # 0=start, 1=limit
+        tcx_data = api.download_activity(activity_id, dl_fmt=api.ActivityDownloadFormat.TCX)
 
-#         return activities
-
-#         '''
-#         {
-#             'activityId': 9164520465,
-#             'activityName': 'Vilnius Road Cycling',
-#             'startTimeLocal': '2022-07-08 17:38:31',
-#             'startTimeGMT': '2022-07-08 14:38:31',
-#             'activityType': {
-#                 'typeId': 10,
-#                 'typeKey': 'road_biking',
-#             },
-#             'distance': 12652.849609375, m / 1000 = km
-#             'movingDuration': 1918.14599609375, sec
-#             'elevationGain': 112.0,
-#             'elevationLoss': 112.0,
-#             'averageSpeed': 6.586999893188477,  (m/s) * 3.6 = km/h
-#             'maxSpeed': 13.222000122070314, (m/s) * 3.6 = km/h
-#             'startLatitude': 54.644642416387796,
-#             'startLongitude': 25.181482387706637,
-#             'calories': 438.0,
-#             'averageHR': None,
-#             'maxHR': None,
-#             'beginTimestamp': 1657291111000,
-#             'minElevation': 97.80000305175781,
-#             'maxElevation': 176.0,
-#             'locationName': 'Vilnius',
-#             'lapCount': 3,
-#             'endLatitude': 54.698334792628884,
-#             'endLongitude': 25.223554093390703,
-#         }
-
-#         '''
-#         # ## Download an Activity
-#         for activity in activities:
-#             print(f'\n\nactivity: {activity}')
-#             activity_id = activity["activityId"]
-
-
-#             distance = float(activity.get("distance")) / 1000
-#             time = float(activity.get("movingDuration"))
-
-#             avg_speed = float(activity.get("averageSpeed")) * 3.6
-#             max_speed = float(activity.get("maxSpeed")) * 3.6
-#             ascent = float(activity.get("elevationGain"))
-#             descent = float(activity.get("elevationLoss"))
-#             calories = int(activity.get("calories"))
-#             max_altitude = float(activity.get("maxElevation"))
-#             min_alititude = float(activity.get("minElevation"))
-
-#             start_longitude = float(activity.get("startLongitude"))
-#             start_latitude = float(activity.get("startLatitude"))
-#             end_longitude = float(activity.get("endLongitude"))
-#             end_latitude = float(activity.get("endLatitude"))
-
-#             avg_heart = None
-#             try:
-#                 avg_heart = float(activity.get("averageHR"))
-#             except (TypeError, ValueError):
-#                 pass
-
-#             max_heart = None
-#             try:
-#                 max_heart = float(activity.get("maxHR"))
-#             except (TypeError, ValueError):
-#                 pass
-
-#             avg_cadence = None
-#             try:
-#                 avg_cadence = float(activity.get("averageBikingCadenceInRevPerMinute"))
-#             except (TypeError, ValueError):
-#                 pass
-
-#             print(f'total_time_seconds: {time}')
-#             print(f'total_km: {distance}')
-#             print(f'avg_speed: {avg_speed}')
-#             print(f'max_speed: {max_speed}')
-#             print(f'ascent: {ascent}')
-#             print(f'descent: {descent}')
-#             print(f'min_altitude: {min_alititude}')
-#             print(f'max_altitude: {max_altitude}')
-#             print(f'calories: {calories}')
-#             print(f'avg_heart: {avg_heart}')
-#             print(f'max_heart: {max_heart}')
-#             print(f'avg_cadence: {avg_cadence}')
-
-#     except (
-#             GarminConnectConnectionError,
-#             GarminConnectAuthenticationError,
-#             GarminConnectTooManyRequestsError,
-#         ) as err:
-#         logger.error("Error occurred during Garmin Connect communication: %s", err)
-
-
-def save_tcx_file(api, activity_id):
-    # tcx_data = api.download_activity(activity_id, dl_fmt=api.ActivityDownloadFormat.TCX)
-    # output_file = f"./{str(activity_id)}.tcx"
-    # with open(output_file, "wb") as fb:
-    #     fb.write(tcx_data)
-    # print(f'\n\n\nDONE: {output_file}\n\n')
-    pass
-
+        with open(output_file, "wb") as fb:
+            fb.write(tcx_data)
