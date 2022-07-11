@@ -65,6 +65,9 @@ def get_api():
         settings.ENV('GARMIN_USER'),
         settings.ENV('GARMIN_PASS')
     )
+
+    api.login()
+
     return api
 
 
