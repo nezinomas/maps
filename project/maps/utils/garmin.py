@@ -12,10 +12,12 @@ from ..models import Statistic, Track, Trip
 
 def get_data() -> str:
     # get current trip
+    today = date.today()
+
     try:
         trip = \
             Trip.objects \
-            .filter(start_date__lte=date.today(), end_date__gte=date.today()) \
+            .filter(start_date__lte=today, end_date__gte=today) \
             .order_by('id') \
             .latest('id')
     except Trip.DoesNotExist:
