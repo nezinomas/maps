@@ -95,6 +95,28 @@ def test_get_data_no_trip(mck_get, mck_write, _activity):
     assert actual == 'No trip found'
 
 
+@pytest.mark.freeze_time('1111-1-1')
+@patch('project.maps.utils.garmin.save_tcx_file')
+@patch('project.maps.utils.garmin.get_activities')
+def test_get_data_today_smaller_than_trip_start_date(mck_get, mck_write, _activity):
+    TripFactory()
+
+    mck_get.return_value = [_activity]
+
+    actual = garmin.get_data()
+    assert actual == 'No trip found'
+
+
+@pytest.mark.freeze_time('3333-1-1')
+@patch('project.maps.utils.garmin.save_tcx_file')
+@patch('project.maps.utils.garmin.get_activities')
+def test_get_data_no_trip(mck_get, mck_write, _activity):
+    mck_get.return_value = [_activity]
+
+    actual = garmin.get_data()
+    assert actual == 'No trip found'
+
+
 @pytest.mark.freeze_time('2022-1-1')
 @patch('project.maps.utils.garmin.save_tcx_file', side_effect=Exception('XXX'))
 @patch('project.maps.utils.garmin.get_activities')

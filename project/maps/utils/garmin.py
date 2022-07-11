@@ -34,7 +34,7 @@ def get_data() -> str:
     try:
         trip = \
             Trip.objects \
-            .filter(end_date__gte=date.today()) \
+            .filter(start_date__lte=date.today(), end_date__gte=date.today()) \
             .order_by('id') \
             .latest('id')
     except Trip.DoesNotExist:
