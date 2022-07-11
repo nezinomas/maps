@@ -51,58 +51,55 @@ def _activity():
     }
 
 
+@pytest.mark.freeze_time('2022-1-1')
 @patch('project.maps.utils.garmin.get_api', side_effect=GarminConnectAuthenticationError('XXX'))
 def test_get_data_failed_get_api(mck):
+    TripFactory()
+
     actual = garmin.get_data()
 
     assert actual == 'Error occurred during Garmin Connect communication: XXX'
 
 
+@pytest.mark.freeze_time('2022-1-1')
 @patch('project.maps.utils.garmin.get_activities', side_effect=Exception('XXX'))
 def test_get_data_failed_get_activities(mck):
+    TripFactory()
+
     actual = garmin.get_data()
 
     assert actual == 'Error occurred during getting garmin activities: XXX'
 
 
+@pytest.mark.freeze_time('2022-1-1')
 @patch('project.maps.utils.garmin.get_activities')
 def test_get_data_no_cycling_activities(mck):
+    TripFactory()
+
     mck.return_value = [{'activityType': {'typeKey': 'XXX'}}]
     actual = garmin.get_data()
 
     assert actual == 'No cycling activities found'
 
 
-@pytest.mark.freeze_time('3333-1-1')
-@patch('project.maps.utils.garmin.save_tcx_file')
-@patch('project.maps.utils.garmin.get_activities')
-def test_get_data_today_greater_than_trip_end_date(mck_get, mck_write, _activity):
-    TripFactory()
-
-    mck_get.return_value = [_activity]
-
-    actual = garmin.get_data()
-    assert actual == 'No trip found'
-
-
-@pytest.mark.freeze_time('3333-1-1')
-@patch('project.maps.utils.garmin.save_tcx_file')
-@patch('project.maps.utils.garmin.get_activities')
-def test_get_data_no_trip(mck_get, mck_write, _activity):
-    mck_get.return_value = [_activity]
-
-    actual = garmin.get_data()
-    assert actual == 'No trip found'
-
-
 @pytest.mark.freeze_time('1111-1-1')
-@patch('project.maps.utils.garmin.save_tcx_file')
-@patch('project.maps.utils.garmin.get_activities')
-def test_get_data_today_smaller_than_trip_start_date(mck_get, mck_write, _activity):
+def test_get_data_today_smaller_than_trip_start_date(_activity):
     TripFactory()
 
-    mck_get.return_value = [_activity]
+    actual = garmin.get_data()
+    assert actual == 'No trip found'
 
+
+@pytest.mark.freeze_time('3333-1-1')
+def test_get_data_today_greater_than_trip_end_date(_activity):
+    TripFactory()
+
+    actual = garmin.get_data()
+    assert actual == 'No trip found'
+
+
+@pytest.mark.freeze_time('2022-1-1')
+def test_get_data_no_trip(_activity):
     actual = garmin.get_data()
     assert actual == 'No trip found'
 

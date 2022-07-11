@@ -11,25 +11,6 @@ from ..models import Statistic, Track, Trip
 
 
 def get_data() -> str:
-    try:
-        api = get_api()
-    except (
-        GarminConnectConnectionError,
-        GarminConnectAuthenticationError,
-        GarminConnectTooManyRequestsError
-    ) as err:
-        return(f'Error occurred during Garmin Connect communication: {err}')
-
-    try:
-        activities = get_activities(api)
-    except Exception as err:
-        return(f'Error occurred during getting garmin activities: {err}')
-
-    # filter non cycling activities
-    activities = filter_non_cycling_activities(activities)
-    if not activities:
-        return('No cycling activities found')
-
     # get current trip
     try:
         trip = \
@@ -39,6 +20,27 @@ def get_data() -> str:
             .latest('id')
     except Trip.DoesNotExist:
         return('No trip found')
+
+    # login to garmin connect
+    try:
+        api = get_api()
+    except (
+        GarminConnectConnectionError,
+        GarminConnectAuthenticationError,
+        GarminConnectTooManyRequestsError
+    ) as err:
+        return(f'Error occurred during Garmin Connect communication: {err}')
+
+    # get activities
+    try:
+        activities = get_activities(api)
+    except Exception as err:
+        return(f'Error occurred during getting garmin activities: {err}')
+
+    # filter non cycling activities
+    activities = filter_non_cycling_activities(activities)
+    if not activities:
+        return('No cycling activities found')
 
     # download TCX files for all activities
     try:
