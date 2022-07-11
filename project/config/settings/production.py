@@ -18,8 +18,8 @@ INSTALLED_APPS += [
 
 TEMPLATES[0]['OPTIONS']['loaders'] = [
     ['django.template.loaders.cached.Loader', [
-        'django_spaceless_templates.loaders.filesystem.Loader',
-        'django_spaceless_templates.loaders.app_directories.Loader', ],
+        'django.template.loaders.filesystem.Loader',
+        'django.template.loaders.app_directories.Loader', ],
      ],
 ]
 
