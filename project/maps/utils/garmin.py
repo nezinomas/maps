@@ -173,7 +173,7 @@ def filter_non_cycling_activities(activities: List[Dict]) -> List[Dict]:
 
 
 def get_activities(api):
-    return api.get_activities(0, 1)  # 0=start, 1=limit
+    return api.get_activities(0, 10)  # 0=start, 1=limit
 
 
 def save_tcx_file(api, activities):
