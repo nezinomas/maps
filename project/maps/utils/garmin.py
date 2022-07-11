@@ -121,6 +121,9 @@ def create_track_statistic(activity: Dict, track: Track):
         'endLongitude': 25.223554093390703,
     } '''
 
+    if not track:
+        return
+
     stats = {
         'total_km': float(activity.get("distance")) / 1000,
         'total_time_seconds': float(activity.get("movingDuration")),

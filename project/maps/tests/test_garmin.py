@@ -214,3 +214,13 @@ def test_create_track_statistic(_activity):
     assert actual.min_altitude == 5
     assert actual.max_altitude == 55
     assert actual.track == track
+
+
+def test_create_track_statistic_no_track(_activity):
+    track = None
+
+    garmin.create_track_statistic(_activity, track)
+
+    actual = Statistic.objects.all()
+
+    assert actual.count() == 0
