@@ -48,3 +48,7 @@ class UserFactory(factory.django.DjangoModelFactory):
 
     username = 'test'
     password = 'test'
+    is_active = True
+    is_staff = True
+    is_superuser = True
+    email = 'test@test.com'
