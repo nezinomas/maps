@@ -8,7 +8,7 @@ urlpatterns = [
     path('', views.index, name='first'),
     path('<slug:trip>/', views.GenerateMaps.as_view(), name='index'),
     path('<slug:trip>/up/', views.UpdateMaps.as_view(), name='update'),
-    path('<slug:trip>/recalc/', views.RecalcMaps.as_view(), name='recalc'),
+    path('<slug:trip>/update_points/', views.UpdatePoints.as_view(), name='update_points'),
     path('<slug:trip>/qty/', views.CommentQty.as_view(), name='comment_qty'),
     path('<slug:trip>/<slug:post>/comments/', views.Comments.as_view(), name='comments'),
 ]
