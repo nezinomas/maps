@@ -9,7 +9,6 @@ from django.views.generic import TemplateView
 
 from . import models
 from .utils import statistic
-from .utils import update_track_points as importer
 from .utils import wp_comments_qty as wpQty
 from .utils import wp_content as wpContent
 from .utils.garmin import get_data as GarminService
@@ -67,7 +66,7 @@ class UpdateTracks(LoginRequiredMixin, TemplateView):
 
         trip = get_object_or_404(models.Trip, slug=self.kwargs.get('trip'))
 
-        context['message'] = importer.update_single_trip(trip)
+        context['message'] = GarminService(trip)
 
         return context
 

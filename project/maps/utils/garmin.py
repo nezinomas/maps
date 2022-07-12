@@ -11,9 +11,9 @@ from ..models import Statistic, Track, Trip
 from ..utils.trip import get_trip
 
 
-def get_data() -> str:
+def get_data(trip: Trip = None) -> str:
     # get current trip
-    trip = get_trip()
+    trip = get_trip() if not trip else trip
     if not trip:
         return('No trip found')
 
