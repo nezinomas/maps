@@ -1,5 +1,5 @@
 import os
-from datetime import date, datetime
+from datetime import datetime
 from typing import Dict, List
 
 from django.conf import settings
@@ -8,19 +8,14 @@ from garminconnect import (Garmin, GarminConnectAuthenticationError,
                            GarminConnectTooManyRequestsError)
 
 from ..models import Statistic, Track, Trip
+from ..utils.trip import get_trip
 
 
 def get_data() -> str:
     # get current trip
-    today = date.today()
+    trip = get_trip()
 
-    try:
-        trip = \
-            Trip.objects \
-            .filter(start_date__lte=today, end_date__gte=today) \
-            .order_by('id') \
-            .latest('id')
-    except Trip.DoesNotExist:
+    if not trip:
         return('No trip found')
 
     # login to garmin connect
