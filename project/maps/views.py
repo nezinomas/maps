@@ -12,6 +12,8 @@ from .utils import statistic
 from .utils import update_track_points as importer
 from .utils import wp_comments_qty as wpQty
 from .utils import wp_content as wpContent
+from .utils.garmin import get_data as GarminService
+from .utils.points_service import PointsService
 
 
 def index(request):
@@ -70,7 +72,7 @@ class UpdateMaps(LoginRequiredMixin, TemplateView):
         return context
 
 
-class RecalcMaps(LoginRequiredMixin, TemplateView):
+class UpdatePoints(LoginRequiredMixin, TemplateView):
     login_url = '/admin/'
     template_name = 'maps/generate_js_message.html'
 
@@ -79,7 +81,7 @@ class RecalcMaps(LoginRequiredMixin, TemplateView):
 
         trip = get_object_or_404(models.Trip, slug=self.kwargs.get('trip'))
 
-        context['message'] = importer.recalc_single_trip(trip)
+        context['message'] = PointsService().update_points(trip)
 
         return context
 

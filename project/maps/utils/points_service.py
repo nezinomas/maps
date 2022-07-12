@@ -4,7 +4,7 @@ from django.conf import settings
 from django.template.loader import render_to_string
 from tcxreader.tcxreader import TCXReader
 
-from ..models import Point, Track
+from ..models import Point, Track, Trip
 from .trip import get_trip
 
 '''
@@ -31,8 +31,8 @@ from .trip import get_trip
 '''
 
 class PointsService():
-    def __init__(self):
-        self._trip = get_trip()
+    def __init__(self, trip: Trip = None):
+        self._trip = get_trip() if not trip else trip
 
     def update_points(self):
         if not self._trip:
