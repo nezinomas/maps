@@ -6,37 +6,12 @@ from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render, reverse
 from django.template import loader
 from django.views.generic import TemplateView
-from tcxreader.tcxreader import TCXReader
 
 from . import models
 from .utils import statistic
 from .utils import update_track_points as importer
 from .utils import wp_comments_qty as wpQty
 from .utils import wp_content as wpContent
-from .utils import garmin
-
-def test(request):
-    # tracks = models.Track.objects.all()
-    # for track in tracks:
-    #     p = models.Point.objects.filter(track=track)
-    #     if p.exists():
-    #         print(f'Points Exists: {track.pk}')
-    #         continue
-
-    #     print(f'<--------- Not exists {track.pk}')
-
-    # file_location = os.path.join(settings.MEDIA_ROOT, 'tracks', '9164520465.tcx')
-    # data = TCXReader().read(file_location)
-
-    # for point in data.trackpoints:
-    #     print(point)
-    msg = garmin.get_data()
-
-    context ={
-        # 'tracks': tracks,
-        'msg': msg,
-    }
-    return render(request, 'maps/test.html', context)
 
 
 def index(request):

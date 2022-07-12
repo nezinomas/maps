@@ -6,7 +6,6 @@ app_name = 'maps'
 
 urlpatterns = [
     path('', views.index, name='first'),
-    path('test/', views.test, name='test'),
     path('<slug:trip>/', views.GenerateMaps.as_view(), name='index'),
     path('<slug:trip>/up/', views.UpdateMaps.as_view(), name='update'),
     path('<slug:trip>/recalc/', views.RecalcMaps.as_view(), name='recalc'),
