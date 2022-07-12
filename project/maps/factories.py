@@ -1,8 +1,9 @@
 from datetime import date, datetime
 
 import factory
+from django.contrib.auth.models import User
 
-from .models import CommentQty, Point, Statistic, Track, Trip
+from .models import Point, Track, Trip
 
 
 class TripFactory(factory.django.DjangoModelFactory):
@@ -39,3 +40,11 @@ class PointFactory(factory.django.DjangoModelFactory):
     datetime = datetime(2022, 1, 1, 3, 2, 1)
 
     track = factory.SubFactory(TrackFactory)
+
+
+class UserFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = User
+
+    username = 'test'
+    password = 'test'
