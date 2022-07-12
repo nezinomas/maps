@@ -58,7 +58,7 @@ class GenerateMaps(TemplateView):
         return context
 
 
-class UpdateMaps(LoginRequiredMixin, TemplateView):
+class UpdateTracks(LoginRequiredMixin, TemplateView):
     login_url = '/admin/'
     template_name = 'maps/generate_js_message.html'
 
