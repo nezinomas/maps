@@ -3,7 +3,6 @@ from datetime import datetime, timezone
 
 import pytest
 from django.conf import settings
-from garminconnect import GarminConnectAuthenticationError
 from mock import Mock, patch
 
 from ..factories import TrackFactory, TripFactory
