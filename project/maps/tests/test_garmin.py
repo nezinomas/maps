@@ -182,8 +182,6 @@ def test_tcx_file_not_exists(fs, _activity):
     folder = os.path.join(settings.MEDIA_ROOT, 'tracks')
     file = os.path.join(folder, '999.tcx')
 
-    fs.create_dir(folder)
-
     api = Mock()
     api.download_activity.return_value = b'tcx data'
 

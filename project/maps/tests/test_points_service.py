@@ -74,8 +74,6 @@ def test_get_data_from_tcx_file(mck, fs, _point):
 
 
 def test_get_data_from_tcx_file_no_file(fs, _point):
-    fs.create_dir(os.path.join(settings.MEDIA_ROOT, 'tracks'))
-
     actual = PointsService().get_data_from_tcx_file('XXX')
 
     assert not actual
@@ -122,9 +120,7 @@ def test_points_to_js(fs):
     template = os.path.join(settings.SITE_ROOT, 'maps', 'templates', 'maps', 'generate_js.html')
     fs.create_file(template)
 
-    # create points folder in fake filesystem
     dir_ = os.path.join(settings.MEDIA_ROOT, 'points')
-    fs.create_dir(dir_)
 
     track = TrackFactory()
     PointsService().points_to_js([track])
