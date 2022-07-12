@@ -52,7 +52,7 @@ def _activity():
 
 @pytest.mark.freeze_time('2022-1-1')
 @patch('project.maps.utils.garmin.get_api', return_value=None)
-def test_get_data_failed_get_api(mck, fs):
+def test_get_data_failed_get_api(mck, project_fs):
     TripFactory()
 
     actual = garmin.get_data()
@@ -62,7 +62,7 @@ def test_get_data_failed_get_api(mck, fs):
 
 @pytest.mark.freeze_time('2022-1-1')
 @patch('project.maps.utils.garmin.Garmin.get_activities', side_effect=Exception('XXX'))
-def test_get_data_failed_get_activities(mck, fs):
+def test_get_data_failed_get_activities(mck, project_fs):
     TripFactory()
 
     actual = garmin.get_data()
@@ -72,7 +72,7 @@ def test_get_data_failed_get_activities(mck, fs):
 
 @pytest.mark.freeze_time('2022-1-1')
 @patch('project.maps.utils.garmin.get_activities')
-def test_get_data_no_cycling_activities(mck, fs):
+def test_get_data_no_cycling_activities(mck, project_fs):
     TripFactory()
 
     mck.return_value = [{'activityType': {'typeKey': 'XXX'}}]
@@ -82,7 +82,7 @@ def test_get_data_no_cycling_activities(mck, fs):
 
 
 @pytest.mark.freeze_time('1111-1-1')
-def test_get_data_today_smaller_than_trip_start_date(_activity, fs):
+def test_get_data_today_smaller_than_trip_start_date(_activity, project_fs):
     TripFactory()
 
     actual = garmin.get_data()
@@ -90,7 +90,7 @@ def test_get_data_today_smaller_than_trip_start_date(_activity, fs):
 
 
 @pytest.mark.freeze_time('3333-1-1')
-def test_get_data_today_greater_than_trip_end_date(_activity, fs):
+def test_get_data_today_greater_than_trip_end_date(_activity, project_fs):
     TripFactory()
 
     actual = garmin.get_data()
@@ -116,7 +116,7 @@ def test_get_data_no_trip(mck_get, mck_write, _activity):
 @pytest.mark.freeze_time('2022-1-1')
 @patch('project.maps.utils.garmin.save_tcx_file', return_value='XXX')
 @patch('project.maps.utils.garmin.get_activities')
-def test_get_data_faile_to_save_files(mck_get, mck_write, _activity, fs):
+def test_get_data_faile_to_save_files(mck_get, mck_write, _activity, project_fs):
     TripFactory()
 
     mck_get.return_value = [_activity]
@@ -128,7 +128,7 @@ def test_get_data_faile_to_save_files(mck_get, mck_write, _activity, fs):
 @pytest.mark.freeze_time('2022-1-1')
 @patch('project.maps.utils.garmin.save_tcx_file', return_value=None)
 @patch('project.maps.utils.garmin.get_activities')
-def test_get_data_success(mck_get, mck_write, _activity, fs):
+def test_get_data_success(mck_get, mck_write, _activity, project_fs):
     TripFactory()
 
     mck_get.return_value = [_activity]
@@ -137,7 +137,7 @@ def test_get_data_success(mck_get, mck_write, _activity, fs):
     assert actual == 'Successfully synced data from Garmin Connect'
 
 
-def test_create_track_exists(_activity, fs):
+def test_create_track_exists(_activity, project_fs):
     trip = TripFactory()
     track = TrackFactory()
     tracks = Track.objects.all().values_list('title', flat=True)
@@ -147,7 +147,7 @@ def test_create_track_exists(_activity, fs):
     assert not actual
 
 
-def test_create_track_not_exists(_activity, fs):
+def test_create_track_not_exists(_activity, project_fs):
     trip = TripFactory()
     tracks = Track.objects.all().values_list('title', flat=True)
 
@@ -178,7 +178,7 @@ def test_filter_non_cycling_activities():
         assert any(x in activity['activityType']['typeKey'] for x in ('biking', 'cycling'))
 
 
-def test_tcx_file_not_exists(fs, _activity):
+def test_tcx_file_not_exists(_activity, project_fs):
     folder = os.path.join(settings.MEDIA_ROOT, 'tracks')
     file = os.path.join(folder, '999.tcx')
 

@@ -6,8 +6,8 @@ from django.conf import settings
 from ..factories import UserFactory
 
 
-@pytest.fixture(autouse=True)
-def create_folders_in_fake_filesystem(fs):
+@pytest.fixture()
+def project_fs(fs):
     fs.create_dir(path.join(settings.MEDIA_ROOT, 'tracks'))
     fs.create_dir(path.join(settings.MEDIA_ROOT, 'points'))
 
