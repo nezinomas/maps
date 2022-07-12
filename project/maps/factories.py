@@ -1,5 +1,4 @@
 from datetime import date, datetime
-from decimal import Decimal
 
 import factory
 
@@ -27,3 +26,16 @@ class TrackFactory(factory.django.DjangoModelFactory):
     date = datetime(2022, 1, 1, 3, 2, 1)
     activity_type = 'cycling'
     trip = factory.SubFactory(TripFactory)
+
+
+class PointFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = Point
+
+    latitude = 11.11
+    longitude = 22.22
+    altitude = 33.33
+    distance_meters = 44.44
+    datetime = datetime(2022, 1, 1, 3, 2, 1)
+
+    track = factory.SubFactory(TrackFactory)
