@@ -26,6 +26,13 @@ def index(request):
     )
 
 
+class Utils(LoginRequiredMixin, TemplateView):
+    login_url = '/admin/'
+    template_name = 'maps/utils.html'
+
+
+
+
 class GenerateMaps(TemplateView):
     template_name = 'maps/generate_map.html'
 
