@@ -31,8 +31,6 @@ class Utils(LoginRequiredMixin, TemplateView):
     template_name = 'maps/utils.html'
 
 
-
-
 class GenerateMaps(TemplateView):
     template_name = 'maps/generate_map.html'
 
