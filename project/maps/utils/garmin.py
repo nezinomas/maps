@@ -75,6 +75,26 @@ def get_api():
     return api
 
 
+def get_activities(api):
+    return api.get_activities(0, 10)  # 0=start, 1=limit
+
+
+def save_tcx_file(api, activities):
+    for activity in activities:
+        activity_id = activity["activityId"]
+        output_file = os.path.join(
+            settings.MEDIA_ROOT, 'tracks', f'{activity_id}.tcx')
+
+        if os.path.exists(output_file):
+            continue
+
+        tcx_data = api.download_activity(
+            activity_id, dl_fmt=api.ActivityDownloadFormat.TCX)
+
+        with open(output_file, "wb") as fb:
+            fb.write(tcx_data)
+
+
 def create_track(trip: Trip, activity: Dict, tracks: List) -> Track:
     activity_id = str(activity["activityId"])
 
@@ -174,21 +194,3 @@ def filter_non_cycling_activities(activities: List[Dict]) -> List[Dict]:
         _activities.append(activity)
 
     return _activities
-
-
-def get_activities(api):
-    return api.get_activities(0, 10)  # 0=start, 1=limit
-
-
-def save_tcx_file(api, activities):
-    for activity in activities:
-        activity_id = activity["activityId"]
-        output_file = os.path.join(settings.MEDIA_ROOT, 'tracks', f'{activity_id}.tcx')
-
-        if os.path.exists(output_file):
-            continue
-
-        tcx_data = api.download_activity(activity_id, dl_fmt=api.ActivityDownloadFormat.TCX)
-
-        with open(output_file, "wb") as fb:
-            fb.write(tcx_data)
