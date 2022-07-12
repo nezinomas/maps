@@ -14,7 +14,7 @@ pytestmark = pytest.mark.django_db
 
 
 @pytest.fixture(autouse=True)
-def _gamin_api(monkeypatch):
+def _garmin_api(monkeypatch):
     mock_func = 'project.maps.utils.garmin.get_api'
     monkeypatch.setattr(mock_func, lambda: 'API')
 
@@ -52,23 +52,23 @@ def _activity():
 
 
 @pytest.mark.freeze_time('2022-1-1')
-@patch('project.maps.utils.garmin.get_api', side_effect=GarminConnectAuthenticationError('XXX'))
+@patch('project.maps.utils.garmin.get_api', return_value=None)
 def test_get_data_failed_get_api(mck):
     TripFactory()
 
     actual = garmin.get_data()
 
-    assert actual == 'Error occurred during Garmin Connect communication: XXX'
+    assert actual == 'Error occurred during Garmin Connect communication'
 
 
 @pytest.mark.freeze_time('2022-1-1')
-@patch('project.maps.utils.garmin.get_activities', side_effect=Exception('XXX'))
+@patch('project.maps.utils.garmin.Garmin.get_activities', side_effect=Exception('XXX'))
 def test_get_data_failed_get_activities(mck):
     TripFactory()
 
     actual = garmin.get_data()
 
-    assert actual == 'Error occurred during getting garmin activities: XXX'
+    assert actual == 'Error occurred during getting garmin activities'
 
 
 @pytest.mark.freeze_time('2022-1-1')
@@ -115,7 +115,7 @@ def test_get_data_no_trip(mck_get, mck_write, _activity):
 
 
 @pytest.mark.freeze_time('2022-1-1')
-@patch('project.maps.utils.garmin.save_tcx_file', side_effect=Exception('XXX'))
+@patch('project.maps.utils.garmin.save_tcx_file', return_value='XXX')
 @patch('project.maps.utils.garmin.get_activities')
 def test_get_data_faile_to_save_files(mck_get, mck_write, _activity):
     TripFactory()
@@ -127,7 +127,7 @@ def test_get_data_faile_to_save_files(mck_get, mck_write, _activity):
 
 
 @pytest.mark.freeze_time('2022-1-1')
-@patch('project.maps.utils.garmin.save_tcx_file')
+@patch('project.maps.utils.garmin.save_tcx_file', return_value=None)
 @patch('project.maps.utils.garmin.get_activities')
 def test_get_data_success(mck_get, mck_write, _activity):
     TripFactory()

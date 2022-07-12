@@ -14,25 +14,18 @@ from ..utils.trip import get_trip
 def get_data() -> str:
     # get current trip
     trip = get_trip()
-
     if not trip:
         return('No trip found')
 
     # login to garmin connect
-    try:
-        api = get_api()
-    except (
-        GarminConnectConnectionError,
-        GarminConnectAuthenticationError,
-        GarminConnectTooManyRequestsError
-    ) as err:
-        return(f'Error occurred during Garmin Connect communication: {err}')
+    api = get_api()
+    if not api:
+        return(f'Error occurred during Garmin Connect communication')
 
     # get activities
-    try:
-        activities = get_activities(api)
-    except Exception as err:
-        return(f'Error occurred during getting garmin activities: {err}')
+    activities = get_activities(api)
+    if not activities:
+        return(f'Error occurred during getting garmin activities')
 
     # filter non cycling activities
     activities = filter_non_cycling_activities(activities)
@@ -40,9 +33,8 @@ def get_data() -> str:
         return('No cycling activities found')
 
     # download TCX files for all activities
-    try:
-        save_tcx_file(api, activities)
-    except Exception as err:
+    err = save_tcx_file(api, activities)
+    if err:
         return(f'Error occurred during saving tcx file: {err}')
 
     # get all tracks for current trip
@@ -60,34 +52,48 @@ def get_data() -> str:
 
 
 def get_api():
-    api = Garmin(
-        settings.ENV('GARMIN_USER'),
-        settings.ENV('GARMIN_PASS')
-    )
+    try:
+        api = Garmin(
+            settings.ENV('GARMIN_USER'),
+            settings.ENV('GARMIN_PASS')
+        )
 
-    api.login()
+        api.login()
+    except (
+        GarminConnectConnectionError,
+        GarminConnectAuthenticationError,
+        GarminConnectTooManyRequestsError
+    ):
+        return
 
     return api
 
 
 def get_activities(api):
-    return api.get_activities(0, 10)  # 0=start, 1=limit
+    try:
+        activities = api.get_activities(0, 10)  # 0=start, 1=limit
+    except Exception:
+        return
+
+    return activities
 
 
 def save_tcx_file(api, activities):
-    for activity in activities:
-        activity_id = activity["activityId"]
-        output_file = os.path.join(
-            settings.MEDIA_ROOT, 'tracks', f'{activity_id}.tcx')
+    try:
+        for activity in activities:
+            activity_id = activity["activityId"]
+            output_file = os.path.join(settings.MEDIA_ROOT, 'tracks', f'{activity_id}.tcx')
 
-        if os.path.exists(output_file):
-            continue
+            if os.path.exists(output_file):
+                continue
 
-        tcx_data = api.download_activity(
-            activity_id, dl_fmt=api.ActivityDownloadFormat.TCX)
+            tcx_data = api.download_activity(activity_id, dl_fmt=api.ActivityDownloadFormat.TCX)
 
-        with open(output_file, "wb") as fb:
-            fb.write(tcx_data)
+            with open(output_file, "wb") as fb:
+                fb.write(tcx_data)
+
+    except Exception as err:
+        return err
 
 
 def create_track(trip: Trip, activity: Dict, tracks: List) -> Track:
