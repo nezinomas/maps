@@ -8,7 +8,7 @@ from garminconnect import (Garmin, GarminConnectAuthenticationError,
                            GarminConnectTooManyRequestsError)
 
 from ..models import Statistic, Track, Trip
-from ..utils.trip import get_trip
+from .common import get_trip
 
 
 def get_data(trip: Trip = None) -> str:

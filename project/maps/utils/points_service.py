@@ -6,7 +6,7 @@ from django.template.loader import render_to_string
 from tcxreader.tcxreader import TCXReader
 
 from ..models import Point, Track, Trip
-from .trip import get_trip
+from .common import get_trip
 
 '''
 {TCXExercise}

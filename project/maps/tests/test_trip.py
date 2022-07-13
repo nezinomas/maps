@@ -1,7 +1,7 @@
 import pytest
 
 from ..factories import TripFactory
-from ..utils.trip import get_trip
+from ..utils.common import get_trip
 
 pytestmark = pytest.mark.django_db
 
