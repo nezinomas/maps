@@ -1,4 +1,5 @@
 import os
+from datetime import timezone
 
 from django.conf import settings
 from django.template.loader import render_to_string
@@ -70,7 +71,7 @@ class PointsService():
                     distance_meters=point.distance,
                     cadence=point.cadence,
                     heart_rate=point.hr_value,
-                    datetime=point.time,
+                    datetime=point.time.astimezone(timezone.utc),
                     track=track
                 )
                 for point in points
