@@ -53,6 +53,17 @@ def test_get_tracks_with_no_points():
 
 
 @pytest.mark.freeze_time('2022-1-1')
+def test_get_tracks_with_no_points_ordering_by_date_desc():
+    PointFactory()
+    track1 = TrackFactory(title='2', date=datetime(2222, 1, 1))
+    track2 = TrackFactory(title='1', date=datetime(1111, 1, 1))
+
+    actual = PointsService().get_tracks_with_no_points()
+
+    assert list(actual) == [track1, track2]
+
+
+@pytest.mark.freeze_time('2022-1-1')
 def test_get_tracks_with_no_points_all_good():
     PointFactory()
 
