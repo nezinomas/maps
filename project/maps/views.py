@@ -91,7 +91,21 @@ class UpdatePoints(LoginRequiredMixin, TemplateView):
 
         trip = get_object_or_404(models.Trip, slug=self.kwargs.get('trip'))
 
-        context['message'] = PointsService().update_points(trip)
+        context['message'] = PointsService(trip).update_points()
+
+        return context
+
+
+class UpdateAllPoints(LoginRequiredMixin, TemplateView):
+    login_url = '/admin/'
+    template_name = 'maps/generate_js_message.html'
+
+    def get_context_data(self, *args, **kwargs):
+        context = super().get_context_data(*args, **kwargs)
+
+        trip = get_object_or_404(models.Trip, slug=self.kwargs.get('trip'))
+
+        context['message'] = PointsService(trip).update_all_points()
 
         return context
 
