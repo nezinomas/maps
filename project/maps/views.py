@@ -30,6 +30,12 @@ class Utils(LoginRequiredMixin, TemplateView):
     login_url = '/admin/'
     template_name = 'maps/utils.html'
 
+    def get_context_data(self, **kwargs):
+        context = {
+            'slug': self.kwargs.get('trip'),
+        }
+        return super().get_context_data(**kwargs) | context
+
 
 class GenerateMaps(TemplateView):
     template_name = 'maps/generate_map.html'
