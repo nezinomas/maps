@@ -3,7 +3,7 @@ from .utils.points_service import PointsService
 from .utils.wp_comments_qty import push_all_comment_qty as qty
 
 
-def my_scheduled_job():
+def get_data_from_garminconnect():
     # get data from garmin connect
     GarminService().get_data()
 
