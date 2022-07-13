@@ -1,20 +1,18 @@
 import os
 
-from django.shortcuts import redirect, reverse, get_object_or_404
+from django.conf import settings
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.http import JsonResponse
+from django.shortcuts import get_object_or_404, redirect, reverse
+from django.template import loader
 from django.views.generic import TemplateView
 
-from django.contrib.auth.mixins import LoginRequiredMixin
-from django.conf import settings
-from django.template import loader
-from django.http import JsonResponse
-
-from ..config.secrets import get_secret
-from .utils import update_track_points as importer
-from .utils import wp_content as wpContent
+from . import models
 from .utils import statistic
 from .utils import wp_comments_qty as wpQty
-
-from . import models
+from .utils import wp_content as wpContent
+from .utils.garmin import get_data as GarminService
+from .utils.points_service import PointsService
 
 
 def index(request):
@@ -26,6 +24,17 @@ def index(request):
             kwargs={'trip': content.slug}
         )
     )
+
+
+class Utils(LoginRequiredMixin, TemplateView):
+    login_url = '/admin/'
+    template_name = 'maps/utils.html'
+
+    def get_context_data(self, **kwargs):
+        context = {
+            'slug': self.kwargs.get('trip'),
+        }
+        return super().get_context_data(**kwargs) | context
 
 
 class GenerateMaps(TemplateView):
@@ -53,13 +62,13 @@ class GenerateMaps(TemplateView):
         context['trip'] = trip
         context['qty'] = comments
         context['st'] = statistic.get_statistic(trip)
-        context['google_api_key'] = get_secret("GOOGLE_API_KEY")
+        context['google_api_key'] = settings.ENV("GOOGLE_API_KEY")
         context['js_version'] = os.path.getmtime('{}/points/{}-points.js'.format(settings.MEDIA_ROOT, trip.pk))
 
         return context
 
 
-class UpdateMaps(LoginRequiredMixin, TemplateView):
+class UpdateTracks(LoginRequiredMixin, TemplateView):
     login_url = '/admin/'
     template_name = 'maps/generate_js_message.html'
 
@@ -68,12 +77,12 @@ class UpdateMaps(LoginRequiredMixin, TemplateView):
 
         trip = get_object_or_404(models.Trip, slug=self.kwargs.get('trip'))
 
-        context['message'] = importer.update_single_trip(trip)
+        context['message'] = GarminService(trip)
 
         return context
 
 
-class RecalcMaps(LoginRequiredMixin, TemplateView):
+class UpdatePoints(LoginRequiredMixin, TemplateView):
     login_url = '/admin/'
     template_name = 'maps/generate_js_message.html'
 
@@ -82,7 +91,21 @@ class RecalcMaps(LoginRequiredMixin, TemplateView):
 
         trip = get_object_or_404(models.Trip, slug=self.kwargs.get('trip'))
 
-        context['message'] = importer.recalc_single_trip(trip)
+        context['message'] = PointsService(trip).update_points()
+
+        return context
+
+
+class UpdateAllPoints(LoginRequiredMixin, TemplateView):
+    login_url = '/admin/'
+    template_name = 'maps/generate_js_message.html'
+
+    def get_context_data(self, *args, **kwargs):
+        context = super().get_context_data(*args, **kwargs)
+
+        trip = get_object_or_404(models.Trip, slug=self.kwargs.get('trip'))
+
+        context['message'] = PointsService(trip).update_all_points()
 
         return context
 
@@ -96,7 +119,7 @@ class Comments(TemplateView):
         wp = []
         if get_remote == 'true':
             trip = get_object_or_404(models.Trip, slug=self.kwargs.get('trip'))
-            wp = wpContent.get_post_comments(trip, post_id)
+            wp = wpContent.get_comments(trip, post_id)
 
         rendered_page = loader.render_to_string('maps/comments.html', {'comments': wp})
         output_data = {'html': rendered_page}

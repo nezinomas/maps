@@ -2,7 +2,6 @@
 
 var map;
 $(document).ready(function () {
-    {% if get_data %}
     s = [
         {% for item in tracks %}["{{ item.date|date:'Y-m-d' }}", {{ item.stats.total_km|floatformat:2 }}, "{{ item.stats.total_time_seconds|format_datetime }}", "{{ item.stats.avg_speed|floatformat:2 }}",], {% endfor %}
     ];
@@ -13,18 +12,18 @@ $(document).ready(function () {
 
     var last0 = 0;
     var last1 = p[last0].length - 1;
-    {% endif %}
+
     prettyPrint();
 
     map = new GMaps({
         div: '#map',
-        zoom: {% if get_data %}14{% else %}8{% endif %},
-        lat: {% if get_data %}p[last0][last1][0]{% else %}54.687157{% endif %},
-        lng: {% if get_data %}p[last0][last1][1]{% else %}25.279652{% endif %},
+        zoom: 12,
+        lat: p[last0][last1][0],
+        lng: p[last0][last1][1],
     });
-    {% if get_data %}
+
     for (i = 0; i < p.length; i++) {
-        var color = 'CornflowerBlue';
+        var color = 'Green';
         if (i % 2 == 0) {
             color = 'Blue';
         }
@@ -52,5 +51,5 @@ $(document).ready(function () {
                         </table>`
             }
         });
-    };{% endif %}
+    };
 });
