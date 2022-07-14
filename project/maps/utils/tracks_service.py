@@ -1,10 +1,10 @@
+import json
 import os
-from typing import List
-
+from typing import Dict, List
+from datetime import datetime
 from django.conf import settings
-from tcxreader.tcxreader import TCXReader
-from tcxreader.tcx_exercise import TCXExercise
-from ..models import Track, Trip, Statistic
+
+from ..models import Statistic, Track, Trip
 from ..utils.common import get_trip
 
 
@@ -18,7 +18,7 @@ class TracksService:
 
         files = self.get_files()
         if not files:
-            return f'No tcx files in {settings.MEDIA_ROOT}/tracks'
+            return f'No sts files in {settings.MEDIA_ROOT}/tracks'
 
         ids = self.track_list_for_update(files)
         if not ids:
@@ -26,7 +26,7 @@ class TracksService:
 
         self.save_track_and_statistic(ids)
 
-        return 'Successfully synced data from tcx files'
+        return 'Successfully synced data from sts files'
 
     def get_files(self) -> List[str]:
         directory = os.path.join(settings.MEDIA_ROOT, 'tracks')
@@ -34,8 +34,8 @@ class TracksService:
 
         files = []
         for file in lst:
-            # only .tcx files
-            if not file.endswith('.tcx'):
+            # only .sts files
+            if not file.endswith('.sts'):
                 continue
 
             # remove extension
@@ -55,43 +55,30 @@ class TracksService:
 
         return list(ids)
 
-    def get_data_from_tcx_file(self, file) -> TCXExercise:
-        file = os.path.join(settings.MEDIA_ROOT, 'tracks', f'{file}.tcx')
+    def get_data_from_sts_file(self, file) -> Dict:
+        file = os.path.join(settings.MEDIA_ROOT, 'tracks', f'{file}.sts')
 
         if not os.path.exists(file):
             return
 
-        reader = TCXReader()
-        data = reader.read(file)
+        with open(file, 'r') as f:
+            data = json.load(f)
 
         return data
 
     def save_track_and_statistic(self, ids: List):
         for id in ids:
-            activity = self.get_data_from_tcx_file(id)
+            activity = self.get_data_from_sts_file(id)
 
             # create track
             track = Track.objects.create(
                 title=id,
-                date=activity.start_time,
-                activity_type=activity.activity_type,
+                date=datetime.strptime(activity['start_time'], '%Y-%m-%d %H:%M:%S %z'),
+                activity_type='cycling',
                 trip=self.trip
             )
 
             # create track statistics
-            stats = {
-                'total_km': activity.distance / 1000,
-                'total_time_seconds': activity.duration,
-                'avg_speed': activity.avg_speed,
-                'max_speed': activity.max_speed,
-                'calories': activity.calories,
-                'avg_cadence': activity.cadence_avg,
-                'avg_heart': activity.hr_avg,
-                'max_heart': activity.hr_max,
-                'min_altitude': activity.altitude_min,
-                'max_altitude': activity.altitude_max,
-                'ascent': activity.ascent,
-                'descent': activity.descent,
-            }
+            del activity['start_time']
 
-            Statistic.objects.create(track=track, **stats)
+            Statistic.objects.create(track=track, **activity)
