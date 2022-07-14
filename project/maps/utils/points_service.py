@@ -80,7 +80,12 @@ class PointsService():
         return Track.objects.filter(pk__in=ids)
 
     def get_data_from_tcx_file(self, file):
-        file = os.path.join(settings.MEDIA_ROOT, 'tracks', f'{file}.tcx')
+        file = os.path.join(
+            settings.MEDIA_ROOT,
+            'tracks',
+            str(self.trip.pk),
+            f'{file}.tcx'
+        )
 
         if not os.path.exists(file):
             return
