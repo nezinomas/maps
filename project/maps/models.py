@@ -111,7 +111,10 @@ class Point(models.Model):
 class Statistic(models.Model):
     total_km = models.FloatField()
     total_time_seconds = models.FloatField()
-    max_speed = models.FloatField()
+    max_speed = models.FloatField(
+        null=True,
+        blank=True
+    )
     calories = models.IntegerField(
         null=True,
         blank=True
