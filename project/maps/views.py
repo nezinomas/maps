@@ -11,8 +11,9 @@ from . import models
 from .utils import statistic
 from .utils import wp_comments_qty as wpQty
 from .utils import wp_content as wpContent
-from .utils.garmin import get_data as GarminService
+from .utils.garmin_service import GarminService
 from .utils.points_service import PointsService
+from .utils.tracks_service import TracksService
 
 
 def index(request):
@@ -68,6 +69,20 @@ class GenerateMaps(TemplateView):
         return context
 
 
+class DownloadTcx(LoginRequiredMixin, TemplateView):
+    login_url = '/admin/'
+    template_name = 'maps/generate_js_message.html'
+
+    def get_context_data(self, *args, **kwargs):
+        context = super().get_context_data(*args, **kwargs)
+
+        trip = get_object_or_404(models.Trip, slug=self.kwargs.get('trip'))
+
+        context['message'] = GarminService(trip).get_data()
+
+        return context
+
+
 class UpdateTracks(LoginRequiredMixin, TemplateView):
     login_url = '/admin/'
     template_name = 'maps/generate_js_message.html'
@@ -77,7 +92,24 @@ class UpdateTracks(LoginRequiredMixin, TemplateView):
 
         trip = get_object_or_404(models.Trip, slug=self.kwargs.get('trip'))
 
-        context['message'] = GarminService(trip)
+        context['message'] = TracksService(trip).save_data()
+
+        return context
+
+
+class UpdateAllTracks(LoginRequiredMixin, TemplateView):
+    login_url = '/admin/'
+    template_name = 'maps/generate_js_message.html'
+
+    def get_context_data(self, *args, **kwargs):
+        context = super().get_context_data(*args, **kwargs)
+
+        trip = get_object_or_404(models.Trip, slug=self.kwargs.get('trip'))
+
+        models.Track.objects.filter(trip=trip).delete()
+        models.Statistic.objects.filter(track__trip=trip).delete()
+
+        context['message'] = TracksService(trip).save_data()
 
         return context
 

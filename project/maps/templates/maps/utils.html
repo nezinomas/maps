@@ -17,9 +17,11 @@
     <div class="container mt-2">
       <div>
         <div>
-          <button type="button" class="btn btn-sm btn-primary" hx-get="{% url 'maps:update_tracks' slug %}" hx-target="#output">Update Tracks</button>
-          <button type="button" class="btn btn-sm btn-primary" hx-get="{% url 'maps:update_points' slug %}" hx-target="#output">Update Points</button>
-          <button type="button" class="btn btn-sm btn-danger" hx-get="{% url 'maps:update_all_points' slug %}" hx-target="#output">Update All Points</button>
+          <button type="button" class="btn btn-sm btn-info" hx-get="{% url 'maps:download_tcx' slug %}" hx-target="#output" onClick='$("#output").html("");'>Download From Garmin</button>
+          <button type="button" class="btn btn-sm btn-primary" hx-get="{% url 'maps:update_tracks' slug %}" hx-target="#output" onClick='$("#output").html("");'>Save New Tracks</button>
+          <button type="button" class="btn btn-sm btn-primary" hx-get="{% url 'maps:update_points' slug %}" hx-target="#output" onClick='$("#output").html("");'>Save New Points</button>
+          <button type="button" class="btn btn-sm btn-danger" hx-get="{% url 'maps:update_all_tracks' slug %}" hx-target="#output" onClick='$("#output").html("");'>Rewrite All Tracks</button>
+          <button type="button" class="btn btn-sm btn-danger" hx-get="{% url 'maps:update_all_points' slug %}" hx-target="#output" onClick='$("#output").html("");'>Rewrite All Points</button>
           <button type="button" class="btn btn-sm btn-secondary" onClick='$("#output").html("");'>Clear Messages</button>
         </div>
 
