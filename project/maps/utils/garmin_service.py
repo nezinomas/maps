@@ -33,7 +33,7 @@ class GarminService:
         for activity in activities:
             # filter non cycling activities
             activity_type = activity['activityType']['typeKey']
-            if not any(x in activity_type for x in ('biking', 'cycling')):
+            if not any(x in activity_type.lower() for x in ('biking', 'cycling')):
                 continue
 
             # activity start time must be:
