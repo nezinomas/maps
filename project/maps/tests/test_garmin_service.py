@@ -177,6 +177,7 @@ def test_statistic_file(project_fs, _activity):
     with open(file, 'r') as f:
         actual = json.load(f)
 
+        assert actual['start_time'] == '2022-01-01 03:02:01 +0000'
         assert actual['total_km'] == 12.345
         assert actual['total_time_seconds'] == 1918.1
         assert round(actual['avg_speed'], 2) == 23.40

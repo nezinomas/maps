@@ -92,6 +92,7 @@ class GarminService:
 
     def get_activity_statistic(self, activity: Dict) -> Dict:
         stats = {
+            'start_time': activity.get('startTimeGMT') + ' +0000',
             'total_km': float(activity.get("distance")) / 1000,
             'total_time_seconds': float(activity.get("movingDuration")),
             'avg_speed': float(activity.get("averageSpeed")) * 3.6,
