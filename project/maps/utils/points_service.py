@@ -8,28 +8,6 @@ from tcxreader.tcxreader import TCXReader
 from ..models import Point, Track, Trip
 from .common import get_trip
 
-'''
-{TCXExercise}
-    activity_type = {str} 'Biking'
-    ascent = {float} 1404.400026500225
-    avg_speed = {float} 24.285282782608693
-    cadence_avg = {NoneType} None
-    cadence_max = {NoneType} None
-    calories = {int} 2010
-    descent = {float} 1422.000026166439
-    distance = {float} 116366.98
-    duration = {float} 17250.0
-    end_time = {datetime} 2015-02-19 14:18:59+00:00
-    hr_avg = {float} 140.59545804464972
-    hr_max = {int} 200
-    hr_min = {int} 94
-    altitude_max = {float}
-    altitude_min = {float}
-    altitude_avg = {float}
-    max_speed = {float} 18.95800018310547
-    start_time = {datetime} 2015-02-19 09:31:29+00:00
-    trackpoints = {list: 7799} [TCXTrackPoint]
-'''
 
 class PointsService():
     def __init__(self, trip: Trip = None):
