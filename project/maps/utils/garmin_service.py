@@ -1,3 +1,4 @@
+import json
 import os
 from datetime import datetime, timezone
 from typing import Dict, List
@@ -89,6 +90,51 @@ class GarminService:
 
         return activities
 
+    def get_activity_statistic(self, activity: Dict) -> Dict:
+        stats = {
+            'total_km': float(activity.get("distance")) / 1000,
+            'total_time_seconds': float(activity.get("movingDuration")),
+            'avg_speed': float(activity.get("averageSpeed")) * 3.6,
+            'max_speed': float(activity.get("maxSpeed")) * 3.6,
+            'calories': int(activity.get("calories")),
+            'avg_cadence': None,
+            'avg_heart': None,
+            'max_heart': None,
+            'avg_temperature': None,
+            'min_altitude': float(activity.get("minElevation")),
+            'max_altitude': float(activity.get("maxElevation")),
+            'ascent': float(activity.get("elevationGain")),
+            'descent': float(activity.get("elevationLoss")),
+        }
+
+        try:
+            stats['avg_heart'] = float(activity.get("averageHR"))
+        except (TypeError, ValueError):
+            pass
+
+        try:
+            stats['max_heart'] = float(activity.get("maxHR"))
+        except (TypeError, ValueError):
+            pass
+
+        try:
+            stats['avg_cadence'] = float(activity.get("averageBikingCadenceInRevPerMinute"))
+        except (TypeError, ValueError):
+            pass
+
+        return stats
+
+    def create_activity_statistic_file(self, activity):
+        activity_id = activity["activityId"]
+
+        outfile = os.path.join(
+            settings.MEDIA_ROOT, 'tracks', f'{activity_id}.sts')
+
+        data = self.get_activity_statistic(activity)
+
+        with open(outfile, "w") as f:
+            json.dump(data, f)
+
     def save_tcx_file(self, api: Garmin, activities: List[Dict]) -> str:
         try:
             for activity in activities:
@@ -106,5 +152,9 @@ class GarminService:
                 with open(output_file, "wb") as fb:
                     fb.write(tcx_data)
 
+                # create activity statistic file
+                self.create_activity_statistic_file(activity)
+
         except Exception as err:
             return err
+
