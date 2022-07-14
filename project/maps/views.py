@@ -32,6 +32,9 @@ class Utils(LoginRequiredMixin, TemplateView):
     template_name = 'maps/utils.html'
 
     def get_context_data(self, **kwargs):
+        trip = get_object_or_404(models.Trip, slug=self.kwargs.get('trip'))
+        points = models.Point.objects.filter(track__trip=trip).values_list('latitude', 'longitude')
+        print(f'points:\n{points}')
         context = {
             'slug': self.kwargs.get('trip'),
         }
