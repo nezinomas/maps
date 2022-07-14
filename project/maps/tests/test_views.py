@@ -68,7 +68,7 @@ def test_download_tcx_not_logged(client):
 def test_update_points_func():
     view = resolve('/trip-title/update_points/')
 
-    assert views.UpdatePoints == view.func.view_class
+    assert views.SaveNewPoints == view.func.view_class
 
 
 def test_update_points_index_200(client_logged):
@@ -95,7 +95,7 @@ def test_update_points_not_logged(client):
 def test_update_all_points_func():
     view = resolve('/trip-title/update_all_points/')
 
-    assert views.UpdateAllPoints == view.func.view_class
+    assert views.RewriteAllPoints == view.func.view_class
 
 
 def test_update_all_points_index_200(client_logged):
@@ -122,7 +122,7 @@ def test_update_all_points_not_logged(client):
 def test_update_tracks_func():
     view = resolve('/trip-title/update_tracks/')
 
-    assert views.UpdateTracks == view.func.view_class
+    assert views.SaveNewTracks == view.func.view_class
 
 
 def test_update_tracks_index_200(client_logged):
@@ -149,7 +149,7 @@ def test_update_tracks_not_logged(client):
 def test_update_all_tracks_func():
     view = resolve('/trip-title/update_all_tracks/')
 
-    assert views.UpdateAllTracks == view.func.view_class
+    assert views.RewriteAllTracks == view.func.view_class
 
 
 def test_update_all_tracks_index_200(client_logged):

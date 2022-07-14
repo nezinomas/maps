@@ -83,7 +83,7 @@ class DownloadTcx(LoginRequiredMixin, TemplateView):
         return context
 
 
-class UpdateTracks(LoginRequiredMixin, TemplateView):
+class SaveNewTracks(LoginRequiredMixin, TemplateView):
     login_url = '/admin/'
     template_name = 'maps/generate_js_message.html'
 
@@ -97,7 +97,7 @@ class UpdateTracks(LoginRequiredMixin, TemplateView):
         return context
 
 
-class UpdateAllTracks(LoginRequiredMixin, TemplateView):
+class RewriteAllTracks(LoginRequiredMixin, TemplateView):
     login_url = '/admin/'
     template_name = 'maps/generate_js_message.html'
 
@@ -114,7 +114,7 @@ class UpdateAllTracks(LoginRequiredMixin, TemplateView):
         return context
 
 
-class UpdatePoints(LoginRequiredMixin, TemplateView):
+class SaveNewPoints(LoginRequiredMixin, TemplateView):
     login_url = '/admin/'
     template_name = 'maps/generate_js_message.html'
 
@@ -128,7 +128,7 @@ class UpdatePoints(LoginRequiredMixin, TemplateView):
         return context
 
 
-class UpdateAllPoints(LoginRequiredMixin, TemplateView):
+class RewriteAllPoints(LoginRequiredMixin, TemplateView):
     login_url = '/admin/'
     template_name = 'maps/generate_js_message.html'
 
@@ -143,7 +143,6 @@ class UpdateAllPoints(LoginRequiredMixin, TemplateView):
 
 
 class Comments(TemplateView):
-
     def get(self, request, *args, **kwargs):
         post_id = request.GET.get('post_id', False)
         get_remote = request.GET.get('get_remote', False)
