@@ -58,7 +58,11 @@ class PointsService():
             Point.objects.bulk_create(objs)
 
     def points_to_js(self, tracks):
-        file = os.path.join(settings.MEDIA_ROOT, 'points', f'{self._trip.pk}-points.js')
+        file = os.path.join(
+            settings.MEDIA_ROOT,
+            'points',
+            f'{self.trip.pk}-points.js'
+        )
 
         with open(file, 'w') as js_file:
             content = render_to_string('maps/generate_js.html', {'tracks': tracks})
