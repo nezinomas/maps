@@ -1,3 +1,4 @@
+import json
 import os
 
 import pytest
@@ -15,6 +16,38 @@ GET_TRIP = 'project.maps.utils.garmin_service.get_trip'
 def _garmin_api(monkeypatch):
     mock_func = f'{GARMIN_SERVICE}.get_api'
     monkeypatch.setattr(mock_func, lambda x: 'API')
+
+
+@pytest.fixture
+def _activity():
+    return {
+        'activityId': 999,
+        'activityName': 'Vilnius Road Cycling',
+        'startTimeLocal': '2022-01-01 05:02:11',
+        'startTimeGMT': '2022-01-01 03:02:01',
+        'activityType': {
+            'typeId': 10,
+            'typeKey': 'road_biking',
+        },
+        'distance': 12345.0,
+        'movingDuration': 1918.1,
+        'elevationGain': 111.0,
+        'elevationLoss': 222.0,
+        'averageSpeed': 6.5,
+        'maxSpeed': 13.2,
+        'startLatitude': 55.555,
+        'startLongitude': 44.444,
+        'calories': 33.0,
+        'averageHR': None,
+        'maxHR': None,
+        'beginTimestamp': 1640998921000,  # 2022-1-1 3:2:1
+        'minElevation': 5,
+        'maxElevation': 55,
+        'locationName': 'Vilnius',
+        'lapCount': 3,
+        'endLatitude': 66.666,
+        'endLongitude': 77.777,
+    }
 
 
 def test_garmin_service_init_with_trip():
@@ -92,7 +125,7 @@ def test_get_data_filter_future_activities(mck_activities):
     assert actual == 'Nothing to sync'
 
 
-@patch(f'{GARMIN_SERVICE}.save_tcx_file')
+@patch(f'{GARMIN_SERVICE}.save_tcx_and_sts_file')
 @patch(f'{GARMIN_SERVICE}.get_activities')
 def test_get_data_save_file_failed(mck_activities, mck_save):
     mck_activities.return_value = [{
@@ -105,7 +138,8 @@ def test_get_data_save_file_failed(mck_activities, mck_save):
 
     assert actual == 'Error occurred during saving tcx file: XXX'
 
-@patch(f'{GARMIN_SERVICE}.save_tcx_file')
+
+@patch(f'{GARMIN_SERVICE}.save_tcx_and_sts_file')
 @patch(f'{GARMIN_SERVICE}.get_activities')
 def test_get_data_success(mck_activities, mck_save):
     mck_activities.return_value = [{
@@ -125,26 +159,104 @@ def test_tcx_new_file(project_fs):
     api = Mock()
     api.download_activity.return_value = b'tcx data'
 
+    GarminService(trip='xxx').save_tcx_and_sts_file(api, _activities)
+
     file = os.path.join(settings.MEDIA_ROOT, 'tracks', '999.tcx')
-
-    GarminService(trip='xxx').save_tcx_file(api, _activities)
-
     with open(file, 'r') as f:
         assert f.read() == 'tcx data'
 
 
-def test_tcx_file_exists(fs):
-    _activities = [{'activityId': 999, }]
-
-    file = os.path.join(settings.MEDIA_ROOT, 'tracks', '999.tcx')
-    fs.create_file(file, contents='test')
+def test_statistic_file(project_fs, _activity):
+    _activities = [_activity]
 
     api = Mock()
     api.download_activity.return_value = b'tcx data'
 
-    GarminService(trip='xxx').save_tcx_file(api, _activities)
+    GarminService(trip=TripFactory.build()).save_tcx_and_sts_file(api, _activities)
+
+    file = os.path.join(settings.MEDIA_ROOT, 'tracks', '999.sts')
+    with open(file, 'r') as f:
+        actual = json.load(f)
+
+        assert actual['start_time'] == '2022-01-01 03:02:01 +0000'
+        assert actual['total_km'] == 12.345
+        assert actual['total_time_seconds'] == 1918.1
+        assert round(actual['avg_speed'], 2) == 23.40
+        assert round(actual['max_speed'], 2) == 47.52
+        assert actual['calories'] == 33.0
+        assert actual['avg_cadence'] == None
+        assert actual['avg_heart'] == None
+        assert actual['max_heart'] == None
+        assert actual['avg_temperature'] == None
+        assert actual['ascent'] == 111.0
+        assert actual['descent'] == 222.0
+        assert actual['min_altitude'] == 5
+        assert actual['max_altitude'] == 55
+
+
+def test_tcx_and_sts_files_exists(fs):
+    _activities = [{'activityId': 999, }]
+
+    file_tcx = os.path.join(settings.MEDIA_ROOT, 'tracks', '999.tcx')
+    fs.create_file(file_tcx, contents='test')
+
+    file_sts = os.path.join(settings.MEDIA_ROOT, 'tracks', '999.sts')
+    fs.create_file(file_sts, contents='test')
+
+    api = Mock()
+    api.download_activity.return_value = b'tcx data'
+
+    GarminService(trip='xxx').save_tcx_and_sts_file(api, _activities)
 
     assert api.download_activity.call_count == 0
 
-    with open(file, 'r') as f:
+    with open(file_tcx, 'r') as f:
         assert f.read() == 'test'
+
+    with open(file_sts, 'r') as f:
+        assert f.read() == 'test'
+
+
+def test_get_activity_statistic(_activity):
+    actual = GarminService(trip=TripFactory.build()).get_activity_statistic(_activity)
+
+    assert actual['total_km'] == 12.345
+    assert actual['total_time_seconds'] == 1918.1
+    assert round(actual['avg_speed'], 2) == 23.40
+    assert round(actual['max_speed'], 2) == 47.52
+    assert actual['calories'] == 33.0
+    assert actual['avg_cadence'] == None
+    assert actual['avg_heart'] == None
+    assert actual['max_heart'] == None
+    assert actual['avg_temperature'] == None
+    assert actual['ascent'] == 111.0
+    assert actual['descent'] == 222.0
+    assert actual['min_altitude'] == 5
+    assert actual['max_altitude'] == 55
+
+
+def test_create_activity_statistic_file(project_fs, _activity):
+    api = Mock()
+    api.download_activity.return_value = b'tcx data'
+
+    GarminService(trip='xxx').create_activity_statistic_file(_activity)
+
+    file = os.path.join(settings.MEDIA_ROOT, 'tracks', '999.sts')
+
+    with open(file, 'r') as f:
+        actual = json.load(f)
+        print(f'actual: {actual}')
+
+        assert actual['total_km'] == 12.345
+        assert actual['total_time_seconds'] == 1918.1
+        assert round(actual['avg_speed'], 2) == 23.40
+        assert round(actual['max_speed'], 2) == 47.52
+        assert actual['calories'] == 33.0
+        assert actual['avg_cadence'] == None
+        assert actual['avg_heart'] == None
+        assert actual['max_heart'] == None
+        assert actual['avg_temperature'] == None
+        assert actual['ascent'] == 111.0
+        assert actual['descent'] == 222.0
+        assert actual['min_altitude'] == 5
+        assert actual['max_altitude'] == 55
