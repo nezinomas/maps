@@ -18,7 +18,7 @@ class TracksService:
 
         files = self.get_files()
         if not files:
-            return f'No sts files in {settings.MEDIA_ROOT}/tracks'
+            return f'No sts files in {settings.MEDIA_ROOT}/tracks/{self.trip.pk}/'
 
         ids = self.track_list_for_update(files)
         if not ids:
@@ -29,7 +29,11 @@ class TracksService:
         return 'Successfully synced data from sts files'
 
     def get_files(self) -> List[str]:
-        directory = os.path.join(settings.MEDIA_ROOT, 'tracks')
+        directory = os.path.join(
+            settings.MEDIA_ROOT,
+            'tracks',
+            str(self.trip.pk)
+        )
         lst = os.listdir(directory)
 
         files = []
@@ -56,7 +60,12 @@ class TracksService:
         return list(ids)
 
     def get_data_from_sts_file(self, file) -> Dict:
-        file = os.path.join(settings.MEDIA_ROOT, 'tracks', f'{file}.sts')
+        file = os.path.join(
+            settings.MEDIA_ROOT,
+            'tracks',
+            str(self.trip.pk),
+            f'{file}.sts'
+        )
 
         if not os.path.exists(file):
             return
