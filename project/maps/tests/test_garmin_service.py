@@ -125,7 +125,7 @@ def test_get_data_filter_future_activities(mck_activities):
     assert actual == 'Nothing to sync'
 
 
-@patch(f'{GARMIN_SERVICE}.save_tcx_file')
+@patch(f'{GARMIN_SERVICE}.save_tcx_and_sts_file')
 @patch(f'{GARMIN_SERVICE}.get_activities')
 def test_get_data_save_file_failed(mck_activities, mck_save):
     mck_activities.return_value = [{
@@ -138,7 +138,8 @@ def test_get_data_save_file_failed(mck_activities, mck_save):
 
     assert actual == 'Error occurred during saving tcx file: XXX'
 
-@patch(f'{GARMIN_SERVICE}.save_tcx_file')
+
+@patch(f'{GARMIN_SERVICE}.save_tcx_and_sts_file')
 @patch(f'{GARMIN_SERVICE}.get_activities')
 def test_get_data_success(mck_activities, mck_save):
     mck_activities.return_value = [{
@@ -158,7 +159,7 @@ def test_tcx_new_file(project_fs):
     api = Mock()
     api.download_activity.return_value = b'tcx data'
 
-    GarminService(trip='xxx').save_tcx_file(api, _activities)
+    GarminService(trip='xxx').save_tcx_and_sts_file(api, _activities)
 
     file = os.path.join(settings.MEDIA_ROOT, 'tracks', '999.tcx')
     with open(file, 'r') as f:
@@ -171,7 +172,7 @@ def test_statistic_file(project_fs, _activity):
     api = Mock()
     api.download_activity.return_value = b'tcx data'
 
-    GarminService(trip=TripFactory.build()).save_tcx_file(api, _activities)
+    GarminService(trip=TripFactory.build()).save_tcx_and_sts_file(api, _activities)
 
     file = os.path.join(settings.MEDIA_ROOT, 'tracks', '999.sts')
     with open(file, 'r') as f:
@@ -205,7 +206,7 @@ def test_tcx_and_sts_files_exists(fs):
     api = Mock()
     api.download_activity.return_value = b'tcx data'
 
-    GarminService(trip='xxx').save_tcx_file(api, _activities)
+    GarminService(trip='xxx').save_tcx_and_sts_file(api, _activities)
 
     assert api.download_activity.call_count == 0
 

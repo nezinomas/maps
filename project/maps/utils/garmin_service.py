@@ -59,7 +59,7 @@ class GarminService:
             return 'Nothing to sync'
 
         # download TCX files for all activities
-        err = self.save_tcx_file(api, arr)
+        err = self.save_tcx_and_sts_file(api, arr)
         if err:
             return f'Error occurred during saving tcx file: {err}'
 
@@ -136,7 +136,7 @@ class GarminService:
         with open(outfile, "w") as f:
             json.dump(data, f)
 
-    def save_tcx_file(self, api: Garmin, activities: List[Dict]) -> str:
+    def save_tcx_and_sts_file(self, api: Garmin, activities: List[Dict]) -> str:
         try:
             for activity in activities:
                 activity_id = activity["activityId"]
