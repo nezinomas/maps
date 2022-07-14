@@ -15,17 +15,17 @@ class PointsService():
 
     def update_points(self):
         if not self._trip:
-            return('No active trip')
+            return 'No active trip'
 
         # get tracks with no points
         tracks = self.get_tracks_with_no_points()
         if not tracks:
-            return('No track.points needs to insert')
+            return 'No track.points needs to insert'
 
         self.points_to_db(tracks)
         self.points_to_js(tracks)
 
-        return('Points inserted')
+        return 'Points inserted'
 
     def update_all_points(self):
         # delete all points
