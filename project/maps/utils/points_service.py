@@ -11,10 +11,10 @@ from .common import get_trip
 
 class PointsService():
     def __init__(self, trip: Trip = None):
-        self._trip = get_trip() if not trip else trip
+        self.trip = get_trip() if not trip else trip
 
     def update_points(self):
-        if not self._trip:
+        if not self.trip:
             return('No active trip')
 
         # get tracks with no points
@@ -29,7 +29,7 @@ class PointsService():
 
     def update_all_points(self):
         # delete all points
-        Point.objects.filter(track__trip=self._trip).delete()
+        Point.objects.filter(track__trip=self.trip).delete()
 
         return self.update_points()
 
@@ -67,12 +67,12 @@ class PointsService():
     def get_tracks_with_no_points(self):
         tracks = \
             Track.objects \
-            .filter(trip=self._trip) \
+            .filter(trip=self.trip) \
             .values_list('pk', flat=True)
 
         points = \
             Point.objects \
-            .filter(track__trip=self._trip) \
+            .filter(track__trip=self.trip) \
             .values_list('track__pk', flat=True)
 
         ids = list(set(tracks) - set(points))
