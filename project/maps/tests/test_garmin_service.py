@@ -11,6 +11,8 @@ from ..utils.garmin_service import GarminService
 GARMIN_SERVICE = 'project.maps.utils.garmin_service.GarminService'
 GET_TRIP = 'project.maps.utils.garmin_service.get_trip'
 
+pytestmark = pytest.mark.django_db
+
 
 @pytest.fixture(autouse=True)
 def _garmin_api(monkeypatch):
@@ -154,27 +156,30 @@ def test_get_data_success(mck_activities, mck_save):
 
 
 def test_tcx_new_file(project_fs):
+    trip = TripFactory()
+
     _activities = [{'activityId': 999,}]
 
     api = Mock()
     api.download_activity.return_value = b'tcx data'
 
-    GarminService(trip='xxx').save_tcx_and_sts_file(api, _activities)
+    GarminService(trip=trip).save_tcx_and_sts_file(api, _activities)
 
-    file = os.path.join(settings.MEDIA_ROOT, 'tracks', '999.tcx')
+    file = os.path.join(settings.MEDIA_ROOT, 'tracks', str(trip.pk), '999.tcx')
     with open(file, 'r') as f:
         assert f.read() == 'tcx data'
 
 
 def test_statistic_file(project_fs, _activity):
+    trip = TripFactory()
     _activities = [_activity]
 
     api = Mock()
     api.download_activity.return_value = b'tcx data'
 
-    GarminService(trip=TripFactory.build()).save_tcx_and_sts_file(api, _activities)
+    GarminService(trip=trip).save_tcx_and_sts_file(api, _activities)
 
-    file = os.path.join(settings.MEDIA_ROOT, 'tracks', '999.sts')
+    file = os.path.join(settings.MEDIA_ROOT, 'tracks', str(trip.pk), '999.sts')
     with open(file, 'r') as f:
         actual = json.load(f)
 
@@ -236,12 +241,14 @@ def test_get_activity_statistic(_activity):
 
 
 def test_create_activity_statistic_file(project_fs, _activity):
+    trip = TripFactory()
+
     api = Mock()
     api.download_activity.return_value = b'tcx data'
 
-    GarminService(trip='xxx').create_activity_statistic_file(_activity)
+    GarminService(trip=trip).create_activity_statistic_file(_activity)
 
-    file = os.path.join(settings.MEDIA_ROOT, 'tracks', '999.sts')
+    file = os.path.join(settings.MEDIA_ROOT, 'tracks',str(trip.pk), '999.sts')
 
     with open(file, 'r') as f:
         actual = json.load(f)

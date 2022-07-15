@@ -60,21 +60,24 @@ def test_save_data_no_trip(mck):
 
 
 @patch(TRACKS_SERVICE + '.get_files')
-def test_save_data_no_sts_files(mck_files):
+def test_save_data_no_sts_files(mck_files, project_fs):
+    trip = TripFactory()
+
     mck_files.return_value = []
 
-    actual = TracksService(trip=TripFactory.build()).save_data()
+    actual = TracksService(trip=trip).save_data()
 
-    assert actual == f'No sts files in {settings.MEDIA_ROOT}/tracks'
+    assert actual == f'No sts files in {settings.MEDIA_ROOT}/tracks/1/'
 
 
 @patch(TRACKS_SERVICE + '.track_list_for_update')
 @patch(TRACKS_SERVICE + '.get_files')
-def test_save_data_everything_is_updated(mck_files, mck_tracks):
+def test_save_data_everything_is_updated(mck_files, mck_tracks, project_fs):
+    trip = TripFactory()
     mck_files.return_value = ['x']
     mck_tracks.return_value = None
 
-    actual = TracksService(trip=TripFactory.build()).save_data()
+    actual = TracksService(trip=trip).save_data()
 
     assert actual == 'All tracks are updated'
 
@@ -140,13 +143,15 @@ def test_save_data_save_success(mck_files, mck_tracks, mck_data, _activity):
     assert actual == 'Successfully synced data from sts files'
 
 
-def test_sts_file_list(fs):
-    directory = os.path.join(settings.MEDIA_ROOT, 'tracks')
+def test_sts_file_list(fs, project_fs):
+    trip = TripFactory()
+
+    directory = os.path.join(settings.MEDIA_ROOT, 'tracks', str(trip.pk))
     fs.create_file(os.path.join(directory, '1.sts'))
     fs.create_file(os.path.join(directory, '2.sts'))
     fs.create_file(os.path.join(directory, '3.xxx'))
 
-    actual = TracksService(trip=TripFactory.build()).get_files()
+    actual = TracksService(trip=trip).get_files()
 
     assert actual == ['1', '2']
 
@@ -162,17 +167,25 @@ def test_track_list_for_update():
 
 
 @patch('json.load')
-def test_get_data_from_sts_file(mck, fs, _activity):
-    fs.create_file(os.path.join(settings.MEDIA_ROOT, 'tracks', 'XXX.sts'))
+def test_get_data_from_sts_file(mck, fs, project_fs, _activity):
+    trip = TripFactory()
+    fs.create_file(
+        os.path.join(
+            settings.MEDIA_ROOT,
+            'tracks',
+            str(trip.pk),
+            'XXX.sts'))
 
     mck.return_value = _activity
 
-    actual = TracksService().get_data_from_sts_file('XXX')
+    actual = TracksService(trip=trip).get_data_from_sts_file('XXX')
 
     assert actual == _activity
 
 
-def test_get_data_from_sts_file_no_file(fs):
-    actual = TracksService().get_data_from_sts_file('XXX')
+def test_get_data_from_sts_file_no_file(project_fs):
+    trip = TripFactory()
+
+    actual = TracksService(trip=trip).get_data_from_sts_file('XXX')
 
     assert not actual

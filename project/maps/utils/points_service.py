@@ -11,7 +11,7 @@ from .common import get_trip
 
 class PointsService():
     def __init__(self, trip: Trip = None):
-        self._trip = get_trip() if not trip else trip
+        self.trip = get_trip() if not trip else trip
 
     def update_points(self):
         if not self._trip:
@@ -29,7 +29,7 @@ class PointsService():
 
     def update_all_points(self):
         # delete all points
-        Point.objects.filter(track__trip=self._trip).delete()
+        Point.objects.filter(track__trip=self.trip).delete()
 
         return self.update_points()
 
@@ -58,7 +58,11 @@ class PointsService():
             Point.objects.bulk_create(objs)
 
     def points_to_js(self, tracks):
-        file = os.path.join(settings.MEDIA_ROOT, 'points', f'{self._trip.pk}-points.js')
+        file = os.path.join(
+            settings.MEDIA_ROOT,
+            'points',
+            f'{self.trip.pk}-points.js'
+        )
 
         with open(file, 'w') as js_file:
             content = render_to_string('maps/generate_js.html', {'tracks': tracks})
@@ -67,12 +71,12 @@ class PointsService():
     def get_tracks_with_no_points(self):
         tracks = \
             Track.objects \
-            .filter(trip=self._trip) \
+            .filter(trip=self.trip) \
             .values_list('pk', flat=True)
 
         points = \
             Point.objects \
-            .filter(track__trip=self._trip) \
+            .filter(track__trip=self.trip) \
             .values_list('track__pk', flat=True)
 
         ids = list(set(tracks) - set(points))
@@ -80,7 +84,12 @@ class PointsService():
         return Track.objects.filter(pk__in=ids)
 
     def get_data_from_tcx_file(self, file):
-        file = os.path.join(settings.MEDIA_ROOT, 'tracks', f'{file}.tcx')
+        file = os.path.join(
+            settings.MEDIA_ROOT,
+            'tracks',
+            str(self.trip.pk),
+            f'{file}.tcx'
+        )
 
         if not os.path.exists(file):
             return

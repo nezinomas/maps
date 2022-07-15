@@ -6,7 +6,7 @@ import pytest
 from django.conf import settings
 from mock import patch
 
-from ..factories import PointFactory, TrackFactory
+from ..factories import PointFactory, TrackFactory, TripFactory
 from ..models import Point
 from ..utils.points_service import PointsService
 
@@ -73,19 +73,20 @@ def test_get_tracks_with_no_points_all_good():
 
 
 @patch('project.maps.utils.points_service.TCXReader.read')
-def test_get_data_from_tcx_file(mck, fs, _point):
-    fs.create_file(os.path.join(settings.MEDIA_ROOT, 'tracks', 'XXX.tcx'))
+def test_get_data_from_tcx_file(mck, fs, project_fs, _point):
+    trip = TripFactory()
+    fs.create_file(os.path.join(settings.MEDIA_ROOT, 'tracks', str(trip.pk), '999.tcx'))
 
     data = SimpleNamespace(trackpoints=[_point])
     mck.return_value = data
 
-    actual = PointsService().get_data_from_tcx_file('XXX')
+    actual = PointsService(trip).get_data_from_tcx_file('999')
 
     assert actual == data
 
 
-def test_get_data_from_tcx_file_no_file(fs, _point):
-    actual = PointsService().get_data_from_tcx_file('XXX')
+def test_get_data_from_tcx_file_no_file(fs, project_fs, _point):
+    actual = PointsService(TripFactory()).get_data_from_tcx_file('999')
 
     assert not actual
 

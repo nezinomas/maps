@@ -1,5 +1,5 @@
 import shutil
-from os import path, remove
+from os import makedirs, path, remove
 
 from django.conf import settings
 from django.db.models.signals import post_delete, post_save
@@ -17,6 +17,10 @@ def create_points_file_for_new_trip(sender: object, instance: object, *args, **k
 
     if not path.exists(file):
         shutil.copy2(template, file)
+
+    # create tracks/trip.pk folder
+    folder = path.join(settings.MEDIA_ROOT, 'tracks', str(pk))
+    makedirs(folder, exist_ok=True)
 
 
 @receiver(post_delete, sender=Trip)

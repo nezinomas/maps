@@ -126,12 +126,14 @@ class GarminService:
         return stats
 
     def create_activity_statistic_file(self, activity):
-        activity_id = activity["activityId"]
-
-        outfile = os.path.join(
-            settings.MEDIA_ROOT, 'tracks', f'{activity_id}.sts')
-
         data = self.get_activity_statistic(activity)
+        activity_id = activity["activityId"]
+        outfile = os.path.join(
+            settings.MEDIA_ROOT,
+            'tracks',
+            str(self.trip.pk),
+            f'{activity_id}.sts'
+        )
 
         with open(outfile, "w") as f:
             json.dump(data, f)
@@ -142,7 +144,11 @@ class GarminService:
                 activity_id = activity["activityId"]
 
                 output_file = os.path.join(
-                    settings.MEDIA_ROOT, 'tracks', f'{activity_id}.tcx')
+                    settings.MEDIA_ROOT,
+                    'tracks',
+                    str(self.trip.pk),
+                    f'{activity_id}.tcx'
+                )
 
                 if os.path.exists(output_file):
                     continue
