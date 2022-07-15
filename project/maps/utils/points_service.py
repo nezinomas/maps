@@ -14,7 +14,7 @@ class PointsService():
         self.trip = get_trip() if not trip else trip
 
     def update_points(self):
-        if not self._trip:
+        if not self.trip:
             return 'No active trip'
 
         # get tracks with no points
