@@ -6,7 +6,7 @@ app_name = 'maps'
 
 urlpatterns = [
     path('', views.index, name='first'),
-    path('<slug:trip>/', views.GenerateMaps.as_view(), name='index'),
+    path('<slug:trip>/', views.Map.as_view(), name='index'),
     path('<slug:trip>/utils/', views.Utils.as_view(), name='utils'),
     path('<slug:trip>/download_tcx/', views.DownloadTcx.as_view(), name='download_tcx'),
     path('<slug:trip>/update_tracks/', views.SaveNewTracks.as_view(), name='update_tracks'),

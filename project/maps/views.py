@@ -38,8 +38,8 @@ class Utils(LoginRequiredMixin, TemplateView):
         return super().get_context_data(**kwargs) | context
 
 
-class GenerateMaps(TemplateView):
-    template_name = 'maps/generate_map.html'
+class Map(TemplateView):
+    template_name = 'maps/map.html'
 
     def get_context_data(self, *args, **kwargs):
         wp = None
