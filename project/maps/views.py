@@ -76,13 +76,11 @@ class DownloadTcx(LoginRequiredMixin, TemplateView):
     template_name = 'maps/utils_messages.html'
 
     def get_context_data(self, *args, **kwargs):
-        context = super().get_context_data(*args, **kwargs)
-
         trip = get_object_or_404(models.Trip, slug=self.kwargs.get('trip'))
 
-        context['message'] = GarminService(trip).get_data()
+        context = {'message': GarminService(trip).get_data()}
 
-        return context
+        return super().get_context_data(*args, **kwargs) | context
 
 
 class SaveNewTracks(LoginRequiredMixin, TemplateView):
@@ -90,13 +88,11 @@ class SaveNewTracks(LoginRequiredMixin, TemplateView):
     template_name = 'maps/utils_messages.html'
 
     def get_context_data(self, *args, **kwargs):
-        context = super().get_context_data(*args, **kwargs)
-
         trip = get_object_or_404(models.Trip, slug=self.kwargs.get('trip'))
 
-        context['message'] = TracksService(trip).save_data()
+        context = {'message': TracksService(trip).save_data() }
 
-        return context
+        return super().get_context_data(*args, **kwargs) | context
 
 
 class RewriteAllTracks(LoginRequiredMixin, TemplateView):
@@ -104,16 +100,14 @@ class RewriteAllTracks(LoginRequiredMixin, TemplateView):
     template_name = 'maps/utils_messages.html'
 
     def get_context_data(self, *args, **kwargs):
-        context = super().get_context_data(*args, **kwargs)
-
         trip = get_object_or_404(models.Trip, slug=self.kwargs.get('trip'))
 
         models.Track.objects.filter(trip=trip).delete()
         models.Statistic.objects.filter(track__trip=trip).delete()
 
-        context['message'] = TracksService(trip).save_data()
+        context = {'message': TracksService(trip).save_data() }
 
-        return context
+        return super().get_context_data(*args, **kwargs) | context
 
 
 class SaveNewPoints(LoginRequiredMixin, TemplateView):
@@ -121,13 +115,11 @@ class SaveNewPoints(LoginRequiredMixin, TemplateView):
     template_name = 'maps/utils_messages.html'
 
     def get_context_data(self, *args, **kwargs):
-        context = super().get_context_data(*args, **kwargs)
-
         trip = get_object_or_404(models.Trip, slug=self.kwargs.get('trip'))
 
-        context['message'] = PointsService(trip).update_points()
+        context = {'message': PointsService(trip).update_points() }
 
-        return context
+        return super().get_context_data(*args, **kwargs) | context
 
 
 class RewriteAllPoints(LoginRequiredMixin, TemplateView):
@@ -135,13 +127,11 @@ class RewriteAllPoints(LoginRequiredMixin, TemplateView):
     template_name = 'maps/utils_messages.html'
 
     def get_context_data(self, *args, **kwargs):
-        context = super().get_context_data(*args, **kwargs)
-
         trip = get_object_or_404(models.Trip, slug=self.kwargs.get('trip'))
 
-        context['message'] = PointsService(trip).update_all_points()
+        context = {'message': PointsService(trip).update_all_points() }
 
-        return context
+        return super().get_context_data(*args, **kwargs) | context
 
 
 class Comments(TemplateView):
@@ -164,12 +154,9 @@ class CommentQty(TemplateView):
     template_name = 'maps/utils_messages.html'
 
     def get_context_data(self, *args, **kwargs):
-        context = super().get_context_data(*args, **kwargs)
-
         trip = get_object_or_404(models.Trip, slug=self.kwargs.get('trip'))
-
         wpQty.push_post_comment_qty(trip)
 
-        context['message'] = 'done'
+        context = {'message': 'done' }
 
-        return context
+        return super().get_context_data(*args, **kwargs) | context
