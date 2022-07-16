@@ -8,7 +8,7 @@ from django.template import loader
 from django.views.generic import TemplateView
 
 from . import models
-from .utils import statistic
+from .utils import statistic_service
 from .utils import wp_comments_qty as wpQty
 from .utils import wp_content as wpContent
 from .utils.garmin_service import GarminService
@@ -62,7 +62,7 @@ class Map(TemplateView):
         context['wp_error'] = wp_error
         context['trip'] = trip
         context['qty'] = comments
-        context['st'] = statistic.get_statistic(trip)
+        context['st'] = statistic_service.get_statistic(trip)
         context['google_api_key'] = settings.ENV("GOOGLE_API_KEY")
         context['js_version'] = os.path.getmtime('{}/points/{}-points.js'.format(settings.MEDIA_ROOT, trip.pk))
 
