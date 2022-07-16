@@ -64,7 +64,8 @@ class Map(TemplateView):
             'qty': comments,
             'st': statistic_service.get_statistic(trip),
             'google_api_key': settings.ENV("GOOGLE_API_KEY"),
-            'js_version': os.path.getmtime('{}/points/{}-points.js'.format(settings.MEDIA_ROOT, trip.pk)),
+            'js_version': os.path.getmtime(
+                f'{settings.MEDIA_ROOT}/points/{trip.pk}-points.js'),
         }
 
         context = super().get_context_data(*args, **kwargs) | context
