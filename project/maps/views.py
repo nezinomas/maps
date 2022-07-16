@@ -71,7 +71,7 @@ class Map(TemplateView):
 
 class DownloadTcx(LoginRequiredMixin, TemplateView):
     login_url = '/admin/'
-    template_name = 'maps/generate_js_message.html'
+    template_name = 'maps/utils_messages.html'
 
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)
@@ -85,7 +85,7 @@ class DownloadTcx(LoginRequiredMixin, TemplateView):
 
 class SaveNewTracks(LoginRequiredMixin, TemplateView):
     login_url = '/admin/'
-    template_name = 'maps/generate_js_message.html'
+    template_name = 'maps/utils_messages.html'
 
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)
@@ -99,7 +99,7 @@ class SaveNewTracks(LoginRequiredMixin, TemplateView):
 
 class RewriteAllTracks(LoginRequiredMixin, TemplateView):
     login_url = '/admin/'
-    template_name = 'maps/generate_js_message.html'
+    template_name = 'maps/utils_messages.html'
 
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)
@@ -116,7 +116,7 @@ class RewriteAllTracks(LoginRequiredMixin, TemplateView):
 
 class SaveNewPoints(LoginRequiredMixin, TemplateView):
     login_url = '/admin/'
-    template_name = 'maps/generate_js_message.html'
+    template_name = 'maps/utils_messages.html'
 
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)
@@ -130,7 +130,7 @@ class SaveNewPoints(LoginRequiredMixin, TemplateView):
 
 class RewriteAllPoints(LoginRequiredMixin, TemplateView):
     login_url = '/admin/'
-    template_name = 'maps/generate_js_message.html'
+    template_name = 'maps/utils_messages.html'
 
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)
@@ -159,7 +159,7 @@ class Comments(TemplateView):
 
 
 class CommentQty(TemplateView):
-    template_name = 'maps/generate_js_message.html'
+    template_name = 'maps/utils_messages.html'
 
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)
