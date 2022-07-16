@@ -46,7 +46,6 @@ class Map(TemplateView):
         wp_error = False
         comments = None
 
-        context = super().get_context_data(*args, **kwargs)
         trip = get_object_or_404(models.Trip, slug=self.kwargs.get('trip'))
 
         try:
@@ -58,15 +57,17 @@ class Map(TemplateView):
             template = "An exception of type {0} occurred. Arguments:\n{1!r}"
             wp_error = template.format(type(ex).__name__, ex.args)
 
-        context['wp'] = wp
-        context['wp_error'] = wp_error
-        context['trip'] = trip
-        context['qty'] = comments
-        context['st'] = statistic_service.get_statistic(trip)
-        context['google_api_key'] = settings.ENV("GOOGLE_API_KEY")
-        context['js_version'] = os.path.getmtime('{}/points/{}-points.js'.format(settings.MEDIA_ROOT, trip.pk))
+        context = {
+            'wp': wp,
+            'wp_error': wp_error,
+            'trip': trip,
+            'qty': comments,
+            'st': statistic_service.get_statistic(trip),
+            'google_api_key': settings.ENV("GOOGLE_API_KEY"),
+            'js_version': os.path.getmtime('{}/points/{}-points.js'.format(settings.MEDIA_ROOT, trip.pk)),
+        }
 
-        return context
+        context = super().get_context_data(*args, **kwargs) | context
 
 
 class DownloadTcx(LoginRequiredMixin, TemplateView):
