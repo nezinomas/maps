@@ -65,7 +65,7 @@ class PointsService():
         )
 
         with open(file, 'w') as js_file:
-            content = render_to_string('maps/generate_js.html', {'tracks': tracks})
+            content = render_to_string('maps/points.html', {'tracks': tracks})
             js_file.write(content)
 
     def get_tracks_with_no_points(self):
