@@ -12,7 +12,10 @@ def get_statistic(trip):
     total_descent = 0.0
     context = {}
     try:
-        stats = models.Statistic.objects.filter(track__trip__pk=trip.pk).filter(track__date__range=(trip.start_date, trip.end_date))
+        stats = \
+            models.Statistic.objects \
+            .filter(track__trip__pk=trip.pk) \
+            .filter(track__date__range=(trip.start_date, trip.end_date))
 
         total_km = stats.aggregate(Sum('total_km'))['total_km__sum']
         total_time = stats.aggregate(Sum('total_time_seconds'))['total_time_seconds__sum']
