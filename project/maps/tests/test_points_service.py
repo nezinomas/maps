@@ -129,7 +129,7 @@ def test_points_to_db_two_points(mck, _point):
 @pytest.mark.freeze_time('2022-1-1')
 def test_points_to_js(fs, project_fs):
     # create template in fake filesystem
-    template = os.path.join(settings.SITE_ROOT, 'maps', 'templates', 'maps', 'generate_js.html')
+    template = os.path.join(settings.SITE_ROOT, 'maps', 'templates', 'maps', 'points.html')
     fs.create_file(template)
 
     dir_ = os.path.join(settings.MEDIA_ROOT, 'points')
