@@ -143,7 +143,7 @@ class Comments(TemplateView):
         return JsonResponse(output_data)
 
 
-class CommentQty(TemplateView):
+class CommentQty(LoginRequiredMixin, TemplateView):
     template_name = 'maps/utils_messages.html'
 
     def get_context_data(self, *args, **kwargs):
