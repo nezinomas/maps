@@ -21,6 +21,9 @@
 {% endblock %}
 
 {% block content %}
+<!-- Loader -->
+    <div class="htmx-indicator loader loader-default is-active" id="indicator"></div>
+
     <div class="row mx-auto pt-3">
         <div class="col-sm-12 mx-auto" style="text-align:center;">
             <h2>{{ trip.title }}</h2>
@@ -48,27 +51,27 @@
         </div>
     </div>
     {% if not wp_error %}
+
     {% for w in wp %}
     <div class="row mx-auto pt-5">
-        <div class="col mx-auto text-center">
+        <div class="col mx-auto text-center" x-data="{ open: false }">
             <h2 class="post-title "><a href="{{ w.link }} " rel="bookmark ">{{ w.title.rendered }}</a></h2>
             <p class="post-date">{{ w.date|parse_date|date:'Y-m-d  H:m' }}</p>
 
             <div class="post-content mt-2">{{ w.content.rendered|safe }}</div>
 
-            <div class="ajaxProgress">
-                <h6>Palaukite...</h6>
-                <img src="{% static 'images/ajax-loader.gif' %}" alt="loading" />
-            </div>
-
-            <p><a href="javascript:void(0);" class="col mr-2" id="link_{{ w.id }}" value1="/{{ trip.slug }}/{{ w.slug }}/comments/" value2="{{ w.id }}" value3="not-clicked">Rodyti komentarus ({% comment_qty qty w.id %})</a> <a href="{{ w.link }}#respond" class="ml-2">Rašyti komentarą</a></p>
-            <div class="com comments-area comments mt-2" id="{{ w.id }}" style="display: none;"></div>
+            <p>
+                <a role="button" hx-get="{% url 'maps:comments' trip.slug w.id %}" hx-target="#post_{{w.id}}" hx-trigger="click once" hx-indicator="#indicator" x-on:click="open = ! open" x-text="open ? 'Slėpti komentarus' : 'Rodyti komentarus ({% comment_qty qty w.id %}) ' "></a>
+                 &nbsp;
+                <a href="{{ w.link }}#respond" class="ml-2">Rašyti komentarą</a>
+            </p>
+            <div class="com comments-area comments mt-2" id="post_{{w.id}}" x-show="open"></div>
         </div>
     </div>{% endfor %}
+
     {% else %}
     <div class="row mx-auto pt-5">
         <div class="col- mx-auto text-center">{{ wp_error }}</div>
     </div>
     {% endif %}
-
 {% endblock %}

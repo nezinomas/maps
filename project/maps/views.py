@@ -3,7 +3,7 @@ import os
 from django.conf import settings
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import JsonResponse
-from django.shortcuts import get_object_or_404, redirect, reverse
+from django.shortcuts import get_object_or_404
 from django.template import loader
 from django.views.generic import ListView, TemplateView
 
@@ -51,6 +51,20 @@ class Map(TemplateView):
         }
 
         return super().get_context_data(*args, **kwargs) | context
+
+
+class Comments(TemplateView):
+    template_name = 'maps/comments.html'
+
+    def get_context_data(self, **kwargs):
+        trip = get_object_or_404(models.Trip, slug=self.kwargs.get('trip'))
+        post_id = self.kwargs.get('post_id')
+        wp = wpContent.get_comments(trip, post_id)
+        context = {
+            'comments': wp
+        }
+
+        return super().get_context_data(**kwargs) | context
 
 
 class Utils(LoginRequiredMixin, TemplateView):
@@ -126,24 +140,7 @@ class RewriteAllPoints(LoginRequiredMixin, TemplateView):
 
         return super().get_context_data(*args, **kwargs) | context
 
-
-class Comments(TemplateView):
-    def get(self, request, *args, **kwargs):
-        post_id = request.GET.get('post_id', False)
-        get_remote = request.GET.get('get_remote', False)
-
-        wp = []
-        if get_remote == 'true':
-            trip = get_object_or_404(models.Trip, slug=self.kwargs.get('trip'))
-            wp = wpContent.get_comments(trip, post_id)
-
-        rendered_page = loader.render_to_string('maps/comments.html', {'comments': wp})
-        output_data = {'html': rendered_page}
-
-        return JsonResponse(output_data)
-
-
-class CommentQty(TemplateView):
+class CommentQty(LoginRequiredMixin, TemplateView):
     template_name = 'maps/utils_messages.html'
 
     def get_context_data(self, *args, **kwargs):
