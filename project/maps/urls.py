@@ -14,6 +14,5 @@ urlpatterns = [
     path('<slug:trip>/update_points/', views.SaveNewPoints.as_view(), name='update_points'),
     path('<slug:trip>/update_all_points/', views.RewriteAllPoints.as_view(), name='update_all_points'),
     path('<slug:trip>/qty/', views.CommentQty.as_view(), name='comment_qty'),
-    path('<slug:trip>/<slug:post>/comments/', views.Comments.as_view(), name='comments'),
+    path('<slug:trip>/<int:post_id>/comments/', views.Comments.as_view(), name='comments'),
 ]
-
