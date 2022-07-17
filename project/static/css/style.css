@@ -188,8 +188,17 @@ img[class*="wp-image-"] {
     margin-top: 5px;
 }
 
-.ajaxProgress {
+/*
+                                                                    Ajax indicator
+*/
+.htmx-indicator {
     display: none;
-    text-align: center;
-    margin: 0 auto;
+}
+
+.htmx-request .htmx-indicator {
+    display: inline;
+}
+
+.htmx-request.htmx-indicator {
+    display: inline;
 }
