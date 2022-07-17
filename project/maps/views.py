@@ -5,7 +5,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, reverse
 from django.template import loader
-from django.views.generic import TemplateView
+from django.views.generic import ListView, TemplateView
 
 from . import models
 from .utils import statistic_service
@@ -16,15 +16,8 @@ from .utils.points_service import PointsService
 from .utils.tracks_service import TracksService
 
 
-def index(request):
-    queryset = models.Trip.objects.all().order_by('-pk')[:1]
-    content = get_object_or_404(queryset)
-    return redirect(
-        reverse(
-            'maps:index',
-            kwargs={'trip': content.slug}
-        )
-    )
+class Trips(ListView):
+    model = models.Trip
 
 
 class Map(TemplateView):

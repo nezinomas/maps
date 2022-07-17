@@ -5,7 +5,7 @@ from . import views
 app_name = 'maps'
 
 urlpatterns = [
-    path('', views.index, name='first'),
+    path('', views.Trips.as_view(), name='trips'),
     path('<slug:trip>/', views.Map.as_view(), name='index'),
     path('<slug:trip>/utils/', views.Utils.as_view(), name='utils'),
     path('<slug:trip>/download_tcx/', views.DownloadTcx.as_view(), name='download_tcx'),
@@ -16,3 +16,4 @@ urlpatterns = [
     path('<slug:trip>/qty/', views.CommentQty.as_view(), name='comment_qty'),
     path('<slug:trip>/<slug:post>/comments/', views.Comments.as_view(), name='comments'),
 ]
+
