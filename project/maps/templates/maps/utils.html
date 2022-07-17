@@ -13,7 +13,7 @@
 
 {% block content %}
 
-    <div>
+    <div class="p-3">
       <button type="button" class="btn btn-sm btn-info" hx-get="{% url 'maps:download_tcx' slug %}" hx-target="#output" onClick='$("#output").html("");'>Download From Garmin</button>
       <button type="button" class="btn btn-sm btn-primary" hx-get="{% url 'maps:update_tracks' slug %}" hx-target="#output" onClick='$("#output").html("");'>Save New Tracks</button>
       <button type="button" class="btn btn-sm btn-primary" hx-get="{% url 'maps:update_points' slug %}" hx-target="#output" onClick='$("#output").html("");'>Save New Points</button>
@@ -22,6 +22,6 @@
       <button type="button" class="btn btn-sm btn-secondary" onClick='$("#output").html("");'>Clear Messages</button>
     </div>
 
-    <div id="output"></div>
+    <div id="output" class="p-3"></div>
 
 {% endblock content %}
