@@ -27,17 +27,6 @@ def index(request):
     )
 
 
-class Utils(LoginRequiredMixin, TemplateView):
-    login_url = '/admin/'
-    template_name = 'maps/utils.html'
-
-    def get_context_data(self, **kwargs):
-        context = {
-            'slug': self.kwargs.get('trip'),
-        }
-        return super().get_context_data(**kwargs) | context
-
-
 class Map(TemplateView):
     template_name = 'maps/map.html'
 
@@ -69,6 +58,17 @@ class Map(TemplateView):
         }
 
         context = super().get_context_data(*args, **kwargs) | context
+
+
+class Utils(LoginRequiredMixin, TemplateView):
+    login_url = '/admin/'
+    template_name = 'maps/utils.html'
+
+    def get_context_data(self, **kwargs):
+        context = {
+            'slug': self.kwargs.get('trip'),
+        }
+        return super().get_context_data(**kwargs) | context
 
 
 class DownloadTcx(LoginRequiredMixin, TemplateView):
