@@ -61,7 +61,7 @@
             <div class="post-content mt-2">{{ w.content.rendered|safe }}</div>
 
             <p>
-                <a role="button" hx-get="{% url 'maps:comments' trip.slug w.id %}" hx-target="#post_{{w.id}}" hx-trigger="click once" hx-indicator="#indicator" x-on:click="open = ! open" x-text="open ? 'Slėpti komentarus' : 'Rodyti komentarus ({% comment_qty qty w.id %}) ' "></a>
+                <a role="button" class="btn-as-link" hx-get="{% url 'maps:comments' trip.slug w.id %}" hx-target="#post_{{w.id}}" hx-trigger="click once" hx-indicator="#indicator" x-on:click="open = ! open" x-text="open ? 'Slėpti komentarus' : 'Rodyti komentarus ({% comment_qty qty w.id %}) ' "></a>
                  &nbsp;
                 <a href="{{ w.link }}#respond" class="ml-2">Rašyti komentarą</a>
             </p>
