@@ -57,7 +57,7 @@ class Map(TemplateView):
                 f'{settings.MEDIA_ROOT}/points/{trip.pk}-points.js'),
         }
 
-        context = super().get_context_data(*args, **kwargs) | context
+        return super().get_context_data(*args, **kwargs) | context
 
 
 class Utils(LoginRequiredMixin, TemplateView):
