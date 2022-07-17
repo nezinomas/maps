@@ -1,33 +1,27 @@
+{% extends 'base.html' %}
+
 {% load static %}
-<!DOCTYPE html>
-<htm>
-  <head>
-    <meta charset="utf-8">
-    <script type="text/javascript" src="{% static 'js/jquery-3.3.1.min.js' %}"></script>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-pprn3073KE6tl6bjs2QrFaJGz5/SUsLqktiwsUTF55Jfv3qYSDhgCecCxMW52nD2" crossorigin="anonymous"></script>
+
+{% block head %}
+
     <script src="https://unpkg.com/htmx.org@1.7.0"></script> <!-- Htmx -->
     <script defer src="https://unpkg.com/@alpinejs/morph@3.10.2/dist/cdn.min.js"></script><!-- Alpine Plugins -->
     <script defer src="https://unpkg.com/alpinejs@3.10.2/dist/cdn.min.js"></script> <!-- Alpine Core -->
 
-    <title>Utilities</title>
-  </head>
+{% endblock head %}
 
-  <body>
-    <div class="container mt-2">
-      <div>
-        <div>
-          <button type="button" class="btn btn-sm btn-info" hx-get="{% url 'maps:download_tcx' slug %}" hx-target="#output" onClick='$("#output").html("");'>Download From Garmin</button>
-          <button type="button" class="btn btn-sm btn-primary" hx-get="{% url 'maps:update_tracks' slug %}" hx-target="#output" onClick='$("#output").html("");'>Save New Tracks</button>
-          <button type="button" class="btn btn-sm btn-primary" hx-get="{% url 'maps:update_points' slug %}" hx-target="#output" onClick='$("#output").html("");'>Save New Points</button>
-          <button type="button" class="btn btn-sm btn-danger" hx-get="{% url 'maps:update_all_tracks' slug %}" hx-target="#output" onClick='$("#output").html("");'>Rewrite All Tracks</button>
-          <button type="button" class="btn btn-sm btn-danger" hx-get="{% url 'maps:update_all_points' slug %}" hx-target="#output" onClick='$("#output").html("");'>Rewrite All Points</button>
-          <button type="button" class="btn btn-sm btn-secondary" onClick='$("#output").html("");'>Clear Messages</button>
-        </div>
 
-        <div id="output"></div>
-      </div>
+{% block content %}
+
+    <div>
+      <button type="button" class="btn btn-sm btn-info" hx-get="{% url 'maps:download_tcx' slug %}" hx-target="#output" onClick='$("#output").html("");'>Download From Garmin</button>
+      <button type="button" class="btn btn-sm btn-primary" hx-get="{% url 'maps:update_tracks' slug %}" hx-target="#output" onClick='$("#output").html("");'>Save New Tracks</button>
+      <button type="button" class="btn btn-sm btn-primary" hx-get="{% url 'maps:update_points' slug %}" hx-target="#output" onClick='$("#output").html("");'>Save New Points</button>
+      <button type="button" class="btn btn-sm btn-danger" hx-get="{% url 'maps:update_all_tracks' slug %}" hx-target="#output" onClick='$("#output").html("");'>Rewrite All Tracks</button>
+      <button type="button" class="btn btn-sm btn-danger" hx-get="{% url 'maps:update_all_points' slug %}" hx-target="#output" onClick='$("#output").html("");'>Rewrite All Points</button>
+      <button type="button" class="btn btn-sm btn-secondary" onClick='$("#output").html("");'>Clear Messages</button>
     </div>
-  </body>
-</html>
 
+    <div id="output"></div>
+
+{% endblock content %}
