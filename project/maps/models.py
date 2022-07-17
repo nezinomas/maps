@@ -23,6 +23,9 @@ class Trip(models.Model):
         max_length=20,
     )
 
+    class Meta:
+        ordering = ['-start_date', ]
+
     def __str__(self):
         return str(self.title)
 
