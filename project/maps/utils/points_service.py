@@ -28,12 +28,15 @@ class PointsService():
         except Exception as e:
             msg_db = e
 
-        try:
-            msg_js = self.points_to_js(tracks)
-        except Exception as e:
-            msg_js = e
+        msg_js = self.regenerate_points_file()
 
         return(f'<p>{msg_db}</p><p>{msg_js}</p>')
+
+    def update_all_points(self):
+        # delete all points
+        Point.objects.filter(track__trip=self.trip).delete()
+
+        return self.update_points()
 
     def regenerate_points_file(self):
         if not self.trip:
@@ -50,12 +53,6 @@ class PointsService():
             msg_js = e
 
         return(f'<p>{msg_js}</p>')
-
-    def update_all_points(self):
-        # delete all points
-        Point.objects.filter(track__trip=self.trip).delete()
-
-        return self.update_points()
 
     def points_to_db(self, tracks: List[Track]) -> str:
         # get points from tcx files and write them to db
@@ -83,7 +80,7 @@ class PointsService():
 
         return 'Points inserted'
 
-    def points_to_js(self, tracks):
+    def points_to_js(self, tracks: List[Track]) -> str:
         file = os.path.join(
             settings.MEDIA_ROOT,
             'points',
