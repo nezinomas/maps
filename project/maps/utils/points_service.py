@@ -32,6 +32,12 @@ class PointsService():
 
         return(f'<p>{msg_db}</p><p>{msg_js}</p>')
 
+    def update_all_points(self):
+        # delete all points
+        Point.objects.filter(track__trip=self.trip).delete()
+
+        return self.update_points()
+
     def regenerate_points_file(self):
         if not self.trip:
             return('No active trip')
@@ -47,12 +53,6 @@ class PointsService():
             msg_js = e
 
         return(f'<p>{msg_js}</p>')
-
-    def update_all_points(self):
-        # delete all points
-        Point.objects.filter(track__trip=self.trip).delete()
-
-        return self.update_points()
 
     def points_to_db(self, tracks: List[Track]) -> str:
         # get points from tcx files and write them to db
