@@ -28,10 +28,7 @@ class PointsService():
         except Exception as e:
             msg_db = e
 
-        try:
-            msg_js = self.points_to_js(tracks)
-        except Exception as e:
-            msg_js = e
+        msg_js = self.regenerate_points_file()
 
         return(f'<p>{msg_db}</p><p>{msg_js}</p>')
 
@@ -83,7 +80,7 @@ class PointsService():
 
         return 'Points inserted'
 
-    def points_to_js(self, tracks):
+    def points_to_js(self, tracks: List[Track]) -> str:
         file = os.path.join(
             settings.MEDIA_ROOT,
             'points',
