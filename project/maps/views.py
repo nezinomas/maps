@@ -141,6 +141,19 @@ class RewriteAllPoints(LoginRequiredMixin, TemplateView):
 
         return super().get_context_data(*args, **kwargs) | context
 
+
+class RegeneratePointsFile(LoginRequiredMixin, TemplateView):
+    login_url = '/admin/'
+    template_name = 'maps/utils_messages.html'
+
+    def get_context_data(self, *args, **kwargs):
+        trip = get_object_or_404(models.Trip, slug=self.kwargs.get('trip'))
+
+        context = {'message': PointsService(trip).regenerate_points_file() }
+
+        return super().get_context_data(*args, **kwargs) | context
+
+
 class CommentQty(LoginRequiredMixin, TemplateView):
     template_name = 'maps/utils_messages.html'
 

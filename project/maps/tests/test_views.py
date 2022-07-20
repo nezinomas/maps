@@ -146,6 +146,33 @@ def test_update_all_points_not_logged(client):
 
 
 # ---------------------------------------------------------------------------------------
+#                                                               Regenerate Points JS File
+# ---------------------------------------------------------------------------------------
+def test_regenerate_points_file_func():
+    view = resolve('/trip-title/regenerate_points_file/')
+
+    assert views.RegeneratePointsFile == view.func.view_class
+
+
+def test_regenerate_points_file_index_200(client_logged):
+    trip = TripFactory()
+
+    url = reverse('maps:regenerate_points_file', kwargs={'trip': trip.slug})
+    response = client_logged.get(url, follow=True)
+
+    assert response.status_code == 200
+
+
+def test_regenerate_points_file_not_logged(client):
+    trip = TripFactory()
+
+    url = reverse('maps:regenerate_points_file', kwargs={'trip': trip.slug})
+    response = client.get(url)
+
+    assert response.status_code == 302
+
+
+# ---------------------------------------------------------------------------------------
 #                                                                          New Tracks View
 # ---------------------------------------------------------------------------------------
 def test_update_tracks_func():
