@@ -38,21 +38,15 @@ a:focus {
     outline: none !important;
 }
 
-a {
+a, .btn-as-link {
     text-decoration: none !important;
     color: #ea4c88;
 }
 
-a:hover, a:focus {
+a:hover, a:focus,
+a.btn-as-link:hover, a.btn-as-link:focus {
     color: #ea4c88;
 }
-
-a, a:hover {
-    -webkit-transition: all 0.3s ease;
-    -moz-transition: all 0.3s ease;
-    transition: all 0.3s ease;
-}
-
 
 p{
     line-height: 24px;

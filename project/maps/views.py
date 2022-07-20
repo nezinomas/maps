@@ -36,8 +36,9 @@ class Map(TemplateView):
                 comments = wpContent.get_comment_qty(trip)
 
         except Exception as ex:
-            template = "An exception of type {0} occurred. Arguments:\n{1!r}"
-            wp_error = template.format(type(ex).__name__, ex.args)
+            # template = "An exception of type {0} occurred. Arguments:\n{1!r}"
+            # wp_error = template.format(type(ex).__name__, ex.args)
+            wp_error = 'Something went wrong with getting data from https://unknownbug.net/nezinomas/'
 
         context = {
             'wp': wp,
@@ -139,6 +140,19 @@ class RewriteAllPoints(LoginRequiredMixin, TemplateView):
         context = {'message': PointsService(trip).update_all_points() }
 
         return super().get_context_data(*args, **kwargs) | context
+
+
+class RegeneratePointsFile(LoginRequiredMixin, TemplateView):
+    login_url = '/admin/'
+    template_name = 'maps/utils_messages.html'
+
+    def get_context_data(self, *args, **kwargs):
+        trip = get_object_or_404(models.Trip, slug=self.kwargs.get('trip'))
+
+        context = {'message': PointsService(trip).regenerate_points_file() }
+
+        return super().get_context_data(*args, **kwargs) | context
+
 
 class CommentQty(LoginRequiredMixin, TemplateView):
     template_name = 'maps/utils_messages.html'

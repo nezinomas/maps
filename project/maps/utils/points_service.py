@@ -1,5 +1,6 @@
 import os
 from datetime import timezone
+from typing import List
 
 from django.conf import settings
 from django.template.loader import render_to_string
@@ -22,10 +23,33 @@ class PointsService():
         if not tracks:
             return 'No track.points needs to insert'
 
-        self.points_to_db(tracks)
-        self.points_to_js(tracks)
+        try:
+            msg_db = self.points_to_db(tracks)
+        except Exception as e:
+            msg_db = e
 
-        return 'Points inserted'
+        try:
+            msg_js = self.points_to_js(tracks)
+        except Exception as e:
+            msg_js = e
+
+        return(f'<p>{msg_db}</p><p>{msg_js}</p>')
+
+    def regenerate_points_file(self):
+        if not self.trip:
+            return('No active trip')
+
+        # get trip all tracks
+        tracks = \
+            Track.objects \
+            .filter(trip=self.trip)
+
+        try:
+            msg_js = self.points_to_js(tracks)
+        except Exception as e:
+            msg_js = e
+
+        return(f'<p>{msg_js}</p>')
 
     def update_all_points(self):
         # delete all points
@@ -33,7 +57,7 @@ class PointsService():
 
         return self.update_points()
 
-    def points_to_db(self, tracks):
+    def points_to_db(self, tracks: List[Track]) -> str:
         # get points from tcx files and write them to db
         for track in tracks:
             points = self.get_data_from_tcx_file(track.title).trackpoints
@@ -57,6 +81,8 @@ class PointsService():
 
             Point.objects.bulk_create(objs)
 
+        return 'Points inserted'
+
     def points_to_js(self, tracks):
         file = os.path.join(
             settings.MEDIA_ROOT,
@@ -67,6 +93,8 @@ class PointsService():
         with open(file, 'w') as js_file:
             content = render_to_string('maps/points.html', {'tracks': tracks})
             js_file.write(content)
+
+        return 'Points written to js file'
 
     def get_tracks_with_no_points(self):
         tracks = \
