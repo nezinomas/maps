@@ -49,8 +49,8 @@ DEFAULT_FROM_EMAIL = 'Invite <invite@bookkeeping.com>'
 
 # ================   CRONJOBS
 CRONJOBS = [
-    ('0,30 * * * *', 'project.maps.cron.get_data_from_garminconnect', '> /dev/null 2>&1'),
-    ('5,30 * * * *', 'project.maps.cron.push_comment_qty', '> /dev/null 2>&1'),
+    ('0 * * * *', 'project.maps.cron.get_data_from_garminconnect', '> /dev/null 2>&1'),
+    ('5 * * * *', 'project.maps.cron.push_comment_qty', '> /dev/null 2>&1'),
 ]
 
 
