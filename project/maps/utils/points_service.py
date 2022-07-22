@@ -43,17 +43,29 @@ class PointsService():
             return('No active trip')
 
         # get trip all tracks
-        tracks = \
+        tracks_qs = \
             Track.objects \
-            .prefetch_related('points') \
+            .select_related('stats') \
             .filter(trip=self.trip)
+
+        if not tracks_qs:
+            return f'No tracks for trip {self.trip.title}'
+
+        tracks = []
+        for track in tracks_qs:
+            points = list(map(list, track.points.values_list('latitude', 'longitude')))
+            tracks.append({
+                'track': track,
+                'points': points,
+                'last_point' : points[-1],
+            })
 
         try:
             msg_js = self.points_to_js(tracks)
         except Exception as e:
             msg_js = e
 
-        return(f'<p>{msg_js}</p>')
+        return msg_js
 
     def points_to_db(self, tracks: List[Track]) -> str:
         # get points from tcx files and write them to db

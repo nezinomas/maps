@@ -12,20 +12,18 @@ $(document).ready(function () {
     });
 
     {% for item in tracks %}
-        var points = [{% for point in item.points.all %}[{{ point.latitude|safe }}, {{ point.longitude|safe }}], {% endfor %}]
-        var _last = points.length - 1;
-        map.drawPolyline({path: points, strokeColor: "{% cycle 'Blue' 'Green' %}", strokeOpacity: 0.6, strokeWeight: 3 });
+        map.drawPolyline({path: {{item.points|safe}}, strokeColor: "{% cycle 'Blue' 'Green' %}", strokeOpacity: 0.6, strokeWeight: 3 });
         map.addMarker({
-            lat: points[_last][0],
-            lng: points[_last][1],
+            lat: {{item.last_point.0|safe}},
+            lng: {{item.last_point.1|safe}},
             title: '',
             infoWindow: {
                 content: `
                 <table border="0">
-                    <tr><td>Diena:</td><td>{{ item.date|date:'Y-m-d' }}</td></tr>
-                    <tr><td>Atstumas:</td><td>{{ item.stats.total_km|floatformat:2 }} km</td></tr>
-                    <tr><td>Laikas:</td><td>{{ item.stats.total_time_seconds|format_datetime }}</td></tr>
-                    <tr><td>Vidutis greitis:</td><td>{{ item.stats.avg_speed|floatformat:2 }} km/h</td></tr>
+                    <tr><td>Diena:</td><td>{{ item.track.date|date:'Y-m-d' }}</td></tr>
+                    <tr><td>Atstumas:</td><td>{{ item.track.stats.total_km|floatformat:2 }} km</td></tr>
+                    <tr><td>Laikas:</td><td>{{ item.track.stats.total_time_seconds|format_datetime }}</td></tr>
+                    <tr><td>Vidutis greitis:</td><td>{{ item.track.stats.avg_speed|floatformat:2 }} km/h</td></tr>
                 </table>
                 `
             }
