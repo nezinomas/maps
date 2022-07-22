@@ -33,9 +33,7 @@ class Map(TemplateView):
                 wp = wpContent.get_posts(trip)
                 comments = wpContent.get_comment_qty(trip)
 
-        except Exception as ex:
-            # template = "An exception of type {0} occurred. Arguments:\n{1!r}"
-            # wp_error = template.format(type(ex).__name__, ex.args)
+        except Exception:
             wp_error = 'Something went wrong with getting data from https://unknownbug.net/nezinomas/'
 
         context = {
