@@ -2,54 +2,33 @@
 
 var map;
 $(document).ready(function () {
-    s = [
-        {% for item in tracks %}["{{ item.date|date:'Y-m-d' }}", {{ item.stats.total_km|floatformat:2 }}, "{{ item.stats.total_time_seconds|format_datetime }}", "{{ item.stats.avg_speed|floatformat:2 }}",], {% endfor %}
-    ];
-
-    p = [
-        {% for item in tracks %}[{% for point in item.points.all %}[{{ point.latitude|safe }}, {{ point.longitude|safe }}], {% endfor %}], {% endfor %}
-    ];
-
-    var last0 = 0;
-    var last1 = p[last0].length - 1;
-
     prettyPrint();
 
     map = new GMaps({
         div: '#map',
         zoom: 12,
-        lat: p[last0][last1][0],
-        lng: p[last0][last1][1],
+        lat: {{last_point.latitude|safe}},
+        lng: {{last_point.longitude|safe}},
     });
 
-    for (i = 0; i < p.length; i++) {
-        var color = 'Green';
-        if (i % 2 == 0) {
-            color = 'Blue';
-        }
-
-        var _last = p[i].length - 1;
-
-        map.drawPolyline({
-            path: p[i],
-            strokeColor: color,
-            strokeOpacity: 0.6,
-            strokeWeight: 3
-        });
-
+    {% for item in tracks %}
+        var points = [{% for point in item.points.all %}[{{ point.latitude|safe }}, {{ point.longitude|safe }}], {% endfor %}]
+        var _last = points.length - 1;
+        map.drawPolyline({path: points, strokeColor: "{% cycle 'Blue' 'Green' %}", strokeOpacity: 0.6, strokeWeight: 3 });
         map.addMarker({
-            lat: p[i][_last][0],
-            lng: p[i][_last][1],
+            lat: points[_last][0],
+            lng: points[_last][1],
             title: '',
             infoWindow: {
                 content: `
-                        <table border="0">
-                            <tr><td>Diena:</td><td>${s[i][0]}</td></tr>
-                            <tr><td>Atstumas:</td><td>${s[i][1]} km</td></tr>
-                            <tr><td>Laikas:</td><td>${s[i][2]}</td></tr>
-                            <tr><td>Vidutis greitis:</td><td>${s[i][3]} km/h</td></tr>
-                        </table>`
+                <table border="0">
+                    <tr><td>Diena:</td><td>{{ item.date|date:'Y-m-d' }}</td></tr>
+                    <tr><td>Atstumas:</td><td>{{ item.stats.total_km|floatformat:2 }} km</td></tr>
+                    <tr><td>Laikas:</td><td>{{ item.stats.total_time_seconds|format_datetime }}</td></tr>
+                    <tr><td>Vidutis greitis:</td><td>{{ item.stats.avg_speed|floatformat:2 }} km/h</td></tr>
+                </table>
+                `
             }
         });
-    };
+    {% endfor %}
 });

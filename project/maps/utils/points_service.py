@@ -87,9 +87,23 @@ class PointsService():
             'points',
             f'{self.trip.pk}-points.js'
         )
+        last = \
+            Point.objects \
+            .filter(track__trip=self.trip) \
+            .order_by('-track__date', '-datetime') \
+            .values_list('latitude', 'longitude')[:1]
+
+        last_point = {
+            'latitude': last[0][0] if last else 0,
+            'longitude': last[0][1] if last else 0
+        }
 
         with open(file, 'w') as js_file:
-            content = render_to_string('maps/points.html', {'tracks': tracks})
+            context = {
+                'tracks': tracks,
+                'last_point': last_point,
+            }
+            content = render_to_string('maps/points.html', context)
             js_file.write(content)
 
         return 'Points written to js file'
