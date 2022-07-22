@@ -14,7 +14,7 @@ class PointsService():
     def __init__(self, trip: Trip = None):
         self.trip = get_trip() if not trip else trip
 
-    def update_points(self):
+    def update_points(self) -> List[str]:
         if not self.trip:
             return ['No active trip']
 
@@ -32,13 +32,13 @@ class PointsService():
 
         return [msg_db, msg_js]
 
-    def update_all_points(self):
+    def update_all_points(self) -> List[str]:
         # delete all points
         Point.objects.filter(track__trip=self.trip).delete()
 
         return self.update_points()
 
-    def regenerate_points_file(self):
+    def regenerate_points_file(self) -> List[str]:
         if not self.trip:
             return ['No active trip']
 
@@ -71,7 +71,7 @@ class PointsService():
 
         return msg_js
 
-    def points_to_db(self, tracks: List[Track]) -> str:
+    def points_to_db(self, tracks: List[Track]) -> List[str]:
         # get points from tcx files and write them to db
         for track in tracks:
             points = self.get_data_from_tcx_file(track.title).trackpoints
@@ -97,7 +97,7 @@ class PointsService():
 
         return ['Points inserted']
 
-    def points_to_js(self, tracks: List[Track]) -> str:
+    def points_to_js(self, tracks: List[Track]) -> List[str]:
         file = os.path.join(
             settings.MEDIA_ROOT,
             'points',
@@ -125,7 +125,7 @@ class PointsService():
 
         return ['Points written to js file']
 
-    def get_tracks_with_no_points(self):
+    def get_tracks_with_no_points(self) -> List[Track]:
         tracks = \
             Track.objects \
             .filter(trip=self.trip) \
@@ -140,7 +140,7 @@ class PointsService():
 
         return Track.objects.filter(pk__in=ids)
 
-    def get_data_from_tcx_file(self, file):
+    def get_data_from_tcx_file(self, file) -> TCXReader:
         file = os.path.join(
             settings.MEDIA_ROOT,
             'tracks',

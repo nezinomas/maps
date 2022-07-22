@@ -9,7 +9,7 @@ from ..utils.common import get_trip
 
 
 class TracksService:
-    def __init__(self, trip: Trip = None):
+    def __init__(self, trip: Trip = None) -> List[str]:
         self.trip = get_trip() if not trip else trip
 
     def save_data(self) -> str:
