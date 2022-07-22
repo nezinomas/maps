@@ -54,6 +54,10 @@ class PointsService():
         tracks = []
         for track in tracks_qs:
             points = list(map(list, track.points.values_list('latitude', 'longitude')))
+
+            if not points:
+                continue
+
             tracks.append({
                 'track': track,
                 'points': points,
