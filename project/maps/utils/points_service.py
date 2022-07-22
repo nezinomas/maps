@@ -23,14 +23,15 @@ class PointsService():
         if not tracks:
             return ['No track.points needs to insert']
 
+        messages = []
         try:
-            msg_db = self.points_to_db(tracks)
+            messages += self.points_to_db(tracks)
         except Exception as e:
-            msg_db = e
+            messages += e
 
-        msg_js = self.regenerate_points_file()
+        messages += self.regenerate_points_file()
 
-        return [*msg_db, *msg_js]
+        return messages
 
     def update_all_points(self) -> List[str]:
         # delete all points
@@ -65,11 +66,11 @@ class PointsService():
             })
 
         try:
-            msg_js = self.points_to_js(tracks)
+            msg = self.points_to_js(tracks)
         except Exception as e:
-            msg_js = e
+            msg = e
 
-        return msg_js
+        return msg
 
     def points_to_db(self, tracks: List[Track]) -> List[str]:
         # get points from tcx files and write them to db
