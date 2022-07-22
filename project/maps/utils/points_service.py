@@ -16,12 +16,12 @@ class PointsService():
 
     def update_points(self):
         if not self.trip:
-            return 'No active trip'
+            return ['No active trip']
 
         # get tracks with no points
         tracks = self.get_tracks_with_no_points()
         if not tracks:
-            return 'No track.points needs to insert'
+            return ['No track.points needs to insert']
 
         try:
             msg_db = self.points_to_db(tracks)
@@ -30,7 +30,7 @@ class PointsService():
 
         msg_js = self.regenerate_points_file()
 
-        return(f'<p>{msg_db}</p><p>{msg_js}</p>')
+        return [msg_db, msg_js]
 
     def update_all_points(self):
         # delete all points
@@ -40,7 +40,7 @@ class PointsService():
 
     def regenerate_points_file(self):
         if not self.trip:
-            return('No active trip')
+            return ['No active trip']
 
         # get trip all tracks
         tracks_qs = \
@@ -49,7 +49,7 @@ class PointsService():
             .filter(trip=self.trip)
 
         if not tracks_qs:
-            return f'No tracks for trip {self.trip.title}'
+            return [f'No tracks for trip {self.trip.title}']
 
         tracks = []
         for track in tracks_qs:
@@ -95,7 +95,7 @@ class PointsService():
 
             Point.objects.bulk_create(objs)
 
-        return 'Points inserted'
+        return ['Points inserted']
 
     def points_to_js(self, tracks: List[Track]) -> str:
         file = os.path.join(
@@ -103,6 +103,7 @@ class PointsService():
             'points',
             f'{self.trip.pk}-points.js'
         )
+
         last = \
             Point.objects \
             .filter(track__trip=self.trip) \
@@ -122,7 +123,7 @@ class PointsService():
             content = render_to_string('maps/points.html', context)
             js_file.write(content)
 
-        return 'Points written to js file'
+        return ['Points written to js file']
 
     def get_tracks_with_no_points(self):
         tracks = \

@@ -14,19 +14,19 @@ class TracksService:
 
     def save_data(self) -> str:
         if not self.trip:
-            return 'No trip found'
+            return ['No trip found']
 
         files = self.get_files()
         if not files:
-            return f'No sts files in {settings.MEDIA_ROOT}/tracks/{self.trip.pk}/'
+            return [f'No sts files in {settings.MEDIA_ROOT}/tracks/{self.trip.pk}/']
 
         ids = self.track_list_for_update(files)
         if not ids:
-            return 'All tracks are updated'
+            return ['All tracks are updated']
 
         self.save_track_and_statistic(ids)
 
-        return 'Successfully synced data from sts files'
+        return ['Successfully synced data from sts files']
 
     def get_files(self) -> List[str]:
         directory = os.path.join(

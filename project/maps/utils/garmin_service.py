@@ -18,17 +18,17 @@ class GarminService:
 
     def get_data(self) -> str:
         if not self.trip:
-            return 'No trip found'
+            return ['No trip found']
 
         # login to garmin connect
         api = self.get_api()
         if not api:
-            return f'Error occurred during Garmin Connect communication'
+            return [f'Error occurred during Garmin Connect communication']
 
         # get activities
         activities = self.get_activities(api)
         if not activities:
-            return f'Error occurred during getting garmin activities'
+            return [f'Error occurred during getting garmin activities']
 
         arr = []
         for activity in activities:
