@@ -45,6 +45,7 @@ class PointsService():
         # get trip all tracks
         tracks = \
             Track.objects \
+            .prefetch_related('points') \
             .filter(trip=self.trip)
 
         try:
