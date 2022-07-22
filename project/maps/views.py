@@ -2,9 +2,7 @@ import os
 
 from django.conf import settings
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
-from django.template import loader
 from django.views.generic import ListView, TemplateView
 
 from . import models
