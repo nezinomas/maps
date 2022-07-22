@@ -30,7 +30,7 @@ class PointsService():
 
         msg_js = self.regenerate_points_file()
 
-        return [msg_db, msg_js]
+        return [*msg_db, *msg_js]
 
     def update_all_points(self) -> List[str]:
         # delete all points
