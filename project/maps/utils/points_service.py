@@ -68,7 +68,7 @@ class PointsService():
         try:
             msg = self.points_to_js(tracks)
         except Exception as e:
-            msg = e
+            msg = [e]
 
         return msg
 
