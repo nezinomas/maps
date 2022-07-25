@@ -108,20 +108,14 @@ class GarminService:
             'descent': float(activity.get("elevationLoss")),
         }
 
-        try:
+        with contextlib.suppress(TypeError, ValueError):
             stats['avg_heart'] = float(activity.get("averageHR"))
-        except (TypeError, ValueError):
-            pass
 
-        try:
+        with contextlib.suppress(TypeError, ValueError):
             stats['max_heart'] = float(activity.get("maxHR"))
-        except (TypeError, ValueError):
-            pass
 
-        try:
+        with contextlib.suppress(TypeError, ValueError):
             stats['avg_cadence'] = float(activity.get("averageBikingCadenceInRevPerMinute"))
-        except (TypeError, ValueError):
-            pass
 
         return stats
 
