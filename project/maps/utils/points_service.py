@@ -12,7 +12,7 @@ from .common import get_trip
 
 class PointsService():
     def __init__(self, trip: Trip = None):
-        self.trip = get_trip() if not trip else trip
+        self.trip = trip or get_trip()
 
     def update_points(self) -> List[str]:
         if not self.trip:
@@ -152,7 +152,4 @@ class PointsService():
         if not os.path.exists(file):
             return
 
-        reader = TCXReader()
-        data = reader.read(file)
-
-        return data
+        return TCXReader().read(file)
