@@ -1,3 +1,4 @@
+import contextlib
 import json
 import os
 from datetime import datetime, timezone
@@ -14,7 +15,7 @@ from ..utils.common import get_trip
 
 class GarminService:
     def __init__(self, trip: Trip = None):
-        self.trip = get_trip() if not trip else trip
+        self.trip = trip or get_trip()
 
     def get_data(self) -> List[str]:
         if not self.trip:
@@ -34,7 +35,7 @@ class GarminService:
         for activity in activities:
             # filter non cycling activities
             activity_type = activity['activityType']['typeKey']
-            if not any(x in activity_type.lower() for x in ('biking', 'cycling')):
+            if all(x not in activity_type.lower() for x in ('biking', 'cycling')):
                 continue
 
             # activity start time must be:
@@ -59,8 +60,7 @@ class GarminService:
             return ['Nothing to sync']
 
         # download TCX files for all activities
-        err = self.save_tcx_and_sts_file(api, arr)
-        if err:
+        if err := self.save_tcx_and_sts_file(api, arr):
             return [f'Error occurred during saving tcx file: {err}']
 
         return ['Successfully synced data from Garmin Connect']
