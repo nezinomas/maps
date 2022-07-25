@@ -13,18 +13,18 @@ def _get_wp_content(trip, post_id_dict):
 
 
 def _count_comments(trip):
-    dict = wpContent.create_post_id_dictionary(trip)
-    wp = _get_wp_content(trip, dict)
+    _dict = wpContent.create_post_id_dictionary(trip)
+    _wp = _get_wp_content(trip, _dict)
 
-    for item in wp:
-        id = str(item['post'])
+    for item in _wp:
+        _id = str(item['post'])
 
-        if id in dict:
-            dict[id] += 1
+        if _id in _dict:
+            _dict[_id] += 1
         else:
-            dict[id] = 1
+            _dict[_id] = 1
 
-    return dict
+    return _dict
 
 
 def _insert_qty_db(trip, dict):
