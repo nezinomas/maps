@@ -17,7 +17,7 @@ pytestmark = pytest.mark.django_db
 
 @pytest.fixture
 def _activity():
-    activity = {
+    return {
         'start_time': '2022-01-01 03:02:01 +0000',
         'total_km': 12.345,
         'total_time_seconds': 1918.1,
@@ -33,8 +33,6 @@ def _activity():
         'min_altitude': 5,
         'max_altitude': 55,
     }
-
-    return activity
 
 
 def test_tracks_service_init_with_trip():
@@ -56,35 +54,35 @@ def test_save_data_no_trip(mck):
     mck.return_value = None
     actual = TracksService().save_data()
 
-    assert actual == 'No trip found'
+    assert actual == ['No trip found']
 
 
-@patch(TRACKS_SERVICE + '.get_files')
-def test_save_data_no_sts_files(mck_files, project_fs):
+@patch(f'{TRACKS_SERVICE}.get_files')
+def test_save_data_no_sts_files(mck_files):
     trip = TripFactory()
 
     mck_files.return_value = []
 
     actual = TracksService(trip=trip).save_data()
 
-    assert actual == f'No sts files in {settings.MEDIA_ROOT}/tracks/1/'
+    assert actual == [f'No sts files in {settings.MEDIA_ROOT}/tracks/1/']
 
 
-@patch(TRACKS_SERVICE + '.track_list_for_update')
-@patch(TRACKS_SERVICE + '.get_files')
-def test_save_data_everything_is_updated(mck_files, mck_tracks, project_fs):
+@patch(f'{TRACKS_SERVICE}.track_list_for_update')
+@patch(f'{TRACKS_SERVICE}.get_files')
+def test_save_data_everything_is_updated(mck_files, mck_tracks):
     trip = TripFactory()
     mck_files.return_value = ['x']
     mck_tracks.return_value = None
 
     actual = TracksService(trip=trip).save_data()
 
-    assert actual == 'All tracks are updated'
+    assert actual == ['All tracks are updated']
 
 
-@patch(TRACKS_SERVICE + '.get_data_from_sts_file')
-@patch(TRACKS_SERVICE + '.track_list_for_update')
-@patch(TRACKS_SERVICE + '.get_files')
+@patch(f'{TRACKS_SERVICE}.get_data_from_sts_file')
+@patch(f'{TRACKS_SERVICE}.track_list_for_update')
+@patch(f'{TRACKS_SERVICE}.get_files')
 def test_save_data_save_track_data(mck_files, mck_tracks, mck_data, _activity):
     trip = TripFactory()
     mck_files.return_value = ['x']
@@ -101,9 +99,9 @@ def test_save_data_save_track_data(mck_files, mck_tracks, mck_data, _activity):
     assert actual.trip.title == 'Trip'
 
 
-@patch(TRACKS_SERVICE + '.get_data_from_sts_file')
-@patch(TRACKS_SERVICE + '.track_list_for_update')
-@patch(TRACKS_SERVICE + '.get_files')
+@patch(f'{TRACKS_SERVICE}.get_data_from_sts_file')
+@patch(f'{TRACKS_SERVICE}.track_list_for_update')
+@patch(f'{TRACKS_SERVICE}.get_files')
 def test_save_data_save_track_statistic_data(mck_files, mck_tracks, mck_data, _activity):
     trip = TripFactory()
     mck_files.return_value = ['x']
@@ -119,19 +117,19 @@ def test_save_data_save_track_statistic_data(mck_files, mck_tracks, mck_data, _a
     assert round(actual.avg_speed, 2) == 23.40
     assert round(actual.max_speed, 2) == 47.52
     assert actual.calories == 33.0
-    assert actual.avg_cadence == None
-    assert actual.avg_heart == None
-    assert actual.max_heart == None
-    assert actual.avg_temperature == None
+    assert actual.avg_cadence is None
+    assert actual.avg_heart is None
+    assert actual.max_heart is None
+    assert actual.avg_temperature is None
     assert actual.ascent == 111.0
     assert actual.descent == 222.0
     assert actual.min_altitude == 5
     assert actual.max_altitude == 55
 
 
-@patch(TRACKS_SERVICE + '.get_data_from_sts_file')
-@patch(TRACKS_SERVICE + '.track_list_for_update')
-@patch(TRACKS_SERVICE + '.get_files')
+@patch(f'{TRACKS_SERVICE}.get_data_from_sts_file')
+@patch(f'{TRACKS_SERVICE}.track_list_for_update')
+@patch(f'{TRACKS_SERVICE}.get_files')
 def test_save_data_save_success(mck_files, mck_tracks, mck_data, _activity):
     trip = TripFactory()
     mck_files.return_value = ['x']
@@ -140,10 +138,10 @@ def test_save_data_save_success(mck_files, mck_tracks, mck_data, _activity):
 
     actual = TracksService(trip=trip).save_data()
 
-    assert actual == 'Successfully synced data from sts files'
+    assert actual == ['Successfully synced data from sts files']
 
 
-def test_sts_file_list(fs, project_fs):
+def test_sts_file_list(fs):
     trip = TripFactory()
 
     directory = os.path.join(settings.MEDIA_ROOT, 'tracks', str(trip.pk))
@@ -167,7 +165,7 @@ def test_track_list_for_update():
 
 
 @patch('json.load')
-def test_get_data_from_sts_file(mck, fs, project_fs, _activity):
+def test_get_data_from_sts_file(mck, fs, _activity):
     trip = TripFactory()
     fs.create_file(
         os.path.join(
@@ -183,7 +181,7 @@ def test_get_data_from_sts_file(mck, fs, project_fs, _activity):
     assert actual == _activity
 
 
-def test_get_data_from_sts_file_no_file(project_fs):
+def test_get_data_from_sts_file_no_file():
     trip = TripFactory()
 
     actual = TracksService(trip=trip).get_data_from_sts_file('XXX')

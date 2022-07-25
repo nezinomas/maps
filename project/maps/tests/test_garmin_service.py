@@ -71,7 +71,7 @@ def test_get_data_no_trip(mck):
     mck.return_value = None
     actual = GarminService().get_data()
 
-    assert actual == 'No trip found'
+    assert actual == ['No trip found']
 
 
 @patch(f'{GARMIN_SERVICE}.get_api')
@@ -80,7 +80,7 @@ def test_get_data_failed_get_api(mck_api):
 
     actual = GarminService(trip=TripFactory.build()).get_data()
 
-    assert actual == 'Error occurred during Garmin Connect communication'
+    assert actual == ['Error occurred during Garmin Connect communication']
 
 
 @patch('project.maps.utils.garmin_service.Garmin.get_activities')
@@ -89,7 +89,7 @@ def test_get_data_failed_get_activities(mck_activities):
 
     actual = GarminService(trip=TripFactory.build()).get_data()
 
-    assert actual == 'Error occurred during getting garmin activities'
+    assert actual == ['Error occurred during getting garmin activities']
 
 
 @patch(f'{GARMIN_SERVICE}.get_activities')
@@ -100,7 +100,7 @@ def test_get_data_filter_non_cyclig_activities(mck_activities):
 
     actual = GarminService(trip=TripFactory.build()).get_data()
 
-    assert actual == 'Nothing to sync'
+    assert actual == ['Nothing to sync']
 
 
 @patch(f'{GARMIN_SERVICE}.get_activities')
@@ -112,7 +112,7 @@ def test_get_data_filter_past_activities(mck_activities):
 
     actual = GarminService(trip=TripFactory.build()).get_data()
 
-    assert actual == 'Nothing to sync'
+    assert actual == ['Nothing to sync']
 
 
 @patch(f'{GARMIN_SERVICE}.get_activities')
@@ -124,7 +124,7 @@ def test_get_data_filter_future_activities(mck_activities):
 
     actual = GarminService(trip=TripFactory.build()).get_data()
 
-    assert actual == 'Nothing to sync'
+    assert actual == ['Nothing to sync']
 
 
 @patch(f'{GARMIN_SERVICE}.save_tcx_and_sts_file')
@@ -138,7 +138,7 @@ def test_get_data_save_file_failed(mck_activities, mck_save):
 
     actual = GarminService(trip=TripFactory.build()).get_data()
 
-    assert actual == 'Error occurred during saving tcx file: XXX'
+    assert actual == ['Error occurred during saving tcx file: XXX']
 
 
 @patch(f'{GARMIN_SERVICE}.save_tcx_and_sts_file')
@@ -152,10 +152,10 @@ def test_get_data_success(mck_activities, mck_save):
 
     actual = GarminService(trip=TripFactory.build()).get_data()
 
-    assert actual == 'Successfully synced data from Garmin Connect'
+    assert actual == ['Successfully synced data from Garmin Connect']
 
 
-def test_tcx_new_file(project_fs):
+def test_tcx_new_file():
     trip = TripFactory()
 
     _activities = [{'activityId': 999,}]
@@ -170,7 +170,7 @@ def test_tcx_new_file(project_fs):
         assert f.read() == 'tcx data'
 
 
-def test_statistic_file(project_fs, _activity):
+def test_statistic_file(_activity):
     trip = TripFactory()
     _activities = [_activity]
 
@@ -189,10 +189,10 @@ def test_statistic_file(project_fs, _activity):
         assert round(actual['avg_speed'], 2) == 23.40
         assert round(actual['max_speed'], 2) == 47.52
         assert actual['calories'] == 33.0
-        assert actual['avg_cadence'] == None
-        assert actual['avg_heart'] == None
-        assert actual['max_heart'] == None
-        assert actual['avg_temperature'] == None
+        assert actual['avg_cadence'] is None
+        assert actual['avg_heart'] is None
+        assert actual['max_heart'] is None
+        assert actual['avg_temperature'] is None
         assert actual['ascent'] == 111.0
         assert actual['descent'] == 222.0
         assert actual['min_altitude'] == 5
@@ -230,17 +230,17 @@ def test_get_activity_statistic(_activity):
     assert round(actual['avg_speed'], 2) == 23.40
     assert round(actual['max_speed'], 2) == 47.52
     assert actual['calories'] == 33.0
-    assert actual['avg_cadence'] == None
-    assert actual['avg_heart'] == None
-    assert actual['max_heart'] == None
-    assert actual['avg_temperature'] == None
+    assert actual['avg_cadence'] is None
+    assert actual['avg_heart'] is None
+    assert actual['max_heart'] is None
+    assert actual['avg_temperature'] is None
     assert actual['ascent'] == 111.0
     assert actual['descent'] == 222.0
     assert actual['min_altitude'] == 5
     assert actual['max_altitude'] == 55
 
 
-def test_create_activity_statistic_file(project_fs, _activity):
+def test_create_activity_statistic_file(_activity):
     trip = TripFactory()
 
     api = Mock()
@@ -252,17 +252,16 @@ def test_create_activity_statistic_file(project_fs, _activity):
 
     with open(file, 'r') as f:
         actual = json.load(f)
-        print(f'actual: {actual}')
 
         assert actual['total_km'] == 12.345
         assert actual['total_time_seconds'] == 1918.1
         assert round(actual['avg_speed'], 2) == 23.40
         assert round(actual['max_speed'], 2) == 47.52
         assert actual['calories'] == 33.0
-        assert actual['avg_cadence'] == None
-        assert actual['avg_heart'] == None
-        assert actual['max_heart'] == None
-        assert actual['avg_temperature'] == None
+        assert actual['avg_cadence'] is None
+        assert actual['avg_heart'] is None
+        assert actual['max_heart'] is None
+        assert actual['avg_temperature'] is None
         assert actual['ascent'] == 111.0
         assert actual['descent'] == 222.0
         assert actual['min_altitude'] == 5

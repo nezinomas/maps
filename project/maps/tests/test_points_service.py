@@ -33,13 +33,13 @@ def _point():
 def test_update_points_no_trip():
     actual = PointsService().update_points()
 
-    assert actual == 'No active trip'
+    assert actual == ['No active trip']
 
 
 def test_update_all_points_no_trip():
     actual = PointsService().update_all_points()
 
-    assert actual == 'No active trip'
+    assert actual == ['No active trip']
 
 
 @pytest.mark.freeze_time('2022-1-1')
@@ -73,7 +73,7 @@ def test_get_tracks_with_no_points_all_good():
 
 
 @patch('project.maps.utils.points_service.TCXReader.read')
-def test_get_data_from_tcx_file(mck, fs, project_fs, _point):
+def test_get_data_from_tcx_file(mck, fs, _point):
     trip = TripFactory()
     fs.create_file(os.path.join(settings.MEDIA_ROOT, 'tracks', str(trip.pk), '999.tcx'))
 
