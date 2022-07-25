@@ -10,7 +10,7 @@ from ..utils.common import get_trip
 
 class TracksService:
     def __init__(self, trip: Trip = None) -> List[str]:
-        self.trip = get_trip() if not trip else trip
+        self.trip = trip or get_trip()
 
     def save_data(self) -> str:
         if not self.trip:
@@ -34,18 +34,9 @@ class TracksService:
             'tracks',
             str(self.trip.pk)
         )
-        lst = os.listdir(directory)
+        file_list = os.listdir(directory)
 
-        files = []
-        for file in lst:
-            # only .sts files
-            if not file.endswith('.sts'):
-                continue
-
-            # remove extension
-            files.append(file[:-4])
-
-        return files
+        return [file[:-4] for file in file_list if file.endswith('.sts')]
 
     def track_list_for_update(self, files: List[str]) -> List[Track]:
         # get all tracks for current trip
