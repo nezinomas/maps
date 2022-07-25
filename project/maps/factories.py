@@ -1,4 +1,4 @@
-from datetime import date, datetime
+from datetime import date, datetime, timezone
 
 import factory
 from django.contrib.auth.models import User
@@ -24,7 +24,7 @@ class TrackFactory(factory.django.DjangoModelFactory):
         model = Track
 
     title = '999'
-    date = datetime(2022, 1, 1, 3, 2, 1)
+    date = datetime(2022, 1, 1, 3, 2, 1, tzinfo=timezone.utc)
     activity_type = 'cycling'
     trip = factory.SubFactory(TripFactory)
 
@@ -37,7 +37,7 @@ class PointFactory(factory.django.DjangoModelFactory):
     longitude = 22.22
     altitude = 33.33
     distance_meters = 44.44
-    datetime = datetime(2022, 1, 1, 3, 2, 1)
+    datetime = datetime(2022, 1, 1, 3, 2, 1, tzinfo=timezone.utc)
 
     track = factory.SubFactory(TrackFactory)
 
