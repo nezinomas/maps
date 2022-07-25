@@ -24,7 +24,7 @@ def test_trips_200(client):
     assert response.status_code == 200
 
 
-def test_trips_list(client, project_fs):
+def test_trips_list(client):
     TripFactory(title='Trip 1')
     TripFactory(title='Trip 2')
 

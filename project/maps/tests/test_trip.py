@@ -16,7 +16,7 @@ def test_trip_not_started():
 
 
 @pytest.mark.freeze_time('3333-1-1')
-def test_trip_ended(project_fs):
+def test_trip_ended():
     TripFactory()
 
     actual = get_trip()
@@ -25,7 +25,7 @@ def test_trip_ended(project_fs):
 
 
 @pytest.mark.freeze_time('2022-1-1')
-def test_trip_exists(project_fs):
+def test_trip_exists():
     _trip = TripFactory()
 
     actual = get_trip()

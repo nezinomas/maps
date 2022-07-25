@@ -1,1 +1,3 @@
-{{message|safe}}
+{% for msg in message %}
+<p>{{msg|safe}}</b>
+{% endfor %}

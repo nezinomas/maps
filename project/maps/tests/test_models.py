@@ -9,6 +9,7 @@ from ..models import Trip
 pytestmark = pytest.mark.django_db
 
 
+@pytest.mark.enable_signals
 def test_new_trip_copy_points_file(project_fs):
     trip = TripFactory()
 
@@ -17,6 +18,7 @@ def test_new_trip_copy_points_file(project_fs):
     assert os.path.exists(file)
 
 
+@pytest.mark.enable_signals
 def test_delete_trip_deletes_points_file(project_fs):
     trip = TripFactory()
 
@@ -28,6 +30,7 @@ def test_delete_trip_deletes_points_file(project_fs):
     assert not os.path.exists(file)
 
 
+@pytest.mark.enable_signals
 def test_new_trip_create_track_folders(fs):
     template = os.path.join(
         settings.SITE_ROOT,

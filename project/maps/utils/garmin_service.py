@@ -1,3 +1,4 @@
+import contextlib
 import json
 import os
 from datetime import datetime, timezone
@@ -14,27 +15,27 @@ from ..utils.common import get_trip
 
 class GarminService:
     def __init__(self, trip: Trip = None):
-        self.trip = get_trip() if not trip else trip
+        self.trip = trip or get_trip()
 
-    def get_data(self) -> str:
+    def get_data(self) -> List[str]:
         if not self.trip:
-            return 'No trip found'
+            return ['No trip found']
 
         # login to garmin connect
         api = self.get_api()
         if not api:
-            return f'Error occurred during Garmin Connect communication'
+            return ['Error occurred during Garmin Connect communication']
 
         # get activities
         activities = self.get_activities(api)
         if not activities:
-            return f'Error occurred during getting garmin activities'
+            return ['Error occurred during getting garmin activities']
 
         arr = []
         for activity in activities:
             # filter non cycling activities
             activity_type = activity['activityType']['typeKey']
-            if not any(x in activity_type.lower() for x in ('biking', 'cycling')):
+            if all(x not in activity_type.lower() for x in ('biking', 'cycling')):
                 continue
 
             # activity start time must be:
@@ -56,14 +57,13 @@ class GarminService:
             arr.append(activity)
 
         if not arr:
-            return 'Nothing to sync'
+            return ['Nothing to sync']
 
         # download TCX files for all activities
-        err = self.save_tcx_and_sts_file(api, arr)
-        if err:
-            return f'Error occurred during saving tcx file: {err}'
+        if err := self.save_tcx_and_sts_file(api, arr):
+            return [f'Error occurred during saving tcx file: {err}']
 
-        return 'Successfully synced data from Garmin Connect'
+        return ['Successfully synced data from Garmin Connect']
 
     def get_api(self) -> Garmin:
         try:
@@ -108,20 +108,14 @@ class GarminService:
             'descent': float(activity.get("elevationLoss")),
         }
 
-        try:
+        with contextlib.suppress(TypeError, ValueError):
             stats['avg_heart'] = float(activity.get("averageHR"))
-        except (TypeError, ValueError):
-            pass
 
-        try:
+        with contextlib.suppress(TypeError, ValueError):
             stats['max_heart'] = float(activity.get("maxHR"))
-        except (TypeError, ValueError):
-            pass
 
-        try:
+        with contextlib.suppress(TypeError, ValueError):
             stats['avg_cadence'] = float(activity.get("averageBikingCadenceInRevPerMinute"))
-        except (TypeError, ValueError):
-            pass
 
         return stats
 

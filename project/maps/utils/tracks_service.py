@@ -9,24 +9,24 @@ from ..utils.common import get_trip
 
 
 class TracksService:
-    def __init__(self, trip: Trip = None):
-        self.trip = get_trip() if not trip else trip
+    def __init__(self, trip: Trip = None) -> List[str]:
+        self.trip = trip or get_trip()
 
     def save_data(self) -> str:
         if not self.trip:
-            return 'No trip found'
+            return ['No trip found']
 
         files = self.get_files()
         if not files:
-            return f'No sts files in {settings.MEDIA_ROOT}/tracks/{self.trip.pk}/'
+            return [f'No sts files in {settings.MEDIA_ROOT}/tracks/{self.trip.pk}/']
 
         ids = self.track_list_for_update(files)
         if not ids:
-            return 'All tracks are updated'
+            return ['All tracks are updated']
 
         self.save_track_and_statistic(ids)
 
-        return 'Successfully synced data from sts files'
+        return ['Successfully synced data from sts files']
 
     def get_files(self) -> List[str]:
         directory = os.path.join(
@@ -34,18 +34,9 @@ class TracksService:
             'tracks',
             str(self.trip.pk)
         )
-        lst = os.listdir(directory)
+        file_list = os.listdir(directory)
 
-        files = []
-        for file in lst:
-            # only .sts files
-            if not file.endswith('.sts'):
-                continue
-
-            # remove extension
-            files.append(file[:-4])
-
-        return files
+        return [file[:-4] for file in file_list if file.endswith('.sts')]
 
     def track_list_for_update(self, files: List[str]) -> List[Track]:
         # get all tracks for current trip
