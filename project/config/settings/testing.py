@@ -33,6 +33,11 @@ TEMPLATES[0]['OPTIONS']['loaders'] = [
 ]
 
 
+TEMPLATES[0]['OPTIONS']['libraries'] = {
+    'staticfiles': 'django.templatetags.static',
+}
+
+
 MIGRATION_MODULES = {
     'auth': None,
     'contenttypes': None,
