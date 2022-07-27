@@ -29,10 +29,8 @@ class Map(TemplateView):
         trip = get_object_or_404(models.Trip, slug=self.kwargs.get('trip'))
 
         try:
-            if trip.blog:
-                wp = wpContent.get_posts(trip)
-                comments = wpContent.get_comment_qty(trip)
-
+            wp = wpContent.get_posts(trip)
+            comments = wpContent.get_comment_qty(trip)
         except Exception:
             wp_error = 'Something went wrong with getting data from https://unknownbug.net/nezinomas/'
 
@@ -57,9 +55,7 @@ class Comments(TemplateView):
         trip = get_object_or_404(models.Trip, slug=self.kwargs.get('trip'))
         post_id = self.kwargs.get('post_id')
         wp = wpContent.get_comments(trip, post_id)
-        context = {
-            'comments': wp
-        }
+        context = {'comments': wp,}
 
         return super().get_context_data(**kwargs) | context
 
