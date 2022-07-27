@@ -26,35 +26,29 @@ def get_content(blog_url, link_end):
 def get_posts(trip):
     return get_content(
         trip.blog,
-        "posts?categories={}&per_page=70".format(
-            trip.blog_category)
-    )
+        f"posts?categories={trip.blog_category}&per_page=70")
 
 
 def create_post_id_dictionary(trip):
     posts = get_posts(trip)
 
-    dict = {}
-    for post in posts:
-        dict[str(post['id'])] = 0
-
-    return dict
+    return {str(post['id']): 0 for post in posts}
 
 
 def post_link(arg):
-    return '&post={}'.format(arg)
+    return f'&post={arg}'
 
 
 def create_comment_rest_link(*args, **kwargs):
-    _str = ''
+    _post_link = ''
 
     if args:
-        _str += ''.join([post_link(arg) if arg else '' for arg in args])
+        _post_link += ''.join([post_link(arg) if arg else '' for arg in args])
 
     if kwargs:
-        _str += ''.join([post_link(key) for key in kwargs.keys()])
+        _post_link += ''.join([post_link(key) for key in kwargs.keys()])
 
-    return 'comments?per_page=100{}'.format(_str)
+    return f'comments?per_page=100{_post_link}'
 
 
 def get_comments(trip, *args, **kwargs):
@@ -65,11 +59,6 @@ def get_comments(trip, *args, **kwargs):
 
 
 def get_comment_qty(trip):
-    qty = {}
+    comments = trip.comment_qty.all().values('post_id', 'qty')
 
-    _list = trip.comment_qty.all().values('post_id', 'qty')
-
-    for i in _list:
-        qty[i['post_id']] = i['qty']
-
-    return qty
+    return {comment['post_id']: comment['qty'] for comment in comments}
