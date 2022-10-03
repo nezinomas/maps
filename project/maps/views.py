@@ -54,7 +54,7 @@ class Comments(TemplateView):
     def get_context_data(self, **kwargs):
         trip = get_object_or_404(models.Trip, slug=self.kwargs.get('trip'))
         post_id = self.kwargs.get('post_id')
-        wp = wpContent.get_comments(trip, post_id)
+        wp = wpContent.get_comments(trip, [post_id])
         context = {'comments': wp,}
 
         return super().get_context_data(**kwargs) | context
