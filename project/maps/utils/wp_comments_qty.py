@@ -29,16 +29,16 @@ def _insert_qty_db(trip, dict):
         )
 
 
-def push_post_comment_qty(trip):
+def push_comments_qty(trip):
     with transaction.atomic():
         comments = _count_comments(trip)
 
         _insert_qty_db(trip, comments)
 
 
-def push_all_comment_qty():
+def push_comments_qty_for_all_trips():
     trips = Trip.objects.filter(
         end_date__gte=dt.date.today() + relativedelta(months=+3))
 
     for trip in trips:
-        push_post_comment_qty(trip)
+        push_comments_qty(trip)

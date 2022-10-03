@@ -47,7 +47,7 @@ class WpCommentsQtyTest(TestCase):
 
 
     def test_push_post_comment_qty(self):
-        qty.push_post_comment_qty(self.trip)
+        qty.push_comments_qty(self.trip)
 
         q = CommentQty.objects.all()
 
@@ -57,7 +57,7 @@ class WpCommentsQtyTest(TestCase):
 
 
     def test_push_post_comment_qty_01(self):
-        qty.push_post_comment_qty(self.trip)
+        qty.push_comments_qty(self.trip)
 
         q = CommentQty.objects.all()
 
@@ -68,7 +68,7 @@ class WpCommentsQtyTest(TestCase):
         with patch('project.maps.utils.wp_content.get_content') as p:
             p.return_value = [{'post': 102}, {'post': 102}, {'post': 102}]
 
-            qty.push_post_comment_qty(self.trip)
+            qty.push_comments_qty(self.trip)
             q = CommentQty.objects.all()
 
             self.assertEqual(len(q), 2)
@@ -78,7 +78,7 @@ class WpCommentsQtyTest(TestCase):
 
     @freeze_time("2000-06-01")
     def test_push_all_comment_qty_01(self):
-        qty.push_all_comment_qty()
+        qty.push_comments_qty_for_all_trips()
 
         q = CommentQty.objects.all()
 
@@ -87,7 +87,7 @@ class WpCommentsQtyTest(TestCase):
 
     @freeze_time("2000-03-01")
     def test_push_all_comment_qty_02(self):
-        qty.push_all_comment_qty()
+        qty.push_comments_qty_for_all_trips()
 
         q = CommentQty.objects.all()
 
