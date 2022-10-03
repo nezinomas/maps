@@ -8,28 +8,21 @@ from ..models import Trip, CommentQty
 from . import wp_content as wpContent
 
 
-def _get_wp_content(trip, post_id_dict):
-    return wpContent.get_comments(trip, **post_id_dict)
-
-
 def _count_comments(trip):
-    _dict = wpContent.create_post_id_dictionary(trip)
-    _wp = _get_wp_content(trip, _dict)
+    posts = wpContent.get_posts(trip)
+    arr = {post.get('id'): 0 for post in posts}
+    comments = wpContent.get_comments(trip, arr.keys())
 
-    for item in _wp:
-        _id = str(item['post'])
+    for comment in comments:
+        post_id = comment.get('post')
+        arr[post_id] += 1
 
-        if _id in _dict:
-            _dict[_id] += 1
-        else:
-            _dict[_id] = 1
-
-    return _dict
+    return arr
 
 
 def _insert_qty_db(trip, dict):
     for post_id, qty in dict.items():
-        obj, created = CommentQty.objects.update_or_create(
+        _, _ = CommentQty.objects.update_or_create(
             trip_id=trip.pk,
             post_id=post_id,
             defaults={'qty': qty}
@@ -38,7 +31,9 @@ def _insert_qty_db(trip, dict):
 
 def push_post_comment_qty(trip):
     with transaction.atomic():
-        _insert_qty_db(trip, _count_comments(trip))
+        comments = _count_comments(trip)
+
+        _insert_qty_db(trip, comments)
 
 
 def push_all_comment_qty():
