@@ -8,23 +8,16 @@ from ..models import Trip, CommentQty
 from . import wp_content as wpContent
 
 
-def _get_wp_content(trip, post_id_dict):
-    return wpContent.get_comments(trip, **post_id_dict)
-
-
 def _count_comments(trip):
-    _dict = wpContent.create_post_id_dictionary(trip)
-    _wp = _get_wp_content(trip, _dict)
+    posts = wpContent.get_posts(trip)
+    arr = {post.get('id'): 0 for post in posts}
+    comments = wpContent.get_comments(trip, arr.keys())
 
-    for item in _wp:
-        _id = str(item['post'])
+    for comment in comments:
+        post_id = comment.get('post')
+        arr[post_id] += 1
 
-        if _id in _dict:
-            _dict[_id] += 1
-        else:
-            _dict[_id] = 1
-
-    return _dict
+    return arr
 
 
 def _insert_qty_db(trip, dict):
