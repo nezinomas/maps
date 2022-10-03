@@ -29,7 +29,7 @@ def _count_comments(trip):
 
 def _insert_qty_db(trip, dict):
     for post_id, qty in dict.items():
-        obj, created = CommentQty.objects.update_or_create(
+        _, _ = CommentQty.objects.update_or_create(
             trip_id=trip.pk,
             post_id=post_id,
             defaults={'qty': qty}
@@ -38,7 +38,9 @@ def _insert_qty_db(trip, dict):
 
 def push_post_comment_qty(trip):
     with transaction.atomic():
-        _insert_qty_db(trip, _count_comments(trip))
+        comments = _count_comments(trip)
+
+        _insert_qty_db(trip, comments)
 
 
 def push_all_comment_qty():
