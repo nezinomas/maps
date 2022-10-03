@@ -24,36 +24,13 @@ def get_content(blog_url, link_end):
 
 
 def get_posts(trip):
-    return get_content(
-        trip.blog,
-        f"posts?categories={trip.blog_category}&per_page=70")
+    link = f"posts?categories={trip.blog_category}&per_page=70"
+
+    return get_content(trip.blog, link)
 
 
-def create_post_id_dictionary(trip):
-    posts = get_posts(trip)
-
-    return {str(post['id']): 0 for post in posts}
-
-
-def post_link(arg):
-    return f'&post={arg}'
-
-
-def create_comment_rest_link(*args, **kwargs):
-    _post_link = ''
-
-    if args:
-        _post_link += ''.join([post_link(arg) if arg else '' for arg in args])
-
-    if kwargs:
-        _post_link += ''.join([post_link(key) for key in kwargs.keys()])
-
-    return f'comments?per_page=100{_post_link}'
-
-
-def get_comments(trip, *args, **kwargs):
-    # comments?post=7363&post=7352&per_page=100'
-    link = create_comment_rest_link(*args, **kwargs)
+def get_comments(trip, posts_id_arr):
+    link = f'comments?post={",".join(map(str, posts_id_arr))}'
 
     return get_content(trip.blog, link)
 
