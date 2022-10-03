@@ -20,9 +20,9 @@ def _count_comments(trip):
     return arr
 
 
-def _insert_qty_db(trip, dict):
-    for post_id, qty in dict.items():
-        _, _ = CommentQty.objects.update_or_create(
+def _insert_qty_db(trip, comments_qty_dict):
+    for post_id, qty in comments_qty_dict.items():
+        CommentQty.objects.update_or_create(
             trip_id=trip.pk,
             post_id=post_id,
             defaults={'qty': qty}
