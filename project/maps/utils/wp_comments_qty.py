@@ -20,20 +20,16 @@ def _count_comments(trip):
     return arr
 
 
-def _insert_qty_db(trip, comments_qty_dict):
-    for post_id, qty in comments_qty_dict.items():
-        CommentQty.objects.update_or_create(
-            trip_id=trip.pk,
-            post_id=post_id,
-            defaults={'qty': qty}
-        )
-
-
 def push_comments_qty(trip):
     with transaction.atomic():
         comments = _count_comments(trip)
 
-        _insert_qty_db(trip, comments)
+        for post_id, qty in comments.items():
+            CommentQty.objects.update_or_create(
+                trip_id=trip.pk,
+                post_id=post_id,
+                defaults={'qty': qty}
+            )
 
 
 def push_comments_qty_for_all_trips():
