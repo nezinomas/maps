@@ -45,25 +45,21 @@ class PointsService():
 
         # get trip all tracks
         tracks_qs = \
-            Track.objects \
-            .select_related('stats') \
-            .filter(trip=self.trip)
+                Track.objects \
+                .select_related('stats') \
+                .filter(trip=self.trip)
 
         if not tracks_qs:
             return [f'No tracks for trip {self.trip.title}']
 
         tracks = []
         for track in tracks_qs:
-            points = list(map(list, track.points.values_list('latitude', 'longitude')))
-
-            if not points:
-                continue
-
-            tracks.append({
-                'track': track,
-                'points': points,
-                'last_point' : points[-1],
-            })
+            if points := list(map(list, track.points.values_list('latitude', 'longitude'))):
+                tracks.append({
+                    'track': track,
+                    'points': points,
+                    'last_point' : points[-1],
+                })
 
         try:
             msg = self.points_to_js(tracks)
