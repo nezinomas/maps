@@ -153,6 +153,6 @@ class CommentQty(LoginRequiredMixin, TemplateView):
         trip = get_object_or_404(models.Trip, slug=self.kwargs.get('trip'))
         wpQty.push_comments_qty(trip)
 
-        context = {'message': 'done' }
+        context = {'message': ['done'] }
 
         return super().get_context_data(*args, **kwargs) | context
