@@ -62,14 +62,8 @@ class Posts(TemplateView):
                 .order_by('-post_id')[offset:next_offset]:
 
             last_record = False
-            posts_ids = []
-
-            for row in qs:
-                post_id = row['post_id']
-                posts_ids.append(post_id)
-                comments_qty[post_id] = row['qty']
-
-            link = f'posts?include={",".join(map(str, posts_ids))}&per_page=100&_fields=id,link,title,date,content'
+            comments_qty = {row['post_id']: row['qty'] for row in qs}
+            link = f'posts?include={",".join(map(str, comments_qty.keys()))}&per_page=100&_fields=id,link,title,date,content'
 
             try:
                 response = wpContent.get_content(trip.blog, link)
