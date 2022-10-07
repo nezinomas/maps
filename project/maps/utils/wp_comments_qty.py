@@ -1,4 +1,5 @@
 import datetime as dt
+import json
 
 from dateutil.relativedelta import relativedelta
 from django.db import transaction
@@ -11,8 +12,8 @@ def count_comments(trip):
     posts = wpContent.get_posts_ids(trip)
     arr = {post: 0 for post in posts}
 
-    link = f'comments?post={",".join(map(str, posts))}&_fields=post'
-    comments = wpContent.get_json(trip.blog, link)
+    link = f'comments?post={",".join(map(str, posts))}&_fields=post&per_page=100'
+    comments = wpContent.get_all_pages_content(trip, link)
 
     for comment in comments:
         post_id = comment.get('post')
