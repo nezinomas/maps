@@ -13,7 +13,7 @@
                 <div class="post-content mt-2">{{ post.content.rendered|safe }}</div>
 
                 <p>
-                    <a role="button" class="btn-as-link" hx-get="{% url 'maps:comments' trip.slug post.id %}" hx-target="#post_{{post.id}}" hx-trigger="click once" hx-indicator="#indicator" x-on:click="open = ! open" x-text="open ? 'Slėpti komentarus' : 'Rodyti komentarus ({% comment_qty qty post.id %}) ' "></a>
+                    <a role="button" class="btn-as-link" hx-get="{% url 'maps:comments' trip.slug post.id %}" hx-target="#post_{{post.id}}" hx-trigger="click once" hx-indicator="#indicator" x-on:click="open = ! open" x-text="open ? 'Slėpti komentarus' : 'Rodyti komentarus ({% comment_qty comments_qty post.id %}) ' "></a>
                         &nbsp;
                     <a href="{{ post.link }}#respond" class="ml-2">Rašyti komentarą</a>
                 </p>

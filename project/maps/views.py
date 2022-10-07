@@ -81,7 +81,7 @@ class Posts(TemplateView):
             'posts': posts,
             'wp_error': wp_error,
             'trip': trip,
-            'qty': comments_qty,
+            'comments_qty': comments_qty,
             'offset': next_offset,
             'last_record': last_record
         }
