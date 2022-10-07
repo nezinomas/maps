@@ -18,24 +18,27 @@ def get_content(blog_url, link_end):
         callback=f'{blog_url}/oauth1_callback'
     )
 
-    r = wpapi.get(link_end)
-
-    return json.loads(r.text)
+    return wpapi.get(link_end)
 
 
-def get_posts(trip):
-    link = f"posts?categories={trip.blog_category}&per_page=70"
+def get_posts_ids(trip):
+    per_page = 100
+    link = f"posts?categories={trip.blog_category}&_fields=id&per_page={per_page}"
+    response = get_content(trip.blog, link)
+    content = json.loads(response.text)
+    pages = int(response.headers['X-WP-TotalPages'])
 
-    return get_content(trip.blog, link)
+    if pages > 1:
+        for page in range(1, pages):
+            link_offset = f'{link}&offset={page * per_page}'
+            response = get_content(trip.blog, link_offset)
+            content += json.loads(response.text)
+
+    return [x['id'] for x in content]
 
 
 def get_comments(trip, posts_id_arr):
     link = f'comments?post={",".join(map(str, posts_id_arr))}'
+    response = get_content(trip.blog, link)
 
-    return get_content(trip.blog, link)
-
-
-def get_comment_qty(trip):
-    comments = trip.comment_qty.all().values('post_id', 'qty')
-
-    return {comment['post_id']: comment['qty'] for comment in comments}
+    return json.loads(response.text)

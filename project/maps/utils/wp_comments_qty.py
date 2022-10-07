@@ -1,17 +1,20 @@
 import datetime as dt
-from dateutil.relativedelta import relativedelta
+import json
 
+from dateutil.relativedelta import relativedelta
 from django.db import transaction
 
-from ..models import Trip, CommentQty
-
+from ..models import CommentQty, Trip
 from . import wp_content as wpContent
 
 
-def _count_comments(trip):
-    posts = wpContent.get_posts(trip)
-    arr = {post.get('id'): 0 for post in posts}
-    comments = wpContent.get_comments(trip, arr.keys())
+def count_comments(trip):
+    posts = wpContent.get_posts_ids(trip)
+    arr = {post: 0 for post in posts}
+
+    link = f'comments?post={",".join(map(str, posts))}&_fields=post'
+    response = wpContent.get_content(trip.blog, link)
+    comments = json.loads(response.text)
 
     for comment in comments:
         post_id = comment.get('post')
@@ -22,7 +25,7 @@ def _count_comments(trip):
 
 def push_comments_qty(trip):
     with transaction.atomic():
-        comments = _count_comments(trip)
+        comments = count_comments(trip)
 
         for post_id, qty in comments.items():
             CommentQty.objects.update_or_create(

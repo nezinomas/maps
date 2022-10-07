@@ -1,3 +1,4 @@
+import json
 import os
 
 from django.conf import settings
@@ -22,27 +23,67 @@ class Map(TemplateView):
     template_name = 'maps/map.html'
 
     def get_context_data(self, *args, **kwargs):
-        wp = None
-        wp_error = False
-        comments = None
-
         trip = get_object_or_404(models.Trip, slug=self.kwargs.get('trip'))
 
-        try:
-            wp = wpContent.get_posts(trip)
-            comments = wpContent.get_comment_qty(trip)
-        except Exception:
-            wp_error = 'Something went wrong with getting data from https://unknownbug.net/nezinomas/'
+        self.kwargs['trip_from_maps_view'] = trip
 
         context = {
-            'wp': wp,
-            'wp_error': wp_error,
             'trip': trip,
-            'qty': comments,
-            'st': statistic_service.get_statistic(trip),
+            'posts': Posts.as_view()(self.request, **self.kwargs).rendered_content,
+            'statistic': statistic_service.get_statistic(trip),
             'google_api_key': settings.ENV("GOOGLE_API_KEY"),
             'js_version': os.path.getmtime(
                 f'{settings.MEDIA_ROOT}/points/{trip.pk}-points.js'),
+        }
+
+        return super().get_context_data(*args, **kwargs) | context
+
+
+class Posts(TemplateView):
+    template_name = 'maps/posts.html'
+
+    def get_context_data(self, *args, **kwargs):
+        trip = self.kwargs.get('trip_from_maps_view')
+
+        if not trip:
+            trip = get_object_or_404(models.Trip, slug=self.kwargs.get('trip'))
+
+        offset = int(self.request.GET.get('offset', 0))
+        next_offset = offset + 10
+
+        posts = None
+        wp_error = False
+        last_record = True
+        comments_qty = {}
+
+        if qs := models.CommentQty.objects \
+                .filter(trip=trip) \
+                .values('post_id', 'qty') \
+                .order_by('-post_id')[offset:next_offset]:
+
+            last_record = False
+            posts_ids = []
+
+            for row in qs:
+                post_id = row['post_id']
+                posts_ids.append(post_id)
+                comments_qty[post_id] = row['qty']
+
+            link = f'posts?include={",".join(map(str, posts_ids))}&per_page=100&_fields=id,link,title,date,content'
+
+            try:
+                response = wpContent.get_content(trip.blog, link)
+                posts = json.loads(response.text)
+            except Exception:
+                wp_error = 'Something went wrong with getting data from https://unknownbug.net/nezinomas/'
+
+        context = {
+            'trip': trip,
+            'posts': posts,
+            'comments_qty': comments_qty,
+            'offset': next_offset,
+            'last_record': last_record,
+            'wp_error': wp_error,
         }
 
         return super().get_context_data(*args, **kwargs) | context
@@ -54,8 +95,8 @@ class Comments(TemplateView):
     def get_context_data(self, **kwargs):
         trip = get_object_or_404(models.Trip, slug=self.kwargs.get('trip'))
         post_id = self.kwargs.get('post_id')
-        wp = wpContent.get_comments(trip, [post_id])
-        context = {'comments': wp,}
+        posts = wpContent.get_comments(trip, [post_id])
+        context = {'comments': posts,}
 
         return super().get_context_data(**kwargs) | context
 

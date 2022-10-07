@@ -1,67 +1,49 @@
-from mock import patch
+import json
+from types import SimpleNamespace
 
-from django.test import TestCase
+import pytest
+from mock import call, patch
 
-from ..models import Trip
-from ..utils import wp_content as wp
-
-class WpContentTest(TestCase):
-    def setUp(self):
-        self.trip = Trip.objects.create(
-            title='Trip',
-            start_date='2000-01-01',
-            end_date='2000-06-01'
-        )
-
-        patcher_post = patch('project.maps.utils.wp_content.get_posts')
-        self.mock_call = patcher_post.start()
-        self.mock_call.return_value = [{'id': 101}, {'id': 102}]
-        self.addCleanup(patcher_post.stop)
+from ..utils import wp_content as WP
 
 
-    def test_create_post_id_dictionary(self):
-        dict = wp.create_post_id_dictionary(self.trip)
-
-        self.assertDictEqual(dict, {'101': 0, '102': 0})
-
-
-    def test_comment_rest_link_01(self):
-        link = wp.create_comment_rest_link(**{'101': 0, '102': 0})
-
-        self.assertEqual(link, 'comments?per_page=100&post=101&post=102')
+@pytest.fixture
+def trip():
+    return SimpleNamespace(blog='Blog_Url', blog_category=6)
 
 
-    def test_comment_rest_link_02(self):
-        link = wp.create_comment_rest_link(**{})
+@patch('project.maps.utils.wp_content.get_content')
+def test_get_posts_ids_pages_lte_one(mck, trip):
+    wp = SimpleNamespace(text=json.dumps([{'id': 1}]), headers={'X-WP-TotalPages': 1})
+    mck.side_effect = [wp]
 
-        self.assertEqual(link, 'comments?per_page=100')
+    actual = WP.get_posts_ids(trip)
 
-
-    def test_comment_rest_link_06(self):
-        link = wp.create_comment_rest_link('', **{})
-
-        self.assertEqual(link, 'comments?per_page=100')
+    assert actual == [1]
 
 
-    def test_comment_rest_link_07(self):
-        link = wp.create_comment_rest_link('')
+@patch('project.maps.utils.wp_content.get_content')
+def test_get_posts_ids_pages_gt_one(mck, trip):
+    wp1 = SimpleNamespace(text=json.dumps([{'id': 1}]), headers={'X-WP-TotalPages': 2})
+    wp2 = SimpleNamespace(text=json.dumps([{'id': 2}]), headers={'X-WP-TotalPages': 2})
+    mck.side_effect = [wp1, wp2]
 
-        self.assertEqual(link, 'comments?per_page=100')
+    actual = WP.get_posts_ids(trip)
 
-
-    def test_comment_rest_link_03(self):
-        link = wp.create_comment_rest_link('101')
-
-        self.assertEqual(link, 'comments?per_page=100&post=101')
-
-
-    def test_comment_rest_link_04(self):
-        link = wp.create_comment_rest_link('101', '102')
-
-        self.assertEqual(link, 'comments?per_page=100&post=101&post=102')
+    assert actual == [1, 2]
 
 
-    def test_comment_rest_link_05(self):
-        link = wp.create_comment_rest_link('101', **{'102': 0})
+@patch('project.maps.utils.wp_content.get_content')
+def test_get_posts_ids_pages_link_offset(mck, trip):
+    wp1 = SimpleNamespace(text=json.dumps([{'id': 1}]), headers={'X-WP-TotalPages': 2})
+    wp2 = SimpleNamespace(text=json.dumps([{'id': 2}]), headers={'X-WP-TotalPages': 2})
+    mck.side_effect = [wp1, wp2]
 
-        self.assertEqual(link, 'comments?per_page=100&post=101&post=102')
+    WP.get_posts_ids(trip)
+
+    expected = [
+        call('Blog_Url', 'posts?categories=6&_fields=id&per_page=100'),
+        call('Blog_Url', 'posts?categories=6&_fields=id&per_page=100&offset=100')
+    ]
+
+    assert mck.call_args_list == expected
