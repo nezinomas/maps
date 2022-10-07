@@ -69,7 +69,8 @@ class Posts(TemplateView):
                 response = wpContent.get_content(trip.blog, link)
                 posts = json.loads(response.text)
             except Exception:
-                wp_error = 'Something went wrong with getting data from https://unknownbug.net/nezinomas/'
+                wp_error = 'Something went wrong with \
+                            getting data from https://unknownbug.net/nezinomas/'
 
         context = {
             'trip': trip,
