@@ -28,21 +28,16 @@ def get_json(blog_url: str, link: str) -> Dict:
 
 
 def get_all_pages_content(trip, link):
+    per_page = 100
+    link = f'{link}&per_page={per_page}'
     response = get_content(trip.blog, link)
     content = json.loads(response.text)
     pages = int(response.headers['X-WP-TotalPages'])
 
     if pages > 1:
         for page in range(1, pages):
-            link_offset = f'{link}&offset={page * 100}'
+            link_offset = f'{link}&offset={page * per_page}'
             response = get_content(trip.blog, link_offset)
             content += json.loads(response.text)
 
     return content
-
-
-def get_posts_ids(trip):
-    link = f"posts?categories={trip.blog_category}&_fields=id&per_page=100"
-    content = get_all_pages_content(trip, link)
-
-    return [x['id'] for x in content]
