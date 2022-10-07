@@ -1,4 +1,3 @@
-import json
 import os
 
 from django.conf import settings
@@ -67,8 +66,7 @@ class Posts(TemplateView):
             link = f'posts?include={ids}&per_page=100&_fields=id,link,title,date,content'
 
             try:
-                response = wpContent.get_content(trip.blog, link)
-                posts = json.loads(response.text)
+                  posts = wpContent.get_json(trip.blog, link)
             except Exception:
                 wp_error = 'Something went wrong with \
                             getting data from https://unknownbug.net/nezinomas/'
@@ -90,9 +88,10 @@ class Comments(TemplateView):
 
     def get_context_data(self, **kwargs):
         trip = get_object_or_404(models.Trip, slug=self.kwargs.get('trip'))
-        post_id = self.kwargs.get('post_id')
-        posts = wpContent.get_comments(trip, [post_id])
-        context = {'comments': posts,}
+        link = f'comments?post={self.kwargs.get("post_id")}'
+        context = {
+            'comments': wpContent.get_json(trip.blog, link),
+        }
 
         return super().get_context_data(**kwargs) | context
 

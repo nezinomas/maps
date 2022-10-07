@@ -1,7 +1,9 @@
 import json
+from typing import Dict
+from urllib import response
 
-from wordpress import API
 from django.conf import settings
+from wordpress import API
 
 
 def get_content(blog_url, link_end):
@@ -21,6 +23,11 @@ def get_content(blog_url, link_end):
     return wpapi.get(link_end)
 
 
+def get_json(blog_url: str, link: str) -> Dict:
+    response = get_content(blog_url, link)
+    return json.loads(response.text)
+
+
 def get_posts_ids(trip):
     per_page = 100
     link = f"posts?categories={trip.blog_category}&_fields=id&per_page={per_page}"
@@ -35,10 +42,3 @@ def get_posts_ids(trip):
             content += json.loads(response.text)
 
     return [x['id'] for x in content]
-
-
-def get_comments(trip, posts_id_arr):
-    link = f'comments?post={",".join(map(str, posts_id_arr))}'
-    response = get_content(trip.blog, link)
-
-    return json.loads(response.text)
