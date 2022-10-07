@@ -23,6 +23,22 @@ def get_content(blog_url, link_end):
     return json.loads(r.text)
 
 
+def get_posts_ids(trip):
+    per_page = 100
+    link = f"posts?categories={trip.blog_category}&_fields=id&per_page={per_page}"
+    response = get_content(trip.blog, link)
+    content = json.loads(response.text)
+    pages = int(response.headers['X-WP-TotalPages'])
+
+    if pages > 1:
+        for page in range(1, pages):
+            link_offset = f'{link}&offset={page * per_page}'
+            response = get_content(trip.blog, link_offset)
+            content += json.loads(response.text)
+
+    return [x['id'] for x in content]
+
+
 def get_posts(trip):
     link = f"posts?categories={trip.blog_category}&per_page=70"
 
