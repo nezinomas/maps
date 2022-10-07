@@ -37,19 +37,8 @@ def get_posts_ids(trip):
     return [x['id'] for x in content]
 
 
-def get_posts(trip):
-    link = f"posts?categories={trip.blog_category}&per_page=70"
-
-    return get_content(trip.blog, link)
-
-
 def get_comments(trip, posts_id_arr):
     link = f'comments?post={",".join(map(str, posts_id_arr))}'
+    response = get_content(trip.blog, link)
 
-    return get_content(trip.blog, link)
-
-
-def get_comment_qty(trip):
-    comments = trip.comment_qty.all().values('post_id', 'qty')
-
-    return {comment['post_id']: comment['qty'] for comment in comments}
+    return json.loads(response.text)
