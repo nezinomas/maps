@@ -1,13 +1,13 @@
 {% load parse_date_filter %}
-{% for c in comments  %}
+{% for comment in comments  %}
         <div class="comment-context media-body mt-5 pt-3">
             <div class="comment-head">
-                <h3 class="comment-author">{{ c.author_name }}</h3>
-                <span class="comment-date">{{ c.date|parse_date|date:'Y-m-d H:m' }}</span>
+                <h3 class="comment-author">{{ comment.author_name }}</h3>
+                <span class="comment-date">{{ comment.date|parse_date|date:'Y-m-d H:m' }}</span>
             </div>
 
             <div class="comment-content">
-                {{ c.content.rendered|safe }}
+                {{ comment.content.rendered|safe }}
             </div>
             {% empty %}
             <div class="comment-context media-body my-3 pt-3 text-center">
