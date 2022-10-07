@@ -78,12 +78,12 @@ class Posts(TemplateView):
                 wp_error = 'Something went wrong with getting data from https://unknownbug.net/nezinomas/'
 
         context = {
-            'posts': posts,
-            'wp_error': wp_error,
             'trip': trip,
+            'posts': posts,
             'comments_qty': comments_qty,
             'offset': next_offset,
-            'last_record': last_record
+            'last_record': last_record,
+            'wp_error': wp_error,
         }
 
         return super().get_context_data(*args, **kwargs) | context
