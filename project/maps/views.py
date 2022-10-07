@@ -63,7 +63,8 @@ class Posts(TemplateView):
 
             last_record = False
             comments_qty = {row['post_id']: row['qty'] for row in qs}
-            link = f'posts?include={",".join(map(str, comments_qty.keys()))}&per_page=100&_fields=id,link,title,date,content'
+            ids = ",".join(map(str, comments_qty.keys()))
+            link = f'posts?include={ids}&per_page=100&_fields=id,link,title,date,content'
 
             try:
                 response = wpContent.get_content(trip.blog, link)
