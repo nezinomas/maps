@@ -4,20 +4,20 @@
 
 {% if not wp_error %}
     {% if not last_record %}
-        {% for w in wp %}
+        {% for post in posts %}
         <div class="row mx-auto pt-5">
             <div class="col mx-auto text-center" x-data="{ open: false }" {% if forloop.last %} hx-get="{% url 'maps:posts' trip %}?offset={{offset}}" hx-trigger="revealed" hx-swap="afterend" hx-indicator="#indicator"{% endif %}>
-                <h2 class="post-title "><a href="{{ w.link }} " rel="bookmark ">{{ w.title.rendered|safe }}</a></h2>
-                <p class="post-date">{{ w.date|parse_date|date:'Y-m-d  H:m' }}</p>
+                <h2 class="post-title "><a href="{{ post.link }} " rel="bookmark ">{{ post.title.rendered|safe }}</a></h2>
+                <p class="post-date">{{ post.date|parse_date|date:'Y-m-d  H:m' }}</p>
 
-                <div class="post-content mt-2">{{ w.content.rendered|safe }}</div>
+                <div class="post-content mt-2">{{ post.content.rendered|safe }}</div>
 
                 <p>
-                    <a role="button" class="btn-as-link" hx-get="{% url 'maps:comments' trip.slug w.id %}" hx-target="#post_{{w.id}}" hx-trigger="click once" hx-indicator="#indicator" x-on:click="open = ! open" x-text="open ? 'Slėpti komentarus' : 'Rodyti komentarus ({% comment_qty qty w.id %}) ' "></a>
+                    <a role="button" class="btn-as-link" hx-get="{% url 'maps:comments' trip.slug post.id %}" hx-target="#post_{{post.id}}" hx-trigger="click once" hx-indicator="#indicator" x-on:click="open = ! open" x-text="open ? 'Slėpti komentarus' : 'Rodyti komentarus ({% comment_qty qty post.id %}) ' "></a>
                         &nbsp;
-                    <a href="{{ w.link }}#respond" class="ml-2">Rašyti komentarą</a>
+                    <a href="{{ post.link }}#respond" class="ml-2">Rašyti komentarą</a>
                 </p>
-                <div class="com comments-area comments mt-2" id="post_{{w.id}}" x-show="open"></div>
+                <div class="com comments-area comments mt-2" id="post_{{post.id}}" x-show="open"></div>
             </div>
         </div>{% endfor %}
     {% endif %}

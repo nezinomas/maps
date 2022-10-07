@@ -51,7 +51,7 @@ class Posts(TemplateView):
         offset = int(self.request.GET.get('offset', 0))
         next_offset = offset + 10
 
-        wp = None
+        posts = None
         wp_error = False
         last_record = True
         comments_qty = {}
@@ -73,12 +73,12 @@ class Posts(TemplateView):
 
             try:
                 response = wpContent.get_content(trip.blog, link)
-                wp = json.loads(response.text)
+                posts = json.loads(response.text)
             except Exception:
                 wp_error = 'Something went wrong with getting data from https://unknownbug.net/nezinomas/'
 
         context = {
-            'wp': wp,
+            'posts': posts,
             'wp_error': wp_error,
             'trip': trip,
             'qty': comments_qty,
@@ -95,8 +95,8 @@ class Comments(TemplateView):
     def get_context_data(self, **kwargs):
         trip = get_object_or_404(models.Trip, slug=self.kwargs.get('trip'))
         post_id = self.kwargs.get('post_id')
-        wp = wpContent.get_comments(trip, [post_id])
-        context = {'comments': wp,}
+        posts = wpContent.get_comments(trip, [post_id])
+        context = {'comments': posts,}
 
         return super().get_context_data(**kwargs) | context
 
