@@ -8,7 +8,7 @@ from ..models import Trip, CommentQty
 from . import wp_content as wpContent
 
 
-def _count_comments(trip):
+def count_comments(trip):
     posts = wpContent.get_posts(trip)
     arr = {post.get('id'): 0 for post in posts}
     comments = wpContent.get_comments(trip, arr.keys())
@@ -22,7 +22,7 @@ def _count_comments(trip):
 
 def push_comments_qty(trip):
     with transaction.atomic():
-        comments = _count_comments(trip)
+        comments = count_comments(trip)
 
         for post_id, qty in comments.items():
             CommentQty.objects.update_or_create(
