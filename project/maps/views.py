@@ -88,7 +88,7 @@ class Comments(TemplateView):
 
     def get_context_data(self, **kwargs):
         trip = get_object_or_404(models.Trip, slug=self.kwargs.get('trip'))
-        link = f'comments?post={self.kwargs.get("post_id")}'
+        link = f'comments?post={self.kwargs.get("post_id")}&_fields=author_name,date,content'
         context = {
             'comments': wpContent.get_json(trip.blog, link),
         }
