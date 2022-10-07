@@ -1,6 +1,5 @@
 import json
 from typing import Dict
-from urllib import response
 
 from django.conf import settings
 from wordpress import API
