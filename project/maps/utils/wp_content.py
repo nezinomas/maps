@@ -18,9 +18,7 @@ def get_content(blog_url, link_end):
         callback=f'{blog_url}/oauth1_callback'
     )
 
-    r = wpapi.get(link_end)
-
-    return json.loads(r.text)
+    return wpapi.get(link_end)
 
 
 def get_posts_ids(trip):
