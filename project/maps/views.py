@@ -28,8 +28,8 @@ class Map(TemplateView):
         self.kwargs['trip_from_maps_view'] = trip
 
         context = {
-            'posts': Posts.as_view()(self.request, **self.kwargs).rendered_content,
             'trip': trip,
+            'posts': Posts.as_view()(self.request, **self.kwargs).rendered_content,
             'st': statistic_service.get_statistic(trip),
             'google_api_key': settings.ENV("GOOGLE_API_KEY"),
             'js_version': os.path.getmtime(
