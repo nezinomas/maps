@@ -9,7 +9,7 @@ from ..utils import wp_content as WP
 
 @pytest.fixture
 def trip():
-    return SimpleNamespace(blog='url', blog_category=6)
+    return SimpleNamespace(blog='Blog_Url', blog_category=6)
 
 
 @patch('project.maps.utils.wp_content.get_content')
@@ -42,8 +42,8 @@ def test_get_posts_ids_pages_link_offset(mck, trip):
     WP.get_posts_ids(trip)
 
     expected = [
-        call('url', 'posts?categories=6&_fields=id&per_page=100'),
-        call('url', 'posts?categories=6&_fields=id&per_page=100&offset=100')
+        call('Blog_Url', 'posts?categories=6&_fields=id&per_page=100'),
+        call('Blog_Url', 'posts?categories=6&_fields=id&per_page=100&offset=100')
     ]
 
     assert mck.call_args_list == expected
