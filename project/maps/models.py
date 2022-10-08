@@ -1,3 +1,4 @@
+from bulk_update_or_create import BulkUpdateOrCreateQuerySet
 from django.db import models
 from django.utils.text import slugify
 
@@ -36,6 +37,8 @@ class Trip(models.Model):
 
 
 class CommentQty(models.Model):
+    objects = BulkUpdateOrCreateQuerySet.as_manager()
+
     post_id = models.IntegerField(
         null=True,
         blank=True,
