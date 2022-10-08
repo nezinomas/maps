@@ -92,6 +92,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.humanize',
+    'django-bulk-update-or-create',
     'project.maps'
 ]
 
