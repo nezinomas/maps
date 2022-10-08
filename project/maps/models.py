@@ -43,6 +43,10 @@ class CommentQty(models.Model):
     qty = models.IntegerField(
         default=0
     )
+    post_date = models.DateTimeField(
+        null=True,
+        blank=True,
+    )
 
     trip = models.ForeignKey(
         Trip,
