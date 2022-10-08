@@ -1,7 +1,10 @@
 import datetime as dt
+from collections import Counter
+from operator import itemgetter
 
 from dateutil.relativedelta import relativedelta
 from django.db import transaction
+from django.utils import timezone
 
 from ..models import CommentQty, Trip
 from . import wp_content as wpContent
@@ -9,32 +12,53 @@ from . import wp_content as wpContent
 
 def count_comments(trip):
     # get all posts id
-    link = f"posts?categories={trip.blog_category}&_fields=id"
+    link = f"posts?categories={trip.blog_category}&_fields=id,date"
     posts = wpContent.get_all_pages_content(trip, link)
-    arr = {post['id']: 0 for post in posts}
+    post_id_list = list(map(itemgetter('id'), posts))
 
     # get comments for posts
-    link = f'comments?post={",".join(map(str, arr.keys()))}&_fields=post'
+    link = f'comments?post={",".join(map(str, post_id_list))}&_fields=post'
     comments = wpContent.get_all_pages_content(trip, link)
 
     # count comments
-    for comment in comments:
-        post_id = comment.get('post')
-        arr[post_id] += 1
+    arr = list(map(itemgetter('post'), comments))
+    counted = dict(Counter(arr))
 
-    return arr
+    # make new list of dictionaries for bulk_create_update
+    create_or_update = []
+    for post in posts:
+        post_id = post['id']
+        qty = counted.get(post_id, 0)
+        date = dt.datetime.strptime(post['date'], "%Y-%m-%dT%H:%M:%S")
+
+        create_or_update.append(
+            CommentQty(
+                trip=trip,
+                post_id=post_id,
+                post_date=date.astimezone(timezone.utc), qty=qty))
+
+    # return two objects
+    # 1 list of CommentsQty objects for create/update
+    # 2 list of posts to show in page
+    return create_or_update, post_id_list
 
 
 def push_comments_qty(trip):
     with transaction.atomic():
-        comments = count_comments(trip)
+        create_or_update, active_posts = count_comments(trip)
 
-        for post_id, qty in comments.items():
-            CommentQty.objects.update_or_create(
-                trip_id=trip.pk,
-                post_id=post_id,
-                defaults={'qty': qty}
-            )
+        # create or update
+        CommentQty.objects.bulk_update_or_create(
+            create_or_update, ['post_date', 'qty'], match_field='post_id')
+
+        # delete obsolete rows
+        all_posts = \
+            CommentQty.objects \
+            .filter(trip=trip) \
+            .values_list('post_id', flat=True)
+
+        if diff := list(set(all_posts) - set(active_posts)):
+            CommentQty.objects.filter(trip=trip, post_id__in=diff).delete()
 
 
 def push_comments_qty_for_all_trips():
