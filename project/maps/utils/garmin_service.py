@@ -103,16 +103,23 @@ class GarminService:
             'total_time_seconds': float(total_time),
             'avg_speed': float(activity.get("averageSpeed")) * 3.6,
             'max_speed': float(activity.get("maxSpeed")) * 3.6,
-            'calories': int(activity.get("calories")),
+            'calories': 0,
             'avg_cadence': None,
             'avg_heart': None,
             'max_heart': None,
             'avg_temperature': None,
-            'min_altitude': float(activity.get("minElevation")),
-            'max_altitude': float(activity.get("maxElevation")),
             'ascent': float(activity.get("elevationGain")),
             'descent': float(activity.get("elevationLoss")),
         }
+
+        with contextlib.suppress(TypeError, ValueError):
+            stats['calories'] = int(activity.get("calories"))
+
+        with contextlib.suppress(TypeError, ValueError):
+            stats['min_altitude'] = float(activity.get("minElevation"))
+
+        with contextlib.suppress(TypeError, ValueError):
+            stats['max_altitude'] = float(activity.get("maxElevation"))
 
         with contextlib.suppress(TypeError, ValueError):
             stats['avg_heart'] = float(activity.get("averageHR"))
