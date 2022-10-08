@@ -85,7 +85,7 @@ class GarminService:
     def get_activities(self, api: Garmin) -> List[Dict]:
         try:
             activities = api.get_activities(0, 15)  # 0=start, 1=limit
-            # activities = api.get_activities_by_date('2016-08-15', '2016-09-09', 'cycling')
+            # activities = api.get_activities_by_date('2017-06-25', '2017-07-24', 'cycling')
         except Exception as e:
             return
 
