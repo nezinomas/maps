@@ -58,7 +58,7 @@ class Posts(TemplateView):
         if qs := models.CommentQty.objects \
                 .filter(trip=trip) \
                 .values('post_id', 'qty') \
-                .order_by('-post_id')[offset:next_offset]:
+                .order_by('-post_date')[offset:next_offset]:
 
             last_record = False
             comments_qty = {row['post_id']: row['qty'] for row in qs}
