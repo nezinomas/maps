@@ -35,7 +35,8 @@ def count_comments(trip):
             CommentQty(
                 trip=trip,
                 post_id=post_id,
-                post_date=date.astimezone(timezone.utc), qty=qty))
+                post_date=date.astimezone(timezone.utc),
+                qty=qty))
 
     # return two objects
     # 1 list of CommentsQty objects for create/update
