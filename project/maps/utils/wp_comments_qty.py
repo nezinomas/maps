@@ -24,7 +24,7 @@ def count_comments(trip):
     arr = list(map(itemgetter('post'), comments))
     counted = dict(Counter(arr))
 
-    # make new list of dictionaries for bulk_create_update
+    # make new list of CommentQty objects for bulk_create_update
     create_or_update = []
     for post in posts:
         post_id = post['id']
