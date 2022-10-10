@@ -37,7 +37,7 @@ class PointFactory(factory.django.DjangoModelFactory):
     longitude = 22.22
     altitude = 33.33
     distance_meters = 44.44
-    datetime = datetime(2022, 1, 1, 3, 2, 1, tzinfo=timezone.utc)
+    datetime = datetime(1999, 1, 1, 1, 1, 1, tzinfo=timezone.utc)
 
     track = factory.SubFactory(TrackFactory)
 
@@ -47,7 +47,7 @@ class CommentQtyFactory(factory.django.DjangoModelFactory):
         model = CommentQty
 
     post_id = 1
-    post_date = datetime(1999, 1, 2, 3, 4, 5)
+    post_date = datetime(1999, 1, 1, 1, 1, 1, tzinfo=timezone.utc)
     qty = 2
     trip = factory.SubFactory(TripFactory)
 
