@@ -3,7 +3,7 @@ from datetime import date, datetime, timezone
 import factory
 from django.contrib.auth.models import User
 
-from .models import Point, Track, Trip
+from .models import CommentQty, Point, Track, Trip
 
 
 class TripFactory(factory.django.DjangoModelFactory):
@@ -40,6 +40,16 @@ class PointFactory(factory.django.DjangoModelFactory):
     datetime = datetime(2022, 1, 1, 3, 2, 1, tzinfo=timezone.utc)
 
     track = factory.SubFactory(TrackFactory)
+
+
+class CommentQtyFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = CommentQty
+
+    post_id = 1
+    post_date = datetime(1999, 1, 2, 3, 4, 5)
+    qty = 2
+    trip = factory.SubFactory(TripFactory)
 
 
 class UserFactory(factory.django.DjangoModelFactory):
