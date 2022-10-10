@@ -1,36 +1,82 @@
 import json
+from datetime import datetime, timezone
 from types import SimpleNamespace
 
 import pytest
 from mock import call, patch
 
+from ..factories import CommentQtyFactory, TripFactory
+from ..models import CommentQty
 from ..utils import wp_comments_qty as CQ
 
-
-@pytest.fixture
-def trip():
-    return SimpleNamespace(blog='Blog_Url', blog_category=6)
+pytestmark = pytest.mark.django_db
 
 
-@patch('project.maps.utils.wp_content.get_content')
-@patch('project.maps.utils.wp_content.get_posts_ids')
-def test_count_comments(mck_ids, mck_content, trip):
-    mck_ids.return_value = [1, 2]
-    mck_content.return_value = SimpleNamespace(text=json.dumps([{'post': 1}, {'post': 1}]))
+@patch('project.maps.utils.wp_content.get_all_pages_content')
+def test_count_comments(mck_content):
+    trip = TripFactory.build()
 
-    actual = CQ.count_comments(trip)
+    posts = [{'id': 1, 'date': '1999-01-01T03:01:01'}]
+    comments = [{'post': 1}, {'post': 1}]
+    mck_content.side_effect = [posts, comments]
 
-    assert actual == {1: 2, 2: 0}
+    create_or_update, post_id_list = CQ.count_comments(trip)
+
+    assert (len(create_or_update)) == 1
+    assert create_or_update[0].trip.title == 'Trip'
+    assert create_or_update[0].post_id == 1
+    assert create_or_update[0].post_date == datetime(1999, 1, 1, 1, 1, 1, tzinfo=timezone.utc)
+    assert create_or_update[0].qty == 2
+
+    assert post_id_list == [1]
 
 
-@patch('project.maps.utils.wp_content.get_content')
-@patch('project.maps.utils.wp_content.get_posts_ids')
-def test_count_comments_link(mck_ids, mck_content, trip):
-    mck_ids.return_value = [1, 2]
-    mck_content.return_value = SimpleNamespace(text=json.dumps([{'post': 1}, {'post': 1}]))
+@patch('project.maps.utils.wp_content.get_all_pages_content')
+def test_count_comments_no_posts(mck_content):
+    trip = TripFactory.build()
+
+    posts = []
+    mck_content.side_effect = [posts]
+
+    create_or_update, post_id_list = CQ.count_comments(trip)
+
+    assert create_or_update is None
+    assert post_id_list is None
+    assert mck_content.call_count == 1
+
+
+@patch('project.maps.utils.wp_content.get_all_pages_content')
+def test_count_comments_no_comments(mck_content):
+    trip = TripFactory.build()
+
+    posts = [{'id': 1, 'date': '1999-01-01T03:01:01'}]
+    comments = []
+    mck_content.side_effect = [posts, comments]
+
+    create_or_update, post_id_list = CQ.count_comments(trip)
+
+    assert (len(create_or_update)) == 1
+    assert create_or_update[0].trip.title == 'Trip'
+    assert create_or_update[0].post_id == 1
+    assert create_or_update[0].post_date == datetime(1999, 1, 1, 1, 1, 1, tzinfo=timezone.utc)
+    assert create_or_update[0].qty == 0
+
+    assert post_id_list == [1]
+
+
+@patch('project.maps.utils.wp_content.get_all_pages_content')
+def test_count_comments_link(mck_content):
+    trip = TripFactory.build()
+
+    posts = [{'id': 1, 'date': '1999-01-01T03:01:01'}]
+    comments = [{'post': 1}, {'post': 1}]
+    mck_content.side_effect = [posts, comments]
 
     CQ.count_comments(trip)
 
-    expected = [call('Blog_Url', 'comments?post=1,2&_fields=post')]
+    expected = [
+        call(trip, 'posts?categories=666&_fields=id,date'),
+        call(trip, 'comments?post=1&_fields=post')
+    ]
 
     assert mck_content.call_args_list == expected

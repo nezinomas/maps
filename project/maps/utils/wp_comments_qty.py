@@ -11,9 +11,16 @@ from . import wp_content as wpContent
 
 
 def count_comments(trip):
+
     # get all posts id
     link = f"posts?categories={trip.blog_category}&_fields=id,date"
     posts = wpContent.get_all_pages_content(trip, link)
+
+    # return None if  there are no posts for given category
+    if not posts:
+        return None, None
+
+    # generate post_id list
     post_id_list = list(map(itemgetter('id'), posts))
 
     # get comments for posts
