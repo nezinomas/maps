@@ -11,7 +11,6 @@ from . import wp_content as wpContent
 
 
 def count_comments(trip):
-
     # get all posts id
     link = f"posts?categories={trip.blog_category}&_fields=id,date"
     posts = wpContent.get_all_pages_content(trip, link)
@@ -52,21 +51,23 @@ def count_comments(trip):
 
 
 def push_comments_qty(trip):
-    with transaction.atomic():
-        create_or_update, active_posts = count_comments(trip)
+    create_or_update, active_posts = count_comments(trip)
 
-        # create or update
-        CommentQty.objects.bulk_update_or_create(
-            create_or_update, ['post_date', 'qty'], match_field='post_id')
+    if not create_or_update:
+        return
 
-        # delete obsolete rows
-        all_posts = \
-            CommentQty.objects \
-            .filter(trip=trip) \
-            .values_list('post_id', flat=True)
+    # create or update
+    CommentQty.objects.bulk_update_or_create(
+        create_or_update, ['post_date', 'qty'], match_field='post_id')
 
-        if diff := list(set(all_posts) - set(active_posts)):
-            CommentQty.objects.filter(trip=trip, post_id__in=diff).delete()
+    # delete obsolete rows
+    all_posts = \
+        CommentQty.objects \
+        .filter(trip=trip) \
+        .values_list('post_id', flat=True)
+
+    if diff := list(set(all_posts) - set(active_posts)):
+        CommentQty.objects.filter(trip=trip, post_id__in=diff).delete()
 
 
 def push_comments_qty_for_all_trips():

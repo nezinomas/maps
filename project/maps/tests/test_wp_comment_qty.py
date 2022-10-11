@@ -80,3 +80,53 @@ def test_count_comments_link(mck_content):
     ]
 
     assert mck_content.call_args_list == expected
+
+
+@patch('project.maps.utils.wp_comments_qty.count_comments')
+def test_push_comments_new_record(mck):
+    trip = TripFactory()
+    create_or_update = [CommentQtyFactory.build(trip=trip)]
+    post_id = [1]
+    mck.return_value = (create_or_update, post_id)
+
+    CQ.push_comments_qty(trip)
+    actual = CommentQty.objects.all()
+
+    assert actual.count() == 1
+    assert actual[0].post_date == datetime(1999, 1, 1, 1, 1, 1, tzinfo=timezone.utc)
+    assert actual[0].qty == 2
+
+
+@patch('project.maps.utils.wp_comments_qty.count_comments')
+def test_push_comments_update_qty_and_date(mck):
+    CommentQtyFactory()
+    trip = TripFactory()
+    create_or_update = [CommentQtyFactory.build(
+            trip=trip,
+            post_id=1,
+            post_date=datetime(2000, 1, 1, 1, 1, 1, tzinfo=timezone.utc),
+            qty=3)]
+    post_id = [1]
+    mck.return_value = (create_or_update, post_id)
+
+    CQ.push_comments_qty(trip)
+    actual = CommentQty.objects.all()
+
+    assert actual.count() == 1
+    assert actual[0].post_date == datetime(2000, 1, 1, 1, 1, 1, tzinfo=timezone.utc)
+    assert actual[0].qty == 3
+
+
+@patch('project.maps.utils.wp_comments_qty.count_comments')
+def test_push_comments_update_delete_old_post_id(mck):
+    trip = TripFactory()
+    obj = CommentQtyFactory()
+    obj_old = CommentQtyFactory(post_id=2)
+
+    mck.return_value = ([obj], [1])
+
+    CQ.push_comments_qty(trip)
+    actual = CommentQty.objects.all()
+
+    assert actual.count() == 1
+    assert actual[0].post_id == obj.post_id
