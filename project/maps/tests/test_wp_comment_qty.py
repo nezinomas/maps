@@ -1,6 +1,4 @@
-import json
 from datetime import datetime, timezone
-from types import SimpleNamespace
 
 import pytest
 from mock import call, patch
