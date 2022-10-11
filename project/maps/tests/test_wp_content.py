@@ -13,37 +13,37 @@ def trip():
 
 
 @patch('project.maps.utils.wp_content.get_content')
-def test_get_posts_ids_pages_lte_one(mck, trip):
+def test_get_all_pages_content_pages_lte_one(mck, trip):
     wp = SimpleNamespace(text=json.dumps([{'id': 1}]), headers={'X-WP-TotalPages': 1})
     mck.side_effect = [wp]
 
-    actual = WP.get_posts_ids(trip)
+    actual = WP.get_all_pages_content(trip, 'some_url')
 
-    assert actual == [1]
+    assert actual == [{'id': 1}]
 
 
 @patch('project.maps.utils.wp_content.get_content')
-def test_get_posts_ids_pages_gt_one(mck, trip):
+def test_get_all_pages_content_pages_gt_one(mck, trip):
     wp1 = SimpleNamespace(text=json.dumps([{'id': 1}]), headers={'X-WP-TotalPages': 2})
     wp2 = SimpleNamespace(text=json.dumps([{'id': 2}]), headers={'X-WP-TotalPages': 2})
     mck.side_effect = [wp1, wp2]
 
-    actual = WP.get_posts_ids(trip)
+    actual = WP.get_all_pages_content(trip, 'some_url')
 
-    assert actual == [1, 2]
+    assert actual == [{'id': 1}, {'id': 2}]
 
 
 @patch('project.maps.utils.wp_content.get_content')
-def test_get_posts_ids_pages_link_offset(mck, trip):
+def test_get_all_pages_content_pages_link_offset(mck, trip):
     wp1 = SimpleNamespace(text=json.dumps([{'id': 1}]), headers={'X-WP-TotalPages': 2})
     wp2 = SimpleNamespace(text=json.dumps([{'id': 2}]), headers={'X-WP-TotalPages': 2})
     mck.side_effect = [wp1, wp2]
 
-    WP.get_posts_ids(trip)
+    WP.get_all_pages_content(trip, 'some_url')
 
     expected = [
-        call('Blog_Url', 'posts?categories=6&_fields=id&per_page=100'),
-        call('Blog_Url', 'posts?categories=6&_fields=id&per_page=100&offset=100')
+        call('Blog_Url', 'some_url&per_page=100'),
+        call('Blog_Url', 'some_url&per_page=100&offset=100')
     ]
 
     assert mck.call_args_list == expected
