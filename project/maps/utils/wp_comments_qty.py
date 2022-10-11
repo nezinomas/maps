@@ -3,7 +3,6 @@ from collections import Counter
 from operator import itemgetter
 
 from dateutil.relativedelta import relativedelta
-from django.db import transaction
 from django.utils import timezone
 
 from ..models import CommentQty, Trip
