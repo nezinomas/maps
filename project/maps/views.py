@@ -1,5 +1,4 @@
 import os
-
 from django.conf import settings
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import get_object_or_404
@@ -25,14 +24,13 @@ class Map(TemplateView):
         trip = get_object_or_404(models.Trip, slug=self.kwargs.get('trip'))
 
         self.kwargs['trip_from_maps_view'] = trip
-
+        points_file = os.path.join(settings.MEDIA_ROOT, 'points', f'{trip.pk}-points.js')
         context = {
             'trip': trip,
             'posts': Posts.as_view()(self.request, **self.kwargs).rendered_content,
             'statistic': statistic_service.get_statistic(trip),
             'google_api_key': settings.ENV("GOOGLE_API_KEY"),
-            'js_version': os.path.getmtime(
-                f'{settings.MEDIA_ROOT}/points/{trip.pk}-points.js'),
+            'js_version': os.path.getmtime(points_file),
         }
 
         return super().get_context_data(*args, **kwargs) | context
