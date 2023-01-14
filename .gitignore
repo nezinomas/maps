@@ -15,6 +15,7 @@ project/static/js/points.js
 *code-workspace
 .htaccess
 # Distribution / packaging
+media/*
 .Python
 ENV/
 build/
