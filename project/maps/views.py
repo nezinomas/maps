@@ -39,10 +39,7 @@ class Posts(TemplateView):
     template_name = 'maps/posts.html'
 
     def get_context_data(self, *args, **kwargs):
-        trip = self.kwargs.get('trip_from_maps_view')
-
-        if not trip:
-            trip = get_object_or_404(models.Trip, slug=self.kwargs.get('trip'))
+        trip = get_object_or_404(models.Trip, slug=self.kwargs.get('trip'))
 
         offset = int(self.request.GET.get('offset', 0))
         next_offset = offset + 10
