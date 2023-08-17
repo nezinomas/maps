@@ -1,27 +1,57 @@
 {% load parse_date_filter %}
 {% load datetime_filter %}
 {% load comment_qty %}
+{% load static %}
+
 
 {% if not wp_error %}
-    {% if not last_record %}
-        {% for post in posts %}
-        <div class="row mx-auto pt-5">
-            <div class="col mx-auto text-center" x-data="{ open: false }" {% if forloop.last %} hx-get="{% url 'maps:posts' trip.slug %}?offset={{offset}}" hx-trigger="revealed" hx-swap="afterend" hx-indicator="#indicator"{% endif %}>
-                <h2 class="post-title "><a href="{{ post.link }} " rel="bookmark ">{{ post.title.rendered|safe }}</a></h2>
-                <p class="post-date">{{ post.date|parse_date|date:'Y-m-d  H:m' }}</p>
+    {% if modula_gallery %}
+    <script src="{% static 'js/gallery.js' %}"></script>
 
-                <div class="post-content mt-2">{{ post.content.rendered|safe }}</div>
+    <link rel='stylesheet' id='modula-css'  href='https://unknownbug.net/nezinomas/wp-content/plugins/modula-best-grid-gallery/assets/css/front.css?ver=2.6.7' type='text/css' media='all' />
+    <script type='text/javascript' src='https://unknownbug.net/nezinomas/wp-includes/js/hoverintent-js.min.js?ver=2.2.1' id='hoverintent-js-js'></script>
+    <script type='text/javascript' src='https://unknownbug.net/nezinomas/wp-includes/js/imagesloaded.min.js?ver=4.1.4' id='imagesloaded-js'></script>
+    <script type='text/javascript' src='https://unknownbug.net/nezinomas/wp-includes/js/masonry.min.js?ver=4.2.2' id='masonry-js'></script>
+    <script type='text/javascript' src='https://unknownbug.net/nezinomas/wp-includes/js/jquery/jquery.masonry.min.js?ver=3.1.2b' id='jquery-masonry-js'></script>
+    <script type='text/javascript' src='https://unknownbug.net/nezinomas/wp-content/plugins/modula-best-grid-gallery/assets/js/front/fancybox.js?ver=2.6.7' id='modula-fancybox-js'></script>
+    <script type='text/javascript' src='https://unknownbug.net/nezinomas/wp-content/plugins/modula-best-grid-gallery/assets/js/modula-justified-wf.js?ver=2.6.7' id='modula-justified-wf-js'></script>
+    <script type="text/javascript" src="https://unknownbug.net/nezinomas/wp-content/plugins/modula-best-grid-gallery/assets/js/modula-wf.js?ver=2.7.4" id="modula-wf-js"></script>
 
-                <p>
-                    <a role="button" class="btn-as-link" hx-get="{% url 'maps:comments' trip.slug post.id %}" hx-target="#post_{{post.id}}" hx-trigger="click once" hx-indicator="#indicator" x-on:click="open = ! open" x-text="open ? 'Slėpti komentarus' : 'Rodyti komentarus ({% comment_qty comments_qty post.id %}) ' "></a>
-                        &nbsp;
-                    <a href="{{ post.link }}#respond" class="ml-2">Rašyti komentarą</a>
-                </p>
-                <div class="com comments-area comments mt-2" id="post_{{post.id}}" x-show="open"></div>
-            </div>
-        </div>{% endfor %}
+    <script type="text/javascript">
+    (function() {
+        var request, b = document.body, c = 'className', cs = 'customize-support', rcs = new RegExp('(^|\\s+)(no-)?'+cs+'(\\s+|$)');
+
+            request = true;
+
+        b[c] = b[c].replace( rcs, ' ' );
+        // The customizer requires postMessage and CORS (if the site is cross domain).
+        b[c] += ( window.postMessage && request ? ' ' : ' no-' ) + cs;
+    }());
+    </script>
     {% endif %}
 
+    {% for post in posts %}
+    <div class="row mx-auto pt-5">
+        <div class="col mx-auto text-center" x-data="{ open: false }">
+            <h2 class="post-title "><a href="{{ post.link }} " rel="bookmark ">{{ post.title.rendered|safe }}</a></h2>
+            <p class="post-date">{{ post.date|parse_date|date:'Y-m-d  H:m' }}</p>
+
+            <div class="post-content mt-2">{{ post.content.rendered }}</div>
+
+            <p>
+                <a role="button" class="btn-as-link" hx-get="{% url 'maps:comments' trip.slug post.id %}" hx-target="#post_{{post.id}}" hx-trigger="click once" hx-indicator="#indicator" x-on:click="open = ! open" x-text="open ? 'Slėpti komentarus' : 'Rodyti komentarus ({% comment_qty comments_qty post.id %}) ' "></a>
+                    &nbsp;
+                <a href="{{ post.link }}#respond" class="ml-2">Rašyti komentarą</a>
+            </p>
+            <div class="com comments-area comments mt-2" id="post_{{post.id}}" x-show="open"></div>
+        </div>
+    </div>
+
+    {% if forloop.last %}
+    <div hx-get="{% url 'maps:posts' trip.slug %}?offset={{offset}}" hx-trigger="intersect once" hx-swap="outerHTML" hx-indicator="#indicator">&nbsp;</div>
+    {% endif %}
+
+    {% endfor %}
 {% else %}
 <div class="row mx-auto pt-5">
     <div class="col- mx-auto text-center">{{ wp_error }}</div>

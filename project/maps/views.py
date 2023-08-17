@@ -1,7 +1,10 @@
 import os
+import re
+
 from django.conf import settings
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import get_object_or_404
+from django.utils.safestring import mark_safe
 from django.views.generic import ListView, TemplateView
 
 from . import models
@@ -27,7 +30,6 @@ class Map(TemplateView):
         points_file = os.path.join(settings.MEDIA_ROOT, 'points', f'{trip.pk}-points.js')
         context = {
             'trip': trip,
-            'posts': Posts.as_view()(self.request, **self.kwargs).rendered_content,
             'statistic': statistic_service.get_statistic(trip),
             'google_api_key': settings.ENV("GOOGLE_API_KEY"),
             'js_version': os.path.getmtime(points_file),
@@ -40,17 +42,14 @@ class Posts(TemplateView):
     template_name = 'maps/posts.html'
 
     def get_context_data(self, *args, **kwargs):
-        trip = self.kwargs.get('trip_from_maps_view')
-
-        if not trip:
-            trip = get_object_or_404(models.Trip, slug=self.kwargs.get('trip'))
+        trip = get_object_or_404(models.Trip, slug=self.kwargs.get('trip'))
 
         offset = int(self.request.GET.get('offset', 0))
         next_offset = offset + 10
 
         posts = None
+        modula_gallery = False
         wp_error = False
-        last_record = True
         comments_qty = {}
 
         if qs := models.CommentQty.objects \
@@ -58,24 +57,34 @@ class Posts(TemplateView):
                 .values('post_id', 'qty') \
                 .order_by('-post_date')[offset:next_offset]:
 
-            last_record = False
             comments_qty = {row['post_id']: row['qty'] for row in qs}
             ids = ",".join(map(str, comments_qty.keys()))
             link = f'posts?include={ids}&per_page=100&_fields=id,link,title,date,content'
 
-            try:
-                  posts = wpContent.get_json(trip.blog, link)
-            except Exception:
-                wp_error = 'Something went wrong with \
-                            getting data from https://unknownbug.net/nezinomas/'
+        try:
+            posts = wpContent.get_json(trip.blog, link)
+        except Exception:
+            wp_error = 'Something went wrong with \
+                        getting data from https://unknownbug.net/nezinomas/'
+
+        if posts:
+            for post in posts:
+                cashed_post = post["content"]["rendered"]
+
+                if "modula" in cashed_post:
+                    modula_gallery = True
+                    cashed_post = re.sub(r'<a class="post-edit-link".*?</a>', '', cashed_post)
+
+                cashed_post = mark_safe(cashed_post)
+                post["content"]["rendered"] = cashed_post
 
         context = {
             'trip': trip,
             'posts': posts,
             'comments_qty': comments_qty,
             'offset': next_offset,
-            'last_record': last_record,
             'wp_error': wp_error,
+            'modula_gallery': modula_gallery,
         }
 
         return super().get_context_data(*args, **kwargs) | context
