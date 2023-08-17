@@ -42,7 +42,7 @@ class Posts(TemplateView):
         trip = get_object_or_404(models.Trip, slug=self.kwargs.get('trip'))
 
         offset = int(self.request.GET.get('offset', 0))
-        next_offset = offset + 10
+        next_offset = offset + 1
 
         posts = None
         modula_gallery = False
@@ -58,21 +58,20 @@ class Posts(TemplateView):
             ids = ",".join(map(str, comments_qty.keys()))
             link = f'posts?include={ids}&per_page=100&_fields=id,link,title,date,content'
 
-            try:
-                  posts = wpContent.get_json(trip.blog, link)
-            except Exception:
-                wp_error = 'Something went wrong with \
-                            getting data from https://unknownbug.net/nezinomas/'
+        try:
+            posts = wpContent.get_json(trip.blog, link)
+        except Exception:
+            wp_error = 'Something went wrong with \
+                        getting data from https://unknownbug.net/nezinomas/'
 
-            if posts:
-                for post in posts:
-                    cashed_post = post["content"]["rendered"]
-                    cashed_post = mark_safe(cashed_post)
-                    post["content"]["rendered"] = cashed_post
+        if posts:
+            for post in posts:
+                cashed_post = post["content"]["rendered"]
+                cashed_post = mark_safe(cashed_post)
+                post["content"]["rendered"] = cashed_post
 
-                    if "modula" in cashed_post:
-                        modula_gallery = True
-
+                if "modula" in cashed_post:
+                    modula_gallery = True
 
         context = {
             'trip': trip,
