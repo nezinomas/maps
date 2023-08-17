@@ -1,7 +1,10 @@
 import os
+import re
+
 from django.conf import settings
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import get_object_or_404
+from django.utils.safestring import mark_safe
 from django.views.generic import ListView, TemplateView
 
 from . import models
@@ -11,7 +14,7 @@ from .utils import wp_content as wpContent
 from .utils.garmin_service import GarminService
 from .utils.points_service import PointsService
 from .utils.tracks_service import TracksService
-from django.utils.safestring import mark_safe
+
 
 class Trips(ListView):
     model = models.Trip
@@ -42,7 +45,7 @@ class Posts(TemplateView):
         trip = get_object_or_404(models.Trip, slug=self.kwargs.get('trip'))
 
         offset = int(self.request.GET.get('offset', 0))
-        next_offset = offset + 1
+        next_offset = offset + 10
 
         posts = None
         modula_gallery = False
@@ -67,11 +70,13 @@ class Posts(TemplateView):
         if posts:
             for post in posts:
                 cashed_post = post["content"]["rendered"]
-                cashed_post = mark_safe(cashed_post)
-                post["content"]["rendered"] = cashed_post
 
                 if "modula" in cashed_post:
                     modula_gallery = True
+                    cashed_post = re.sub(r'<a class="post-edit-link".*?</a>', '', cashed_post)
+
+                cashed_post = mark_safe(cashed_post)
+                post["content"]["rendered"] = cashed_post
 
         context = {
             'trip': trip,
