@@ -61,11 +61,11 @@ class Posts(TemplateView):
             ids = ",".join(map(str, comments_qty.keys()))
             link = f'posts?include={ids}&per_page=100&_fields=id,link,title,date,content'
 
-        try:
-            posts = wpContent.get_json(trip.blog, link)
-        except Exception:
-            wp_error = 'Something went wrong with \
-                        getting data from https://unknownbug.net/nezinomas/'
+            try:
+                posts = wpContent.get_json(trip.blog, link)
+            except Exception:
+                wp_error = 'Something went wrong with \
+                            getting data from https://unknownbug.net/nezinomas/'
 
         if posts:
             for post in posts:
