@@ -27,7 +27,6 @@ class Map(TemplateView):
         points_file = os.path.join(settings.MEDIA_ROOT, 'points', f'{trip.pk}-points.js')
         context = {
             'trip': trip,
-            'posts': Posts.as_view()(self.request, **self.kwargs).rendered_content,
             'statistic': statistic_service.get_statistic(trip),
             'google_api_key': settings.ENV("GOOGLE_API_KEY"),
             'js_version': os.path.getmtime(points_file),
@@ -60,11 +59,17 @@ class Posts(TemplateView):
             comments_qty = {row['post_id']: row['qty'] for row in qs}
             ids = ",".join(map(str, comments_qty.keys()))
             link = f'posts?include={ids}&per_page=100&_fields=id,link,title,date,content'
+            modula_gallery = False
 
             try:
                   posts = wpContent.get_json(trip.blog, link)
                   for post in posts:
-                    post["content"]["rendered"] = mark_safe(post["content"]["rendered"])
+                    cashed_post = post["content"]["rendered"]
+                    cashed_post = mark_safe(cashed_post)
+                    post["content"]["rendered"] = cashed_post
+
+                    if "modula" in cashed_post:
+                        modula_gallery = True
 
             except Exception:
                 wp_error = 'Something went wrong with \
@@ -76,6 +81,7 @@ class Posts(TemplateView):
             'comments_qty': comments_qty,
             'offset': next_offset,
             'wp_error': wp_error,
+            'modula_gallery': modula_gallery,
         }
 
         return super().get_context_data(*args, **kwargs) | context
