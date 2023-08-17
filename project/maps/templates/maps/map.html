@@ -49,26 +49,6 @@
         </div>
     </div>
 
-    {{ posts }}
-
-
-<link rel='stylesheet' id='modula-css'  href='https://unknownbug.net/nezinomas/wp-content/plugins/modula-best-grid-gallery/assets/css/front.css?ver=2.6.7' type='text/css' media='all' />
-<script type='text/javascript' src='https://unknownbug.net/nezinomas/wp-includes/js/hoverintent-js.min.js?ver=2.2.1' id='hoverintent-js-js'></script>
-<script type='text/javascript' src='https://unknownbug.net/nezinomas/wp-includes/js/imagesloaded.min.js?ver=4.1.4' id='imagesloaded-js'></script>
-<script type='text/javascript' src='https://unknownbug.net/nezinomas/wp-includes/js/masonry.min.js?ver=4.2.2' id='masonry-js'></script>
-<script type='text/javascript' src='https://unknownbug.net/nezinomas/wp-includes/js/jquery/jquery.masonry.min.js?ver=3.1.2b' id='jquery-masonry-js'></script>
-<script type='text/javascript' src='https://unknownbug.net/nezinomas/wp-content/plugins/modula-best-grid-gallery/assets/js/front/fancybox.js?ver=2.6.7' id='modula-fancybox-js'></script>
-<script type='text/javascript' src='https://unknownbug.net/nezinomas/wp-content/plugins/modula-best-grid-gallery/assets/js/modula-justified-wf.js?ver=2.6.7' id='modula-justified-wf-js'></script>
-	<script type="text/javascript">
-		(function() {
-			var request, b = document.body, c = 'className', cs = 'customize-support', rcs = new RegExp('(^|\\s+)(no-)?'+cs+'(\\s+|$)');
-
-				request = true;
-
-			b[c] = b[c].replace( rcs, ' ' );
-			// The customizer requires postMessage and CORS (if the site is cross domain).
-			b[c] += ( window.postMessage && request ? ' ' : ' no-' ) + cs;
-		}());
-	</script>
+    <div hx-trigger="load" hx-get="{% url 'maps:posts' trip.slug %}" hx-swap="outerHTML">4</div>
 
 {% endblock %}
