@@ -50,7 +50,6 @@ class Posts(TemplateView):
 
         posts = None
         wp_error = False
-        last_record = True
         comments_qty = {}
 
         if qs := models.CommentQty.objects \
@@ -58,7 +57,6 @@ class Posts(TemplateView):
                 .values('post_id', 'qty') \
                 .order_by('-post_date')[offset:next_offset]:
 
-            last_record = False
             comments_qty = {row['post_id']: row['qty'] for row in qs}
             ids = ",".join(map(str, comments_qty.keys()))
             link = f'posts?include={ids}&per_page=100&_fields=id,link,title,date,content'
@@ -74,7 +72,6 @@ class Posts(TemplateView):
             'posts': posts,
             'comments_qty': comments_qty,
             'offset': next_offset,
-            'last_record': last_record,
             'wp_error': wp_error,
         }
 
