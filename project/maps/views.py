@@ -60,7 +60,12 @@ class Posts(TemplateView):
 
             try:
                   posts = wpContent.get_json(trip.blog, link)
-                  for post in posts:
+            except Exception:
+                wp_error = 'Something went wrong with \
+                            getting data from https://unknownbug.net/nezinomas/'
+
+            if posts:
+                for post in posts:
                     cashed_post = post["content"]["rendered"]
                     cashed_post = mark_safe(cashed_post)
                     post["content"]["rendered"] = cashed_post
@@ -68,9 +73,6 @@ class Posts(TemplateView):
                     if "modula" in cashed_post:
                         modula_gallery = True
 
-            except Exception:
-                wp_error = 'Something went wrong with \
-                            getting data from https://unknownbug.net/nezinomas/'
 
         context = {
             'trip': trip,
