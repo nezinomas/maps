@@ -45,6 +45,7 @@ class Posts(TemplateView):
         next_offset = offset + 10
 
         posts = None
+        modula_gallery = False
         wp_error = False
         comments_qty = {}
 
@@ -56,7 +57,6 @@ class Posts(TemplateView):
             comments_qty = {row['post_id']: row['qty'] for row in qs}
             ids = ",".join(map(str, comments_qty.keys()))
             link = f'posts?include={ids}&per_page=100&_fields=id,link,title,date,content'
-            modula_gallery = False
 
             try:
                   posts = wpContent.get_json(trip.blog, link)
