@@ -11,7 +11,7 @@ from .utils import wp_content as wpContent
 from .utils.garmin_service import GarminService
 from .utils.points_service import PointsService
 from .utils.tracks_service import TracksService
-
+from django.utils.safestring import mark_safe
 
 class Trips(ListView):
     model = models.Trip
@@ -63,6 +63,9 @@ class Posts(TemplateView):
 
             try:
                   posts = wpContent.get_json(trip.blog, link)
+                  for post in posts:
+                    post["content"]["rendered"] = mark_safe(post["content"]["rendered"])
+
             except Exception:
                 wp_error = 'Something went wrong with \
                             getting data from https://unknownbug.net/nezinomas/'
