@@ -182,6 +182,11 @@ img[class*="wp-image-"] {
     margin-top: 5px;
 }
 
+.wp-block-video video {
+    vertical-align: middle;
+    width: 100%;
+}
+
 /*
                                                                     Ajax indicator
 */
