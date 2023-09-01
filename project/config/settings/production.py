@@ -11,9 +11,7 @@ ALLOWED_HOSTS = ENV.list("ALLOWED_HOSTS")
 
 
 # ================   APP CONFIGURATION
-INSTALLED_APPS += [
-    'django_crontab',
-]
+INSTALLED_APPS += []
 
 
 TEMPLATES[0]['OPTIONS']['loaders'] = [
@@ -45,13 +43,6 @@ EMAIL_HOST_USER = ''
 EMAIL_HOST_PASSWORD = ''
 EMAIL_USE_TLS = False
 DEFAULT_FROM_EMAIL = 'Invite <invite@bookkeeping.com>'
-
-
-# ================   CRONJOBS
-CRONJOBS = [
-    ('0 * * * *', 'project.maps.cron.get_data_from_garminconnect', '> /dev/null 2>&1'),
-    ('5 * * * *', 'project.maps.cron.push_comment_qty', '> /dev/null 2>&1'),
-]
 
 
 LOGGING = {
