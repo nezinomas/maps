@@ -5,12 +5,12 @@
 <head>
     <meta charset="utf-8">
     <title>{{trip.title}}</title>
-    <script src="{% static 'js/jquery-3.3.1.min.js' %}" type="text/javascript"></script>
     <link href="{% static 'css/style.css' %}" rel="stylesheet" type="text/css" />
     <link href="{% static 'css/css-loader.css' %}" rel="stylesheet" type="text/css">
 
-    <script src="https://unpkg.com/htmx.org@1.7.0"></script> <!-- Htmx -->
-    <script defer src="https://unpkg.com/alpinejs@3.10.2/dist/cdn.min.js"></script> <!-- Alpine Core -->
+    <script src="{% static 'js/jquery-3.3.1.min.js' %}" type="text/javascript"></script>
+    <script src="https://unpkg.com/htmx.org@1.7.0" type="text/javascript"></script> <!-- Htmx -->
+    <script src="https://unpkg.com/alpinejs@3.10.2/dist/cdn.min.js" type="text/javascript"></script> <!-- Alpine Core -->
     {% block head %}{% endblock %}
 </head>
 
