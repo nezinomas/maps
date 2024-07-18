@@ -3,7 +3,6 @@ from collections import Counter
 from operator import itemgetter
 
 from dateutil.relativedelta import relativedelta
-from django.utils import timezone
 
 from ..models import CommentQty, Trip
 from . import wp_content as wpContent
@@ -40,7 +39,7 @@ def count_comments(trip):
             CommentQty(
                 trip=trip,
                 post_id=post_id,
-                post_date=date.astimezone(timezone.utc),
+                post_date=date.astimezone(dt.timezone.utc),
                 qty=qty))
 
     # return two objects
