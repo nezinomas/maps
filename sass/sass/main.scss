@@ -1,4 +1,60 @@
+* {
+	box-sizing: border-box;
+    padding: 0;
+    margin: 0;
+}
 
+.trip-list {
+	font-family: 'Segoe UI', serif;
+	font-size: .8rem;
+
+    .wrapper {
+        display: flex;
+        flex-direction: column;
+        max-width: max-content;
+        margin: 0 auto;
+    }
+
+    a,
+    a:visited {
+        color: palevioletred;
+    }
+
+    h1 {
+        margin-bottom: 1rem;
+    }
+
+    ul {
+        list-style: none;
+
+        li {
+            > * {
+                display: block;
+            }
+
+            > *:last-child {
+                font-style: italic;
+                margin-bottom: 1rem;
+                color: #686868;
+            }
+
+            &:last-child {
+                margin-bottom: 1rem;
+            }
+        }
+    }
+
+    .trip-container {
+        display: flex;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+    }
+
+    .year {
+        font-size: .9rem;
+        font-weight: bold;
+    }
+}
 
 
 // Ajax indicator
