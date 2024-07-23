@@ -4,6 +4,42 @@
     margin: 0;
 }
 
+body {
+    font-family: 'Lora', serif;
+    font-size: 14px;
+    color: #222222;
+    background-color: #f3f3f3;
+}
+
+// Map
+.map-container{
+    background:#fff;
+    padding:15px;
+    box-shadow: 0 0 20px #999;
+    border-radius:2px;
+}
+
+#map {
+    height:400px;
+    background:#6699cc;
+}
+
+
+// Ajax indicator
+.htmx-indicator {
+    display: none;
+}
+
+.htmx-request .htmx-indicator {
+    display: inline;
+}
+
+.htmx-request.htmx-indicator {
+    display: inline;
+}
+
+
+// Trip list
 .trip-list {
 	font-family: 'Segoe UI', serif;
 	font-size: .8rem;
@@ -57,15 +93,126 @@
 }
 
 
-// Ajax indicator
-.htmx-indicator {
-    display: none;
+// Map and posts grid
+.grid {
+    display: grid;
+    grid-template-columns: 1fr 7fr 1fr;
+    row-gap: 1rem;
+
+    > div {
+        grid-column: 2/3;
+    }
 }
 
-.htmx-request .htmx-indicator {
-    display: inline;
+@media screen and (max-width: 768px) {
+    .grid {
+        grid-template-columns: 1rem 1fr 1rem;
+    }
 }
 
-.htmx-request.htmx-indicator {
-    display: inline;
+
+header {
+    margin-bottom: 2rem;
+
+    .trip-title {
+        text-align: center;
+
+        h1 {
+            font-size: 2rem;
+            font-weight: 400;
+            font-family: 'Playfair Display', serif;
+        }
+
+        p {
+            font-style: italic;
+            font-size: .8rem;
+            color: #686868;
+        }
+    }
+
+    .trip-statistic {
+        display: flex;
+        justify-content: center;
+        gap: 1rem;
+    }
+}
+
+
+// Post
+.post {
+    margin-bottom: 2rem;
+
+    a {
+        color: #ea4c88;
+    }
+
+    img {
+        max-width: 100%;
+        width: 100%;
+        max-height: auto;
+        height: auto;
+        object-fit: cover;
+    }
+
+    figcaption {
+        margin-bottom: 1rem;
+        text-align: center;
+    }
+
+    figure:not(:has(figcaption)) {
+        margin-bottom: 1rem;
+    }
+
+    .post-header {
+        text-align: center;
+
+        // Post title
+        h2 {
+            font-family: 'Playfair Display', serif;
+            font-weight: 400;
+            font-size: 1.5rem;
+        }
+
+        // Post date
+        p {
+            font-size: .8rem;
+        }
+    }
+
+    .post-content {
+        margin: 1rem 0;
+
+        p {
+            margin-bottom: 1rem;
+        }
+    }
+
+    .post-footer {
+        text-align: center;
+    }
+
+    .post-comments{
+        margin: 2rem 0;
+
+        .comment-context {
+            margin: 2rem 0;
+        }
+
+        .comment-date {
+            color: #686868;
+            font-size: .7rem;
+        }
+
+        .comment-content {
+            margin: 1rem 0;
+        }
+    }
+
+
+    .wp-block-video video {
+        vertical-align: middle;
+        width: 100%;
+        margin-top: 1rem;
+        margin-bottom: 1rem;
+    }
 }
