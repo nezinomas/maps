@@ -5,23 +5,28 @@
 
 
 {% if not wp_error %}
+    <!-- Galery JS files -->
     {% include 'maps/includes/modula.html' %}
 
     {% for post in posts %}
-    <div class="row mx-auto pt-5">
-        <div class="col mx-auto text-center" x-data="{ open: false }">
-            <h2 class="post-title "><a href="{{ post.link }} " rel="bookmark ">{{ post.title.rendered|safe }}</a></h2>
-            <p class="post-date">{{ post.date|parse_date|date:'Y-m-d  H:m' }}</p>
-
-            <div class="post-content mt-2">{{ post.content.rendered }}</div>
-
-            <p>
-                <a role="button" class="btn-as-link" hx-get="{% url 'maps:comments' trip.slug post.id %}" hx-target="#post_{{post.id}}" hx-trigger="click once" hx-indicator="#indicator" x-on:click="open = ! open" x-text="open ? 'Slėpti komentarus' : 'Rodyti komentarus ({% comment_qty comments_qty post.id %}) ' "></a>
-                    &nbsp;
-                <a href="{{ post.link }}#respond" class="ml-2">Rašyti komentarą</a>
-            </p>
-            <div class="com comments-area comments mt-2" id="post_{{post.id}}" x-show="open"></div>
+    <div class="post" x-data="{ open: false }">
+        <div class="post-header">
+            <h2><a href="{{ post.link }} " rel="bookmark ">{{ post.title.rendered|safe }}</a></h2>
+            <p>{{ post.date|parse_date|date:'Y-m-d  H:m' }}</p>
         </div>
+
+        <div class="post-content">
+            {{ post.content.rendered }}
+        </div>
+
+        <div class="post-footer">
+            <a href="#" hx-get="{% url 'maps:comments' trip.slug post.id %}" hx-target="#post_{{post.id}}" hx-trigger="click once" hx-indicator="#indicator" x-on:click="open = ! open" x-text="open ? 'Slėpti komentarus' : 'Rodyti komentarus ({% comment_qty comments_qty post.id %}) ' ">Rodyti komentarus</a>
+                &nbsp;
+            <a href="{{ post.link }}#respond">Rašyti komentarą</a>
+        </div>
+
+        <div class="post-comments" id="post_{{post.id}}" x-show="open"></div>
+
     </div>
 
     {% if forloop.last %}
@@ -29,8 +34,9 @@
     {% endif %}
 
     {% endfor %}
+
 {% else %}
-<div class="row mx-auto pt-5">
-    <div class="col- mx-auto text-center">{{ wp_error }}</div>
-</div>
+
+    <div>{{ wp_error }}</div>
+
 {% endif %}

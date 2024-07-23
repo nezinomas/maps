@@ -1,8 +1,6 @@
 {% extends 'base.html' %}
 
 {% load static %}
-{% load datetime_filter %}
-{% load humanize %}
 
 
 {% block head %}
@@ -19,36 +17,45 @@
 {% endblock %}
 
 {% block content %}
-    <!-- Loader -->
-    <div class="htmx-indicator loader loader-default is-active" id="indicator"></div>
 
-    <div class="row mx-auto pt-3">
-        <div class="col-sm-12 mx-auto" style="text-align:center;">
-            <h2>{{ trip.title }}</h2>
-            <p>{{ trip.description }}</p>
-        </div>
+<!-- Loader -->
+<div class="htmx-indicator loader loader-default is-active" id="indicator"></div>
+
+<header class="grid">
+    <div class="trip-title">
+        <h1>{{ trip.title }}</h1>
+        <p>{{ trip.description }}</p>
     </div>
 
-    <div class="map_row">
-        <div class="popin">
-            <div id="map"></div>
-        </div>
+    <div class="map-container">
+        <div id="map"></div>
     </div>
 
-    <div class="row mx-auto">
-        <div class="col- mx-auto pt-3 text-center">
-            <p class="stats">
-                {% now "Y-m-d" as todays_date %}
-                {% if todays_date < trip.start_date|date:"Y-m-d" %}
-                Kelionė dar neprasidėjo.
-                {% elif todays_date > trip.end_date|date:"Y-m-d" %}
-                Kelionė jau pasibaigusi.
-                {% else %}
-                <b>{{ statistic.total_days }}</b> diena kelyje.{% endif %}
-                Nuvažiavau <b>{{ statistic.total_km|floatformat:2 }}</b>km per <b>{{ statistic.total_time|format_datetime }}</b>. Pakilau <b>{{ statistic.total_ascent|floatformat:0|intcomma }}</b>m. Nusileidau <b>{{ statistic.total_descent|floatformat:0|intcomma }}</b>m</p>
-        </div>
+    <div class="trip-statistic">
+        {% now "Y-m-d" as todays_date %}
+
+        <!-- Trip not started -->
+        {% if todays_date < trip.start_date|date:"Y-m-d" %}
+
+        <div>Kelionė dar neprasidėjo.</div>
+
+        <!-- Trip finished -->
+        {% elif todays_date > trip.end_date|date:"Y-m-d" %}
+
+        <div>Kelionė jau pasibaigusi.</div>
+        {% include 'maps/includes/trip_statistic.html' %}
+
+        <!-- Trip is active -->
+        {% else %}
+
+        <div><b>{{ statistic.total_days }}</b> diena kelyje.</div>
+        {% include 'maps/includes/trip_statistic.html' %}
+
+        {% endif %}
     </div>
+</header>
 
-    <div hx-trigger="load" hx-get="{% url 'maps:posts' trip.slug %}" hx-swap="outerHTML" hx-indicator="#indicator"></div>
-
+<main class="grid">
+    <div hx-trigger="load" hx-get="{% url 'maps:posts' trip.slug %}" hx-indicator="#indicator"></div>
+</main>
 {% endblock %}
