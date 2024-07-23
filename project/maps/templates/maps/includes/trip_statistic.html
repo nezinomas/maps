@@ -1,0 +1,14 @@
+{% load datetime_filter %}
+{% load humanize %}
+
+{% if statistic.total_km %}
+
+<div>
+    Nuvažiavau <b>{{ statistic.total_km|floatformat:2 }}</b>km per <b>{{ statistic.total_time|format_datetime }}</b>.
+</div>
+
+<div>Pakilau <b>{{ statistic.total_ascent|floatformat:0|intcomma }}</b>m.</div>
+
+<div>Nusileidau <b>{{ statistic.total_descent|floatformat:0|intcomma }}</b>m</div>
+
+{% endif %}
