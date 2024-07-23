@@ -142,10 +142,6 @@ header {
 .post {
     margin-bottom: 2rem;
 
-    a {
-        color: #ea4c88;
-    }
-
     img {
         max-width: 100%;
         width: 100%;
@@ -171,11 +167,16 @@ header {
             font-family: 'Playfair Display', serif;
             font-weight: 400;
             font-size: 1.5rem;
+
+            > a {
+                color: hsl(337, 100%, 40%);
+            }
         }
 
         // Post date
         p {
             font-size: .8rem;
+            color: #686868;
         }
     }
 
@@ -189,6 +190,10 @@ header {
 
     .post-footer {
         text-align: center;
+
+        a {
+            color: #ea4c88;
+        }
     }
 
     .post-comments{
