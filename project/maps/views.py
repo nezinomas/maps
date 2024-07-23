@@ -64,8 +64,7 @@ class Posts(TemplateView):
             try:
                 posts = wpContent.get_json(trip.blog, link)
             except Exception:
-                wp_error = 'Something went wrong with \
-                            getting data from https://unknownbug.net/nezinomas/'
+                wp_error = 'Kažkas neveikia. Bandykite prisijungti vėliau.'
 
         if posts:
             for post in posts:
