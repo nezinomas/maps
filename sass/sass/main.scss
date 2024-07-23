@@ -221,3 +221,18 @@ header {
         margin-bottom: 1rem;
     }
 }
+
+.wp-error {
+    text-align: center;
+
+    p:first-child {
+        font-size: 1rem;
+        color: #58151c;
+        background-color: #f8d7da;
+        border: 1px solid #f1aeb5;
+        padding: 1rem;
+        border-radius: 2px;
+
+        margin-bottom: 1rem;
+    }
+}
