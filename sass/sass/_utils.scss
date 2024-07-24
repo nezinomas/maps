@@ -14,15 +14,6 @@ button {
 }
 
 
-@mixin button {
-    &::before {
-        vertical-align: middle;
-        padding-bottom: .25rem;
-        padding-right: .25rem;
-    }
-}
-
-
 .utils {
     font-family: Roboto, sans-serif;
     font-size: 0.85rem;
@@ -46,7 +37,6 @@ button {
 
 
 .btn-primary {
-    @include button();
     color: #fff;
     background-color: rgb(108, 117, 125);
     border-color: rgb(84, 90, 96);
@@ -67,7 +57,6 @@ button {
 
 
 .btn-secondary {
-    @include button();
     background-color: #f7f7f7;
     border-color: #989898;
 
@@ -87,7 +76,6 @@ button {
 
 
 .btn-success {
-    @include button();
     color: #fff;
     background-color: #198754;
     border-color: #198754;
@@ -100,7 +88,6 @@ button {
 
 
 .btn-danger {
-    @include button();
     color: #fff;
     background-color: $danger;
     border-color: $danger;
