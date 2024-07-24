@@ -2,6 +2,7 @@
 $black:   black;
 $danger: #dc3545;
 
+
 button {
     color: inherit;
     font: inherit !important;
@@ -12,6 +13,7 @@ button {
     cursor: pointer;
 }
 
+
 @mixin button {
     &::before {
         vertical-align: middle;
@@ -20,9 +22,11 @@ button {
     }
 }
 
+
 .utils {
     font-family: Roboto, sans-serif;
     font-size: 0.85rem;
+
     .container {
         display: flex;
         justify-content: center;
@@ -31,7 +35,6 @@ button {
         width: 250px;
         margin: 0 auto;
         gap: 1rem;
-
     }
 
     #message-container {
@@ -62,6 +65,7 @@ button {
     }
 }
 
+
 .btn-secondary {
     @include button();
     background-color: #f7f7f7;
@@ -81,6 +85,7 @@ button {
     }
 }
 
+
 .btn-success {
     @include button();
     color: #fff;
@@ -92,6 +97,7 @@ button {
         border-color: #146c43;
     }
 }
+
 
 .btn-danger {
     @include button();
