@@ -41,13 +41,11 @@ button {
     background-color: rgb(108, 117, 125);
     border-color: rgb(84, 90, 96);
 
-    &:hover {
-        background-color: #5c6e64;
-    }
-
+    &:hover,
     &:focus,
     &:focus-within,
     &:active {
+        background-color: #5c6e64;
         outline: 0;
         box-shadow:
             inset 0 1px 2px rgba($black, .075),
@@ -60,10 +58,7 @@ button {
     background-color: #f7f7f7;
     border-color: #989898;
 
-    &:hover {
-        background-color: #e1e1e1;
-    }
-
+    &:hover,
     &:focus,
     &:focus-within,
     &:active {
@@ -80,9 +75,17 @@ button {
     background-color: #198754;
     border-color: #198754;
 
-    &:hover {
+
+    &:hover,
+    &:focus,
+    &:focus-within,
+    &:active {
         background-color: #157347;
         border-color: #146c43;
+        outline: 0;
+        box-shadow:
+            inset 0 1px 2px rgba($black, .075),
+            0 0 0 0.15rem rgba(#198754, 0.1);
     }
 }
 
@@ -92,14 +95,12 @@ button {
     background-color: $danger;
     border-color: $danger;
 
-    &:hover {
-        background-color: #bb2d3b;
-        border-color: #b02a37;
-    }
-
+    &:hover,
     &:focus,
     &:focus-within,
     &:active {
+        background-color: #bb2d3b;
+        border-color: #b02a37;
         outline: 0;
         box-shadow:
             inset 0 1px 2px rgba($black, .075),
