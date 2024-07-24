@@ -6,7 +6,7 @@ from ..utils.common import get_trip
 pytestmark = pytest.mark.django_db
 
 
-@pytest.mark.freeze_time('1111-1-1')
+@pytest.mark.freeze_time('1974-1-1')
 def test_trip_not_started():
     TripFactory()
 
@@ -15,7 +15,7 @@ def test_trip_not_started():
     assert not actual
 
 
-@pytest.mark.freeze_time('3333-1-1')
+@pytest.mark.freeze_time('2100-1-1')
 def test_trip_ended():
     TripFactory()
 
@@ -33,7 +33,7 @@ def test_trip_exists():
     assert actual == _trip
 
 
-@pytest.mark.freeze_time('3333-1-1')
+@pytest.mark.freeze_time('2100-1-1')
 def test_trip_not_exists():
     actual = get_trip()
 
