@@ -6,10 +6,14 @@
 
 body {
     font-family: 'Lora', serif;
-    font-size: 14px;
+    font-size: 1rem;
     color: #222222;
     background-color: #f3f3f3;
 }
+
+
+@import 'utils';
+
 
 // Map
 .map-container{
