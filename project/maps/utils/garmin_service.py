@@ -72,7 +72,7 @@ class GarminService:
 
     def get_api(self) -> Garmin:
         try:
-            api = Garmin(settings.ENV("GARMIN_USER"), settings.ENV("GARMIN_PASS"))
+            api = Garmin(settings.ENV["GARMIN_USER"], settings.ENV["GARMIN_PASS"])
 
             api.login()
         except (

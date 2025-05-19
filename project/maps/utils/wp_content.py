@@ -8,12 +8,12 @@ from wordpress import API
 def get_content(blog_url, link_end):
     wpapi = API(
         url=blog_url,
-        consumer_key=settings.ENV("CONSUMER_KEY"),
-        consumer_secret=settings.ENV("CONSUMER_SECRET"),
+        consumer_key=settings.ENV["CONSUMER_KEY"],
+        consumer_secret=settings.ENV["CONSUMER_SECRET"],
         api="wp-json",
         version="wp/v2",
-        wp_user=settings.ENV("WP_USER"),
-        wp_pass=settings.ENV("WP_PASS"),
+        wp_user=settings.ENV["WP_USER"],
+        wp_pass=settings.ENV["WP_PASS"],
         oauth1a_3leg=True,
         creds_store="",
         callback=f"{blog_url}/oauth1_callback",
