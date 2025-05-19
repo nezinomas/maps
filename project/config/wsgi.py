@@ -1,16 +1,16 @@
 import os
+import tomllib as toml
+from pathlib import Path
 
-import environ
 from django.core.wsgi import get_wsgi_application
 
 # Set the project base directory
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+BASE_DIR = Path(__file__).absolute().parent.parent.parent
 
-# Take environment variables from .env file
-env = environ.Env()
-environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
+# Take environment variables from .conf file
+with open(BASE_DIR / ".conf", "rb") as f:
+    conf = toml.load(f)["django"]
 
-
-os.environ["DJANGO_SETTINGS_MODULE"] = env("DJANGO_SETTINGS_MODULE")
+os.environ["DJANGO_SETTINGS_MODULE"] = conf["DJANGO_SETTINGS_MODULE"]
 
 application = get_wsgi_application()
