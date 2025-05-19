@@ -9,16 +9,10 @@ from ..factories import UserFactory
 
 @pytest.fixture()
 def project_fs(fs):
-    fs.create_dir(path.join(settings.MEDIA_ROOT, 'tracks', '1'))
-    fs.create_dir(path.join(settings.MEDIA_ROOT, 'points'))
+    fs.create_dir(path.join(settings.MEDIA_ROOT, "tracks", "1"))
+    fs.create_dir(path.join(settings.MEDIA_ROOT, "points"))
 
-    template = path.join(
-        settings.SITE_ROOT,
-        'maps',
-        'templates',
-        'maps',
-        '0-points.js'
-    )
+    template = path.join(settings.SITE_ROOT, "maps", "templates", "maps", "0-points.js")
     fs.create_file(template)
 
 
@@ -26,7 +20,7 @@ def project_fs(fs):
 def client_logged(client):
     UserFactory()
 
-    client.login(username='test', password='test')
+    client.login(username="test", password="test")
 
     return client
 
@@ -34,7 +28,7 @@ def client_logged(client):
 @pytest.fixture(autouse=True)  # Automatically use in tests.
 def mute_signals(request):
     # Skip applying, if marked with `enabled_signals`
-    if 'enable_signals' in request.keywords:
+    if "enable_signals" in request.keywords:
         return
 
     signals = [

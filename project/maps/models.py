@@ -4,14 +4,9 @@ from django.utils.text import slugify
 
 
 class Trip(models.Model):
-    title = models.CharField(
-        max_length=254
-    )
+    title = models.CharField(max_length=254)
     slug = models.SlugField(editable=False)
-    description = models.TextField(
-        blank=True,
-        null=True
-    )
+    description = models.TextField(blank=True, null=True)
     start_date = models.DateField()
     end_date = models.DateField()
     blog = models.URLField(
@@ -25,7 +20,9 @@ class Trip(models.Model):
     )
 
     class Meta:
-        ordering = ['-start_date', ]
+        ordering = [
+            "-start_date",
+        ]
 
     def __str__(self):
         return str(self.title)
@@ -43,9 +40,7 @@ class CommentQty(models.Model):
         null=True,
         blank=True,
     )
-    qty = models.IntegerField(
-        default=0
-    )
+    qty = models.IntegerField(default=0)
     post_date = models.DateTimeField(
         null=True,
         blank=True,
@@ -53,7 +48,7 @@ class CommentQty(models.Model):
 
     trip = models.ForeignKey(
         Trip,
-        related_name='comment_qty',
+        related_name="comment_qty",
         on_delete=models.CASCADE,
     )
 
@@ -65,9 +60,7 @@ class CommentQty(models.Model):
 
 
 class Track(models.Model):
-    title = models.CharField(
-        max_length=254
-    )
+    title = models.CharField(max_length=254)
     date = models.DateTimeField()
     activity_type = models.CharField(
         max_length=30,
@@ -75,12 +68,14 @@ class Track(models.Model):
 
     trip = models.ForeignKey(
         Trip,
-        related_name='tracks',
+        related_name="tracks",
         on_delete=models.CASCADE,
     )
 
     class Meta:
-        ordering = ['-date', ]
+        ordering = [
+            "-date",
+        ]
 
     def __str__(self):
         return self.title
@@ -89,88 +84,35 @@ class Track(models.Model):
 class Point(models.Model):
     latitude = models.FloatField()
     longitude = models.FloatField()
-    altitude = models.FloatField(
-        null=True,
-        blank=True
-    )
+    altitude = models.FloatField(null=True, blank=True)
     distance_meters = models.FloatField(
         null=True,
         blank=True,
     )
-    cadence = models.IntegerField(
-        null=True,
-        blank=True
-    )
-    heart_rate = models.IntegerField(
-        null=True,
-        blank=True
-    )
-    temperature = models.FloatField(
-        null=True,
-        blank=True
-    )
+    cadence = models.IntegerField(null=True, blank=True)
+    heart_rate = models.IntegerField(null=True, blank=True)
+    temperature = models.FloatField(null=True, blank=True)
     datetime = models.DateTimeField()
 
-    track = models.ForeignKey(
-        Track,
-        related_name='points',
-        on_delete=models.CASCADE
-    )
+    track = models.ForeignKey(Track, related_name="points", on_delete=models.CASCADE)
 
 
 class Statistic(models.Model):
     total_km = models.FloatField()
     total_time_seconds = models.FloatField()
-    max_speed = models.FloatField(
-        null=True,
-        blank=True
-    )
-    calories = models.IntegerField(
-        null=True,
-        blank=True
-    )
-    avg_speed = models.FloatField(
-        null=True,
-        blank=True
-    )
-    avg_cadence = models.FloatField(
-        null=True,
-        blank=True
-    )
-    avg_heart = models.FloatField(
-        null=True,
-        blank=True
-    )
-    max_heart = models.FloatField(
-        null=True,
-        blank=True
-    )
-    avg_temperature = models.FloatField(
-        null=True,
-        blank=True
-    )
-    min_altitude = models.FloatField(
-        null=True,
-        blank=True
-    )
-    max_altitude = models.FloatField(
-        null=True,
-        blank=True
-    )
-    ascent = models.FloatField(
-        null=True,
-        blank=True
-    )
-    descent = models.FloatField(
-        null=True,
-        blank=True
-    )
+    max_speed = models.FloatField(null=True, blank=True)
+    calories = models.IntegerField(null=True, blank=True)
+    avg_speed = models.FloatField(null=True, blank=True)
+    avg_cadence = models.FloatField(null=True, blank=True)
+    avg_heart = models.FloatField(null=True, blank=True)
+    max_heart = models.FloatField(null=True, blank=True)
+    avg_temperature = models.FloatField(null=True, blank=True)
+    min_altitude = models.FloatField(null=True, blank=True)
+    max_altitude = models.FloatField(null=True, blank=True)
+    ascent = models.FloatField(null=True, blank=True)
+    descent = models.FloatField(null=True, blank=True)
 
-    track = models.OneToOneField(
-        Track,
-        related_name='stats',
-        on_delete=models.CASCADE
-    )
+    track = models.OneToOneField(Track, related_name="stats", on_delete=models.CASCADE)
 
 
 class Note(models.Model):
@@ -182,9 +124,5 @@ class Note(models.Model):
     )
 
     track = models.ForeignKey(
-        Track,
-        related_name='notes',
-        on_delete=models.CASCADE,
-        blank=True,
-        null=True
+        Track, related_name="notes", on_delete=models.CASCADE, blank=True, null=True
     )

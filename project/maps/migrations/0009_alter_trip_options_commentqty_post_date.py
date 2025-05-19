@@ -4,19 +4,18 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('maps', '0008_alter_statistic_max_speed'),
+        ("maps", "0008_alter_statistic_max_speed"),
     ]
 
     operations = [
         migrations.AlterModelOptions(
-            name='trip',
-            options={'ordering': ['-start_date']},
+            name="trip",
+            options={"ordering": ["-start_date"]},
         ),
         migrations.AddField(
-            model_name='commentqty',
-            name='post_date',
+            model_name="commentqty",
+            name="post_date",
             field=models.DateTimeField(blank=True, null=True),
         ),
     ]

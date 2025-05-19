@@ -16,7 +16,7 @@ def get_content(blog_url, link_end):
         wp_pass=settings.ENV("WP_PASS"),
         oauth1a_3leg=True,
         creds_store="",
-        callback=f'{blog_url}/oauth1_callback'
+        callback=f"{blog_url}/oauth1_callback",
     )
 
     return wpapi.get(link_end)
@@ -29,14 +29,14 @@ def get_json(blog_url: str, link: str) -> Dict:
 
 def get_all_pages_content(trip, link):
     per_page = 100
-    link = f'{link}&per_page={per_page}'
+    link = f"{link}&per_page={per_page}"
     response = get_content(trip.blog, link)
     content = json.loads(response.text)
-    pages = int(response.headers['X-WP-TotalPages'])
+    pages = int(response.headers["X-WP-TotalPages"])
 
     if pages > 1:
         for page in range(1, pages):
-            link_offset = f'{link}&offset={page * per_page}'
+            link_offset = f"{link}&offset={page * per_page}"
             response = get_content(trip.blog, link_offset)
             content += json.loads(response.text)
 

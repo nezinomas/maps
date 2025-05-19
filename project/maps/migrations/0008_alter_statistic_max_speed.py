@@ -4,15 +4,14 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('maps', '0007_auto_20181107_1709'),
+        ("maps", "0007_auto_20181107_1709"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='statistic',
-            name='max_speed',
+            model_name="statistic",
+            name="max_speed",
             field=models.FloatField(blank=True, null=True),
         ),
     ]
