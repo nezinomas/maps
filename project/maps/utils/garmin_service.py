@@ -5,9 +5,12 @@ from datetime import datetime, timezone
 from typing import Dict, List
 
 from django.conf import settings
-from garminconnect import (Garmin, GarminConnectAuthenticationError,
-                           GarminConnectConnectionError,
-                           GarminConnectTooManyRequestsError)
+from garminconnect import (
+    Garmin,
+    GarminConnectAuthenticationError,
+    GarminConnectConnectionError,
+    GarminConnectTooManyRequestsError,
+)
 
 from ..models import Trip
 from ..utils.common import get_trip
@@ -78,7 +81,7 @@ class GarminService:
             GarminConnectAuthenticationError,
             GarminConnectTooManyRequestsError
         ):
-            return
+            return None
 
         return api
 
@@ -87,7 +90,7 @@ class GarminService:
             activities = api.get_activities(0, 15)  # 0=start, 1=limit
             # activities = api.get_activities_by_date('2017-06-25', '2017-07-24', 'cycling')
         except Exception as e:
-            return
+            return None
 
         return activities
 

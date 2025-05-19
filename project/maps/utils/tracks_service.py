@@ -1,7 +1,8 @@
 import json
 import os
-from typing import Dict, List
 from datetime import datetime
+from typing import Dict, List
+
 from django.conf import settings
 
 from ..models import Statistic, Track, Trip
@@ -59,7 +60,7 @@ class TracksService:
         )
 
         if not os.path.exists(file):
-            return
+            return None
 
         with open(file, 'r') as f:
             data = json.load(f)

@@ -2,7 +2,6 @@ import os
 import tomllib as toml
 from pathlib import Path
 
-
 BASE_DIR = Path(__file__).absolute()
 PROJECT_ROOT = BASE_DIR.parent.parent.parent.parent
 SITE_ROOT = BASE_DIR.parent.parent.parent

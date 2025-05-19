@@ -1,5 +1,5 @@
-from django import template
 from dateutil.parser import parse
+from django import template
 
 register = template.Library()
 

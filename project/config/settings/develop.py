@@ -1,5 +1,6 @@
-from .base import *
 from pathlib import Path
+
+from .base import *
 
 # ================   DEBUG CONFIGURATION
 DEBUG = True

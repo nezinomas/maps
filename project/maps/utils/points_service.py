@@ -146,6 +146,6 @@ class PointsService():
         )
 
         if not os.path.exists(file):
-            return
+            return None
 
         return TCXReader().read(file)
