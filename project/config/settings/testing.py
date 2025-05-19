@@ -2,9 +2,9 @@ from .base import *
 
 DEBUG = False
 
-LANGUAGE_CODE = 'lt'
+LANGUAGE_CODE = "lt"
 
-TEMPLATES[0]['OPTIONS']['debug'] = False
+TEMPLATES[0]["OPTIONS"]["debug"] = False
 
 
 EMAIL_BACKEND = "django.core.mail.backends.locmem.EmailBackend"
@@ -29,16 +29,15 @@ TEMPLATES[0]["OPTIONS"]["loaders"] = [
 
 
 MIGRATION_MODULES = {
-    'auth': None,
-    'contenttypes': None,
-    'default': None,
-    'sessions': None,
-
-    'maps': None,
+    "auth": None,
+    "contenttypes": None,
+    "default": None,
+    "sessions": None,
+    "maps": None,
 }
 
 
 # Bonus: Use a faster password hasher. This REALLY helps.
-PASSWORD_HASHERS = ('django.contrib.auth.hashers.MD5PasswordHasher',)
+PASSWORD_HASHERS = ("django.contrib.auth.hashers.MD5PasswordHasher",)
 
-DEFAULT_FILE_STORAGE = 'inmemorystorage.InMemoryStorage'
+DEFAULT_FILE_STORAGE = "inmemorystorage.InMemoryStorage"

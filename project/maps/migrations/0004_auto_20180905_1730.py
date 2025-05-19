@@ -4,20 +4,19 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('maps', '0003_auto_20180904_1952'),
+        ("maps", "0003_auto_20180904_1952"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='trip',
-            name='blog',
+            model_name="trip",
+            name="blog",
             field=models.URLField(blank=True, null=True),
         ),
         migrations.AddField(
-            model_name='trip',
-            name='blog_category',
+            model_name="trip",
+            name="blog_category",
             field=models.CharField(blank=True, max_length=20, null=True),
         ),
     ]

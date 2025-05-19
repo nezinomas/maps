@@ -12,14 +12,14 @@ from .models import Trip
 def create_points_file_for_new_trip(sender: object, instance: object, *args, **kwargs):
     pk = instance.pk
 
-    template = path.join(settings.SITE_ROOT, 'maps', 'templates', 'maps', '0-points.js')
-    file = path.join(settings.MEDIA_ROOT, 'points', f'{pk}-points.js')
+    template = path.join(settings.SITE_ROOT, "maps", "templates", "maps", "0-points.js")
+    file = path.join(settings.MEDIA_ROOT, "points", f"{pk}-points.js")
 
     if not path.exists(file):
         shutil.copy2(template, file)
 
     # create tracks/trip.pk folder
-    folder = path.join(settings.MEDIA_ROOT, 'tracks', str(pk))
+    folder = path.join(settings.MEDIA_ROOT, "tracks", str(pk))
     makedirs(folder, exist_ok=True)
 
 
@@ -27,7 +27,7 @@ def create_points_file_for_new_trip(sender: object, instance: object, *args, **k
 def delete_points_file(sender: object, instance: object, *args, **kwargs):
     pk = instance.pk
 
-    file = path.join(settings.MEDIA_ROOT, 'points', f'{pk}-points.js')
+    file = path.join(settings.MEDIA_ROOT, "points", f"{pk}-points.js")
 
     if path.exists(file):
         remove(file)

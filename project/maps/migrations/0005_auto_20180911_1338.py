@@ -4,24 +4,23 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('maps', '0004_auto_20180905_1730'),
+        ("maps", "0004_auto_20180905_1730"),
     ]
 
     operations = [
         migrations.AlterModelOptions(
-            name='track',
-            options={'ordering': ['-date']},
+            name="track",
+            options={"ordering": ["-date"]},
         ),
         migrations.RenameField(
-            model_name='statistic',
-            old_name='ascend',
-            new_name='ascent',
+            model_name="statistic",
+            old_name="ascend",
+            new_name="ascent",
         ),
         migrations.RenameField(
-            model_name='statistic',
-            old_name='descend',
-            new_name='descent',
+            model_name="statistic",
+            old_name="descend",
+            new_name="descent",
         ),
     ]

@@ -4,26 +4,24 @@ from django.urls import include, path
 from django.views.defaults import page_not_found, permission_denied, server_error
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('', include('project.maps.urls')),
+    path("admin/", admin.site.urls),
+    path("", include("project.maps.urls")),
 ]
 
 urlpatterns += [
     path(
-        '403/',
+        "403/",
         permission_denied,
-        kwargs={'exception': Exception("Permission Denied")}, name='error403'
+        kwargs={"exception": Exception("Permission Denied")},
+        name="error403",
     ),
     path(
-        '404/',
+        "404/",
         page_not_found,
-        kwargs={'exception': Exception("Page not Found")}, name='error404'
+        kwargs={"exception": Exception("Page not Found")},
+        name="error404",
     ),
-    path(
-        '500/',
-        server_error,
-        name='error500'
-    ),
+    path("500/", server_error, name="error500"),
 ]
 
 
@@ -38,4 +36,6 @@ if settings.DEBUG:
     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
-    urlpatterns = [path('__debug__/', include(debug_toolbar.urls)), ] + urlpatterns
+    urlpatterns = [
+        path("__debug__/", include(debug_toolbar.urls)),
+    ] + urlpatterns

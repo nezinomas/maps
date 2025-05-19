@@ -5,19 +5,33 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('maps', '0005_auto_20180911_1338'),
+        ("maps", "0005_auto_20180911_1338"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='CommentQty',
+            name="CommentQty",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('post_id', models.IntegerField(blank=True, null=True)),
-                ('qty', models.IntegerField(default=0)),
-                ('trip', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='comment_qty', to='maps.Trip')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("post_id", models.IntegerField(blank=True, null=True)),
+                ("qty", models.IntegerField(default=0)),
+                (
+                    "trip",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="comment_qty",
+                        to="maps.Trip",
+                    ),
+                ),
             ],
         ),
     ]

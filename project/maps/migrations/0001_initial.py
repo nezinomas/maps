@@ -5,92 +5,148 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     initial = True
 
-    dependencies = [
-    ]
+    dependencies = []
 
     operations = [
         migrations.CreateModel(
-            name='Note',
+            name="Note",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('latitude', models.FloatField()),
-                ('longitude', models.FloatField()),
-                ('note', models.TextField(blank=True, null=True)),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("latitude", models.FloatField()),
+                ("longitude", models.FloatField()),
+                ("note", models.TextField(blank=True, null=True)),
             ],
         ),
         migrations.CreateModel(
-            name='Point',
+            name="Point",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('latitude', models.FloatField()),
-                ('longitude', models.FloatField()),
-                ('altitude', models.FloatField(blank=True, null=True)),
-                ('distance_meters', models.FloatField(blank=True, null=True)),
-                ('cadence', models.IntegerField(blank=True, null=True)),
-                ('heart_rate', models.IntegerField(blank=True, null=True)),
-                ('temperature', models.FloatField(blank=True, null=True)),
-                ('datetime', models.DateTimeField()),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("latitude", models.FloatField()),
+                ("longitude", models.FloatField()),
+                ("altitude", models.FloatField(blank=True, null=True)),
+                ("distance_meters", models.FloatField(blank=True, null=True)),
+                ("cadence", models.IntegerField(blank=True, null=True)),
+                ("heart_rate", models.IntegerField(blank=True, null=True)),
+                ("temperature", models.FloatField(blank=True, null=True)),
+                ("datetime", models.DateTimeField()),
             ],
         ),
         migrations.CreateModel(
-            name='Statistic',
+            name="Statistic",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('total_km', models.FloatField()),
-                ('total_time_seconds', models.FloatField()),
-                ('max_speed', models.FloatField()),
-                ('calories', models.IntegerField(blank=True, null=True)),
-                ('avg_speed', models.FloatField(blank=True, null=True)),
-                ('avg_cadence', models.FloatField(blank=True, null=True)),
-                ('avg_heart', models.FloatField(blank=True, null=True)),
-                ('max_heart', models.FloatField(blank=True, null=True)),
-                ('avg_temperature', models.FloatField(blank=True, null=True)),
-                ('min_altitude', models.FloatField(blank=True, null=True)),
-                ('max_altitude', models.FloatField(blank=True, null=True)),
-                ('ascend', models.FloatField(blank=True, null=True)),
-                ('descend', models.FloatField(blank=True, null=True)),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("total_km", models.FloatField()),
+                ("total_time_seconds", models.FloatField()),
+                ("max_speed", models.FloatField()),
+                ("calories", models.IntegerField(blank=True, null=True)),
+                ("avg_speed", models.FloatField(blank=True, null=True)),
+                ("avg_cadence", models.FloatField(blank=True, null=True)),
+                ("avg_heart", models.FloatField(blank=True, null=True)),
+                ("max_heart", models.FloatField(blank=True, null=True)),
+                ("avg_temperature", models.FloatField(blank=True, null=True)),
+                ("min_altitude", models.FloatField(blank=True, null=True)),
+                ("max_altitude", models.FloatField(blank=True, null=True)),
+                ("ascend", models.FloatField(blank=True, null=True)),
+                ("descend", models.FloatField(blank=True, null=True)),
             ],
         ),
         migrations.CreateModel(
-            name='Track',
+            name="Track",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('title', models.CharField(max_length=254)),
-                ('date', models.DateTimeField()),
-                ('activity_type', models.CharField(max_length=30)),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("title", models.CharField(max_length=254)),
+                ("date", models.DateTimeField()),
+                ("activity_type", models.CharField(max_length=30)),
             ],
         ),
         migrations.CreateModel(
-            name='Trip',
+            name="Trip",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('title', models.CharField(max_length=254)),
-                ('slug', models.SlugField(editable=False)),
-                ('start_data', models.DateField()),
-                ('end_date', models.DateField()),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("title", models.CharField(max_length=254)),
+                ("slug", models.SlugField(editable=False)),
+                ("start_data", models.DateField()),
+                ("end_date", models.DateField()),
             ],
         ),
         migrations.AddField(
-            model_name='track',
-            name='trip',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='tracks', to='maps.Trip'),
+            model_name="track",
+            name="trip",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="tracks",
+                to="maps.Trip",
+            ),
         ),
         migrations.AddField(
-            model_name='statistic',
-            name='track',
-            field=models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, related_name='stats', to='maps.Track'),
+            model_name="statistic",
+            name="track",
+            field=models.OneToOneField(
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="stats",
+                to="maps.Track",
+            ),
         ),
         migrations.AddField(
-            model_name='point',
-            name='track',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='points', to='maps.Track'),
+            model_name="point",
+            name="track",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="points",
+                to="maps.Track",
+            ),
         ),
         migrations.AddField(
-            model_name='note',
-            name='track',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='notes', to='maps.Track'),
+            model_name="note",
+            name="track",
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="notes",
+                to="maps.Track",
+            ),
         ),
     ]

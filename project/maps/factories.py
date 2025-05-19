@@ -9,23 +9,23 @@ from .models import CommentQty, Point, Track, Trip
 class TripFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = Trip
-        django_get_or_create = ('title',)
+        django_get_or_create = ("title",)
 
-    title = 'Trip'
-    description = 'Trip description'
+    title = "Trip"
+    description = "Trip description"
     start_date = date(2022, 1, 1)
     end_date = date(2022, 1, 31)
-    blog = 'http://www.trip.com'
-    blog_category = '666'
+    blog = "http://www.trip.com"
+    blog_category = "666"
 
 
 class TrackFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = Track
 
-    title = '999'
+    title = "999"
     date = datetime(2022, 1, 1, 3, 2, 1, tzinfo=timezone.utc)
-    activity_type = 'cycling'
+    activity_type = "cycling"
     trip = factory.SubFactory(TripFactory)
 
 
@@ -56,9 +56,9 @@ class UserFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = User
 
-    username = 'test'
-    password = 'test'
+    username = "test"
+    password = "test"
     is_active = True
     is_staff = True
     is_superuser = True
-    email = 'test@test.com'
+    email = "test@test.com"

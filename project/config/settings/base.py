@@ -20,8 +20,8 @@ MEDIA_ROOT = ENV["MEDIA_ROOT"]
 MEDIA_URL = "/media/"
 
 # ================   STATIC FILE CONFIGURATION
-STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(SITE_ROOT, 'static')
+STATIC_URL = "/static/"
+STATIC_ROOT = os.path.join(SITE_ROOT, "static")
 
 
 # ================   DEBUG CONFIGURATION
@@ -30,20 +30,20 @@ TEMPLATE_DEBUG = DEBUG
 
 
 # ================   SECRET CONFIGURATION
-SECRET_KEY = ENV['SECRET_KEY']
+SECRET_KEY = ENV["SECRET_KEY"]
 
 
 # ================   project CONFIGURATION
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ["*"]
 
 
 # ================   DATABASE CONFIGURATION
 DATABASES = {"default": DB}
-DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
+DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
 
 # ================   GENERAL CONFIGURATION
-LANGUAGE_CODE = 'en-us'
-TIME_ZONE = 'Europe/Vilnius'
+LANGUAGE_CODE = "en-us"
+TIME_ZONE = "Europe/Vilnius"
 USE_I18N = True
 USE_L10N = True
 USE_TZ = True
@@ -52,15 +52,15 @@ USE_TZ = True
 # ================   TEMPLATE CONFIGURATION
 TEMPLATES = [
     {
-        'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(SITE_ROOT, 'templates')],
-        'OPTIONS': {
-            'context_processors': [
-                'django.template.context_processors.debug',
-                'django.template.context_processors.request',
-                'django.contrib.auth.context_processors.auth',
-                'django.contrib.messages.context_processors.messages',
-                'django.template.context_processors.media',
+        "BACKEND": "django.template.backends.django.DjangoTemplates",
+        "DIRS": [os.path.join(SITE_ROOT, "templates")],
+        "OPTIONS": {
+            "context_processors": [
+                "django.template.context_processors.debug",
+                "django.template.context_processors.request",
+                "django.contrib.auth.context_processors.auth",
+                "django.contrib.messages.context_processors.messages",
+                "django.template.context_processors.media",
             ],
         },
     },
@@ -69,51 +69,51 @@ TEMPLATES = [
 
 # ================   MIDDLEWARE CONFIGURATION
 MIDDLEWARE = [
-    'django.middleware.security.SecurityMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    "django.middleware.security.SecurityMiddleware",
+    "django.contrib.sessions.middleware.SessionMiddleware",
+    "django.middleware.common.CommonMiddleware",
+    "django.middleware.csrf.CsrfViewMiddleware",
+    "django.contrib.auth.middleware.AuthenticationMiddleware",
+    "django.contrib.messages.middleware.MessageMiddleware",
+    "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "django_htmx.middleware.HtmxMiddleware",
 ]
 
 
 # ================   APP CONFIGURATION
 INSTALLED_APPS = [
-    'django.contrib.admin',
-    'django.contrib.auth',
-    'django.contrib.contenttypes',
-    'django.contrib.sessions',
-    'django.contrib.messages',
-    'django.contrib.staticfiles',
-    'django.contrib.humanize',
-    'bulk_update_or_create',
-    'project.maps'
+    "django.contrib.admin",
+    "django.contrib.auth",
+    "django.contrib.contenttypes",
+    "django.contrib.sessions",
+    "django.contrib.messages",
+    "django.contrib.staticfiles",
+    "django.contrib.humanize",
+    "bulk_update_or_create",
+    "project.maps",
 ]
 
 
 # ================   URL CONFIGURATION
-ROOT_URLCONF = 'project.config.urls'
+ROOT_URLCONF = "project.config.urls"
 
 
 # ================   WSGI CONFIGURATION
-WSGI_APPLICATION = 'project.config.wsgi.application'
+WSGI_APPLICATION = "project.config.wsgi.application"
 
 
 # ================   PASSWORD VALIDATORS CONFIGURATION
 AUTH_PASSWORD_VALIDATORS = [
     {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+        "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",  # noqa: E501
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+        "NAME": "django.contrib.auth.password_validation.MinimumLengthValidator",
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
+        "NAME": "django.contrib.auth.password_validation.CommonPasswordValidator",
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
+        "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",
     },
 ]
