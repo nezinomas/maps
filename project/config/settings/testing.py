@@ -7,35 +7,25 @@ LANGUAGE_CODE = 'lt'
 TEMPLATES[0]['OPTIONS']['debug'] = False
 
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': ':memory:',
-        'TIMEOUT': 25,
-    }
-}
-
-EMAIL_BACKEND = 'django.core.mail.backends.locmem.EmailBackend'
+EMAIL_BACKEND = "django.core.mail.backends.locmem.EmailBackend"
 
 
 CACHES = {
-    'default': {
-        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
-        'LOCATION': ''
+    "default": {
+        "BACKEND": "django.core.cache.backends.dummy.DummyCache",
     }
 }
 
 
-TEMPLATES[0]['OPTIONS']['loaders'] = [
-    ['django.template.loaders.cached.Loader', [
-        'django.template.loaders.filesystem.Loader',
-        'django.template.loaders.app_directories.Loader', ], ],
+TEMPLATES[0]["OPTIONS"]["loaders"] = [
+    [
+        "django.template.loaders.cached.Loader",
+        [
+            "django.template.loaders.filesystem.Loader",
+            "django.template.loaders.app_directories.Loader",
+        ],
+    ],
 ]
-
-
-TEMPLATES[0]['OPTIONS']['libraries'] = {
-    'staticfiles': 'django.templatetags.static',
-}
 
 
 MIGRATION_MODULES = {
