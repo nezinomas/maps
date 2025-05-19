@@ -14,14 +14,14 @@ GET_TRIP = "project.maps.utils.garmin_service.get_trip"
 pytestmark = pytest.mark.django_db
 
 
-@pytest.fixture(autouse=True)
-def _garmin_api(monkeypatch):
+@pytest.fixture(name="garmin_api", autouse=True)
+def fixture_garmin_api(monkeypatch):
     mock_func = f"{GARMIN_SERVICE}.get_api"
     monkeypatch.setattr(mock_func, lambda x: "API")
 
 
-@pytest.fixture
-def _activity():
+@pytest.fixture(name="garmin_activity")
+def fixture_activity():
     return {
         "activityId": 999,
         "activityName": "Vilnius Road Cycling",
@@ -182,9 +182,9 @@ def test_tcx_new_file():
         assert f.read() == "tcx data"
 
 
-def test_statistic_file(_activity):
+def test_statistic_file(garmin_activity):
     trip = TripFactory()
-    _activities = [_activity]
+    _activities = [garmin_activity]
 
     api = Mock()
     api.download_activity.return_value = b"tcx data"
@@ -238,8 +238,8 @@ def test_tcx_and_sts_files_exists(fs):
         assert f.read() == "test"
 
 
-def test_get_activity_statistic(_activity):
-    actual = GarminService(trip=TripFactory.build()).get_activity_statistic(_activity)
+def test_get_activity_statistic(garmin_activity):
+    actual = GarminService(trip=TripFactory.build()).get_activity_statistic(garmin_activity)
 
     assert actual["total_km"] == 12.345
     assert actual["total_time_seconds"] == 1918.1
@@ -256,13 +256,13 @@ def test_get_activity_statistic(_activity):
     assert actual["max_altitude"] == 55
 
 
-def test_create_activity_statistic_file(_activity):
+def test_create_activity_statistic_file(garmin_activity):
     trip = TripFactory()
 
     api = Mock()
     api.download_activity.return_value = b"tcx data"
 
-    GarminService(trip=trip).create_activity_statistic_file(_activity)
+    GarminService(trip=trip).create_activity_statistic_file(garmin_activity)
 
     file = os.path.join(settings.MEDIA_ROOT, "tracks", str(trip.pk), "999.sts")
 
