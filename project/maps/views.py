@@ -7,7 +7,8 @@ from django.shortcuts import get_object_or_404
 from django.utils.safestring import mark_safe
 from django.views.generic import ListView, TemplateView
 
-from . import models, utils
+from . import models
+from .utils import statistic_service, wp_comments_qty, wp_content
 from .utils.garmin_service import GarminService
 from .utils.points_service import PointsService
 from .utils.tracks_service import TracksService
@@ -29,7 +30,7 @@ class Map(TemplateView):
         )
         context = {
             "trip": trip,
-            "statistic": utils.statistic_service.get_statistic(trip),
+            "statistic": statistic_service.get_statistic(trip),
             "google_api_key": settings.ENV["GOOGLE_API_KEY"],
             "js_version": os.path.getmtime(points_file),
         }
@@ -63,7 +64,7 @@ class Posts(TemplateView):
             )
 
             try:
-                posts = utils.wp.get_json(trip.blog, link)
+                posts = wp_content.get_json(trip.blog, link)
             except Exception:
                 wp_error = "Kažkas neveikia. Bandykite prisijungti vėliau."
 
@@ -100,7 +101,7 @@ class Comments(TemplateView):
         post_id = self.kwargs.get("post_id")
         link = f"comments?post={post_id}&_fields=author_name,date,content"
         context = {
-            "comments": utils.wp_content.get_json(trip.blog, link),
+            "comments": wp_content.get_json(trip.blog, link),
         }
 
         return super().get_context_data(**kwargs) | context
@@ -197,7 +198,7 @@ class CommentQty(LoginRequiredMixin, TemplateView):
 
     def get_context_data(self, *args, **kwargs):
         trip = get_object_or_404(models.Trip, slug=self.kwargs.get("trip"))
-        utils.wp_comments_qty.push_comments_qty(trip)
+        wp_comments_qty.push_comments_qty(trip)
 
         context = {"message": ["done"]}
 
