@@ -1,4 +1,5 @@
 from .base import *
+from pathlib import Path
 
 # ================   DEBUG CONFIGURATION
 DEBUG = True
@@ -6,7 +7,7 @@ TEMPLATE_DEBUG = DEBUG
 
 
 # ================   project CONFIGURATION
-ALLOWED_HOSTS = ENV.list("ALLOWED_HOSTS")
+ALLOWED_HOSTS = ENV["ALLOWED_HOSTS"]
 
 
 # ================   APP CONFIGURATION
@@ -18,7 +19,7 @@ INSTALLED_APPS += [
 
 STATIC_ROOT = None
 STATICFILES_DIRS = [
-    os.path.join(SITE_ROOT, 'static'),
+    Path(SITE_ROOT, 'static'),
 ]
 
 # print SQL queries in shell_plus

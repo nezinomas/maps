@@ -1,6 +1,0 @@
-# my.cnf
-[client]
-database = DB
-user = USER
-password = PASSWORD
-default-character-set = utf8
