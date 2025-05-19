@@ -15,8 +15,8 @@ GET_TRIP = "project.maps.utils.tracks_service.get_trip"
 pytestmark = pytest.mark.django_db
 
 
-@pytest.fixture
-def _activity():
+@pytest.fixture(name="garmin_activity")
+def fixture_activity():
     return {
         "start_time": "2022-01-01 03:02:01 +0000",
         "total_km": 12.345,
@@ -83,11 +83,11 @@ def test_save_data_everything_is_updated(mck_files, mck_tracks):
 @patch(f"{TRACKS_SERVICE}.get_data_from_sts_file")
 @patch(f"{TRACKS_SERVICE}.track_list_for_update")
 @patch(f"{TRACKS_SERVICE}.get_files")
-def test_save_data_save_track_data(mck_files, mck_tracks, mck_data, _activity):
+def test_save_data_save_track_data(mck_files, mck_tracks, mck_data, garmin_activity):
     trip = TripFactory()
     mck_files.return_value = ["x"]
     mck_tracks.return_value = ["y"]
-    mck_data.return_value = _activity
+    mck_data.return_value = garmin_activity
 
     TracksService(trip=trip).save_data()
 
@@ -103,12 +103,12 @@ def test_save_data_save_track_data(mck_files, mck_tracks, mck_data, _activity):
 @patch(f"{TRACKS_SERVICE}.track_list_for_update")
 @patch(f"{TRACKS_SERVICE}.get_files")
 def test_save_data_save_track_statistic_data(
-    mck_files, mck_tracks, mck_data, _activity
+    mck_files, mck_tracks, mck_data, garmin_activity
 ):
     trip = TripFactory()
     mck_files.return_value = ["x"]
     mck_tracks.return_value = ["y"]
-    mck_data.return_value = _activity
+    mck_data.return_value = garmin_activity
 
     TracksService(trip=trip).save_data()
 
@@ -132,11 +132,11 @@ def test_save_data_save_track_statistic_data(
 @patch(f"{TRACKS_SERVICE}.get_data_from_sts_file")
 @patch(f"{TRACKS_SERVICE}.track_list_for_update")
 @patch(f"{TRACKS_SERVICE}.get_files")
-def test_save_data_save_success(mck_files, mck_tracks, mck_data, _activity):
+def test_save_data_save_success(mck_files, mck_tracks, mck_data, garmin_activity):
     trip = TripFactory()
     mck_files.return_value = ["x"]
     mck_tracks.return_value = ["y"]
-    mck_data.return_value = _activity
+    mck_data.return_value = garmin_activity
 
     actual = TracksService(trip=trip).save_data()
 
@@ -167,15 +167,15 @@ def test_track_list_for_update():
 
 
 @patch("json.load")
-def test_get_data_from_sts_file(mck, fs, _activity):
+def test_get_data_from_sts_file(mck, fs, garmin_activity):
     trip = TripFactory()
     fs.create_file(os.path.join(settings.MEDIA_ROOT, "tracks", str(trip.pk), "XXX.sts"))
 
-    mck.return_value = _activity
+    mck.return_value = garmin_activity
 
     actual = TracksService(trip=trip).get_data_from_sts_file("XXX")
 
-    assert actual == _activity
+    assert actual == garmin_activity
 
 
 def test_get_data_from_sts_file_no_file():
