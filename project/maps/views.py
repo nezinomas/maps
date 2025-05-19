@@ -30,7 +30,7 @@ class Map(TemplateView):
         context = {
             "trip": trip,
             "statistic": utils.statistic_service.get_statistic(trip),
-            "google_api_key": settings.ENV("GOOGLE_API_KEY"),
+            "google_api_key": settings.ENV["GOOGLE_API_KEY"],
             "js_version": os.path.getmtime(points_file),
         }
 
