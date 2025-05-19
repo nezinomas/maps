@@ -65,7 +65,7 @@ def test_save_data_no_sts_files(mck_files):
 
     actual = TracksService(trip=trip).save_data()
 
-    assert actual == [f"No sts files in {settings.MEDIA_ROOT}/tracks/1/"]
+    assert actual == [f"No sts files in {settings.MEDIA_ROOT}/tracks/{trip.pk}/"]
 
 
 @patch(f"{TRACKS_SERVICE}.track_list_for_update")

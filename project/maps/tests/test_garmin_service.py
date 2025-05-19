@@ -1,8 +1,9 @@
 import json
 import os
-
+from pathlib import Path
 import pytest
 from django.conf import settings
+from django.test import override_settings
 from mock import Mock, patch
 
 from ..factories import TripFactory
@@ -163,7 +164,7 @@ def test_get_data_success(mck_activities, mck_save):
     assert actual == ["Successfully synced data from Garmin Connect"]
 
 
-def test_tcx_new_file():
+def test_tcx_new_file(tmp_path):
     trip = TripFactory()
 
     _activities = [
@@ -175,11 +176,14 @@ def test_tcx_new_file():
     api = Mock()
     api.download_activity.return_value = b"tcx data"
 
-    GarminService(trip=trip).save_tcx_and_sts_file(api, _activities)
+    tmp_path.mkdir(parents=True, exist_ok=True)
 
-    file = os.path.join(settings.MEDIA_ROOT, "tracks", str(trip.pk), "999.tcx")
-    with open(file, "r") as f:
-        assert f.read() == "tcx data"
+    with override_settings(MEDIA_ROOT=tmp_path):
+        GarminService(trip=trip).save_tcx_and_sts_file(api, _activities)
+
+        file = Path(settings.MEDIA_ROOT, "tracks", str(trip.pk), "999.tcx")
+        with open(file, "r") as f:
+            assert f.read() == "tcx data"
 
 
 def test_statistic_file(garmin_activity):
@@ -239,7 +243,9 @@ def test_tcx_and_sts_files_exists(fs):
 
 
 def test_get_activity_statistic(garmin_activity):
-    actual = GarminService(trip=TripFactory.build()).get_activity_statistic(garmin_activity)
+    actual = GarminService(trip=TripFactory.build()).get_activity_statistic(
+        garmin_activity
+    )
 
     assert actual["total_km"] == 12.345
     assert actual["total_time_seconds"] == 1918.1
@@ -256,29 +262,31 @@ def test_get_activity_statistic(garmin_activity):
     assert actual["max_altitude"] == 55
 
 
-def test_create_activity_statistic_file(garmin_activity):
+def test_create_activity_statistic_file(garmin_activity, tmp_path):
     trip = TripFactory()
 
     api = Mock()
     api.download_activity.return_value = b"tcx data"
 
-    GarminService(trip=trip).create_activity_statistic_file(garmin_activity)
+    tmp_path.mkdir(parents=True, exist_ok=True)
+    with override_settings(MEDIA_ROOT=tmp_path):
+        GarminService(trip=trip).create_activity_statistic_file(garmin_activity)
 
-    file = os.path.join(settings.MEDIA_ROOT, "tracks", str(trip.pk), "999.sts")
+        file = Path(settings.MEDIA_ROOT, "tracks", str(trip.pk), "999.sts")
 
-    with open(file, "r") as f:
-        actual = json.load(f)
+        with open(file, "r") as f:
+            actual = json.load(f)
 
-        assert actual["total_km"] == 12.345
-        assert actual["total_time_seconds"] == 1918.1
-        assert round(actual["avg_speed"], 2) == 23.40
-        assert round(actual["max_speed"], 2) == 47.52
-        assert actual["calories"] == 33.0
-        assert actual["avg_cadence"] is None
-        assert actual["avg_heart"] is None
-        assert actual["max_heart"] is None
-        assert actual["avg_temperature"] is None
-        assert actual["ascent"] == 111.0
-        assert actual["descent"] == 222.0
-        assert actual["min_altitude"] == 5
-        assert actual["max_altitude"] == 55
+            assert actual["total_km"] == 12.345
+            assert actual["total_time_seconds"] == 1918.1
+            assert round(actual["avg_speed"], 2) == 23.40
+            assert round(actual["max_speed"], 2) == 47.52
+            assert actual["calories"] == 33.0
+            assert actual["avg_cadence"] is None
+            assert actual["avg_heart"] is None
+            assert actual["max_heart"] is None
+            assert actual["avg_temperature"] is None
+            assert actual["ascent"] == 111.0
+            assert actual["descent"] == 222.0
+            assert actual["min_altitude"] == 5
+            assert actual["max_altitude"] == 55

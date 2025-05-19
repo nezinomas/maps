@@ -1,7 +1,7 @@
 import contextlib
 import json
-import os
 from datetime import datetime, timezone
+from pathlib import Path
 from typing import Dict, List
 
 from django.conf import settings
@@ -136,26 +136,30 @@ class GarminService:
     def create_activity_statistic_file(self, activity):
         data = self.get_activity_statistic(activity)
         activity_id = activity["activityId"]
-        outfile = os.path.join(
-            settings.MEDIA_ROOT, "tracks", str(self.trip.pk), f"{activity_id}.sts"
-        )
 
+        # create directory for trip if not exists
+        tracks_folder = Path(settings.MEDIA_ROOT) / "tracks" / str(self.trip.pk)
+        if not tracks_folder.exists():
+            tracks_folder.mkdir(parents=True, exist_ok=True)
+
+        # create activity statistic file
+        outfile = tracks_folder / f"{activity_id}.sts"
         with open(outfile, "w") as f:
             json.dump(data, f)
 
     def save_tcx_and_sts_file(self, api: Garmin, activities: List[Dict]) -> str:
         try:
+            tracks_folder = Path(settings.MEDIA_ROOT) / "tracks" / str(self.trip.pk)
+
+            if not tracks_folder.exists():
+                tracks_folder.mkdir(parents=True, exist_ok=True)
+
             for activity in activities:
                 activity_id = activity["activityId"]
 
-                output_file = os.path.join(
-                    settings.MEDIA_ROOT,
-                    "tracks",
-                    str(self.trip.pk),
-                    f"{activity_id}.tcx",
-                )
+                output_file = tracks_folder /  f"{activity_id}.tcx"
 
-                if os.path.exists(output_file):
+                if output_file.exists():
                     continue
 
                 tcx_data = api.download_activity(
