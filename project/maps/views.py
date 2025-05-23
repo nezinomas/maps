@@ -62,14 +62,11 @@ class Map(TemplateView):
             }
             geo_json["features"].append(feature)
 
-        # Serialize
-        geojson_data = json.dumps(geo_json, cls=DjangoJSONEncoder)
-
         context = {
             "trip": trip,
             "statistic": statistic_service.get_statistic(trip),
             "google_api_key": settings.ENV["GOOGLE_API_KEY"],
-            "tracks": geojson_data,
+            "tracks": json.dumps(geo_json, cls=DjangoJSONEncoder),
         }
 
         return super().get_context_data(*args, **kwargs) | context
