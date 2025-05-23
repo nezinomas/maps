@@ -14,9 +14,7 @@ def get_statistic(trip):
     stats = models.Statistic.objects.filter(track__trip__pk=trip.pk)
 
     total_km = stats.aggregate(Sum("total_km"))["total_km__sum"]
-    total_time = stats.aggregate(Sum("total_time_seconds"))[
-        "total_time_seconds__sum"
-    ]
+    total_time = stats.aggregate(Sum("total_time_seconds"))["total_time_seconds__sum"]
     total_ascent = stats.aggregate(Sum("ascent"))["ascent__sum"]
     # total_descent = stats.aggregate(Sum("descent"))["descent__sum"]
 

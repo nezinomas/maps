@@ -9,10 +9,11 @@ from django.utils.safestring import mark_safe
 from django.views.generic import ListView, TemplateView
 
 from . import models
+from .templatetags.datetime_filter import format_time
 from .utils import statistic_service, wp_comments_qty, wp_content
 from .utils.garmin_service import GarminService
 from .utils.tracks_service import TracksService
-from .templatetags.datetime_filter import format_time
+
 
 class Trips(ListView):
     model = models.Trip
