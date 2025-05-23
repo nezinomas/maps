@@ -49,24 +49,12 @@
     <div class="trip-statistic">
         {% now "Y-m-d" as todays_date %}
 
-        <!-- Trip not started -->
-        {% if todays_date < trip.start_date|date:"Y-m-d" %}
-
-        <div>Kelionė dar neprasidėjo.</div>
-
         <!-- Trip finished -->
-        {% elif todays_date > trip.end_date|date:"Y-m-d" %}
-
-        <div>Kelionė jau pasibaigusi.</div>
-        {% include 'maps/includes/trip_statistic.html' %}
-
-        <!-- Trip is active -->
-        {% else %}
-
+        {% if todays_date > trip.start_date|date:"Y-m-d" and todays_date < trip.end_date|date:"Y-m-d" %}
         <div><b>{{ statistic.total_days }}</b> diena kelyje.</div>
-        {% include 'maps/includes/trip_statistic.html' %}
-
         {% endif %}
+
+        {% include 'maps/includes/trip_statistic.html' %}
     </div>
 </header>
 
