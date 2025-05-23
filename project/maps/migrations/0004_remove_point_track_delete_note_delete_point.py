@@ -4,20 +4,19 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('maps', '0003_add_point_indexes'),
+        ("maps", "0003_add_point_indexes"),
     ]
 
     operations = [
         migrations.RemoveField(
-            model_name='point',
-            name='track',
+            model_name="point",
+            name="track",
         ),
         migrations.DeleteModel(
-            name='Note',
+            name="Note",
         ),
         migrations.DeleteModel(
-            name='Point',
+            name="Point",
         ),
     ]

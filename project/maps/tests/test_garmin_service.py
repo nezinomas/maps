@@ -1,6 +1,7 @@
 import json
 import os
 from pathlib import Path
+
 import pytest
 from django.conf import settings
 from django.test import override_settings
