@@ -73,9 +73,17 @@ function initMap(routes) {
             endPoint = feature.properties.last_point;
 
             let stats = feature.properties;
-            const popupContent =
-            `<p><b>${stats.date}</b></p>` +
-            `Atstumas: ${stats.total_km ? stats.total_km.toFixed(2) : 'N/A'} km<br>`
+            console.log("stats", stats);
+            let popupContent =
+                `<div class="popup">` +
+                `<p>${stats.date}</p>` +
+                `<table>` +
+                `<tr><td>Atstumas:</td><td><span>${stats.total_km || 'N/A'}</span> km</td></tr>` +
+                `<tr><td>Laikas:</td><td><span>${stats.time || 'N/A'}</span> val</td></tr>` +
+                `<tr><td>Vid. greitis:</td><td><span>${stats.avg_speed || 'N/A'}</span> km/h</td></tr>` +
+                `<tr><td>Į kalną:</td><td><span>${stats.ascent || 'N/A'}</span> m</td></tr>` +
+                `</table></div>`
+
             trackLayer.bindPopup(popupContent);
 
             const marker = L.marker(endPoint, { title: (feature.properties.name || 'Unnamed') + ' (End)' }).bindPopup(popupContent);
