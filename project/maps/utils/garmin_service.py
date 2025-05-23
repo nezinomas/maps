@@ -58,7 +58,7 @@ class GarminService:
             if time < trip_start_date or time > trip_end_date:
                 continue
 
-            # activities list for download as tcx file
+            # activities list for download
             arr.append(activity)
 
         if not arr:
@@ -87,6 +87,9 @@ class GarminService:
     def get_activities(self, api: Garmin) -> List[Dict]:
         try:
             activities = api.get_activities(0, 15)  # 0=start, 1=limit
+            # activities = api.get_activities_by_date(
+            #     startdate="2018-09-14", enddate="2018-11-01"
+            # )
         except Exception as e:
             return None
 
@@ -133,20 +136,6 @@ class GarminService:
 
         return stats
 
-    def create_activity_statistic_file(self, activity):
-        data = self.get_activity_statistic(activity)
-        activity_id = activity["activityId"]
-
-        # create directory for trip if not exists
-        tracks_folder = Path(settings.MEDIA_ROOT) / "tracks" / str(self.trip.pk)
-        if not tracks_folder.exists():
-            tracks_folder.mkdir(parents=True, exist_ok=True)
-
-        # create activity statistic file
-        outfile = tracks_folder / f"{activity_id}.sts"
-        with open(outfile, "w") as f:
-            json.dump(data, f)
-
     def save_tcx_and_sts_file(self, api: Garmin, activities: List[Dict]) -> str:
         try:
             tracks_folder = Path(settings.MEDIA_ROOT) / "tracks" / str(self.trip.pk)
@@ -157,7 +146,7 @@ class GarminService:
             for activity in activities:
                 activity_id = activity["activityId"]
 
-                output_file = tracks_folder /  f"{activity_id}.tcx"
+                output_file = tracks_folder / str(activity_id)
 
                 if output_file.exists():
                     continue
@@ -166,11 +155,11 @@ class GarminService:
                     activity_id, dl_fmt=api.ActivityDownloadFormat.TCX
                 )
 
-                with open(output_file, "wb") as fb:
-                    fb.write(tcx_data)
+                with open(output_file, "w") as activity_file:
+                    json.dump(activity, activity_file)
 
-                # create activity statistic file
-                self.create_activity_statistic_file(activity)
+                with open(f"{output_file}.tcx", "wb") as tcx_file:
+                    tcx_file.write(tcx_data)
 
         except Exception as err:
             return err
