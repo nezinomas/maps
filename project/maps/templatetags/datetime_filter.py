@@ -3,8 +3,8 @@ from django import template
 register = template.Library()
 
 
-@register.filter(name="format_datetime")
-def format_datetime(value):
+@register.filter(name="format_time")
+def format_time(value):
     if type(value) is str or value is None:
         return value
 
