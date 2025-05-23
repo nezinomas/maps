@@ -240,3 +240,21 @@ header {
         margin-bottom: 1rem;
     }
 }
+
+
+div.popup {
+    table tr > td:first-child {
+        text-align: right;
+        padding-right: 0.25rem;
+    }
+
+    table td > span {
+        font-weight: 550;
+        color: #0e0e0e;
+    }
+
+    p {
+        text-align: center;
+        font-weight: 600;
+    }
+}
