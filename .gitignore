@@ -9,7 +9,6 @@ media/
 _config_db.cnf
 _config_secrets.json
 project.pyproj*
-project/static/js/points.js
 .vscode/
 *code-workspace
 .htaccess

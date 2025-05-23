@@ -1,5 +1,5 @@
 from bulk_update_or_create import BulkUpdateOrCreateQuerySet
-from django.db import models
+from django.contrib.gis.db import models
 from django.utils.text import slugify
 
 
@@ -65,6 +65,7 @@ class Track(models.Model):
     activity_type = models.CharField(
         max_length=30,
     )
+    path = models.LineStringField(srid=4326, null=True, blank=True)
 
     trip = models.ForeignKey(
         Trip,
@@ -79,22 +80,6 @@ class Track(models.Model):
 
     def __str__(self):
         return self.title
-
-
-class Point(models.Model):
-    latitude = models.FloatField()
-    longitude = models.FloatField()
-    altitude = models.FloatField(null=True, blank=True)
-    distance_meters = models.FloatField(
-        null=True,
-        blank=True,
-    )
-    cadence = models.IntegerField(null=True, blank=True)
-    heart_rate = models.IntegerField(null=True, blank=True)
-    temperature = models.FloatField(null=True, blank=True)
-    datetime = models.DateTimeField()
-
-    track = models.ForeignKey(Track, related_name="points", on_delete=models.CASCADE)
 
 
 class Statistic(models.Model):
@@ -113,16 +98,3 @@ class Statistic(models.Model):
     descent = models.FloatField(null=True, blank=True)
 
     track = models.OneToOneField(Track, related_name="stats", on_delete=models.CASCADE)
-
-
-class Note(models.Model):
-    latitude = models.FloatField()
-    longitude = models.FloatField()
-    note = models.TextField(
-        blank=True,
-        null=True,
-    )
-
-    track = models.ForeignKey(
-        Track, related_name="notes", on_delete=models.CASCADE, blank=True, null=True
-    )

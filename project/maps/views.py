@@ -10,7 +10,6 @@ from django.views.generic import ListView, TemplateView
 from . import models
 from .utils import statistic_service, wp_comments_qty, wp_content
 from .utils.garmin_service import GarminService
-from .utils.points_service import PointsService
 from .utils.tracks_service import TracksService
 
 
@@ -153,42 +152,6 @@ class RewriteAllTracks(LoginRequiredMixin, TemplateView):
         models.Statistic.objects.filter(track__trip=trip).delete()
 
         context = {"message": TracksService(trip).save_data()}
-
-        return super().get_context_data(*args, **kwargs) | context
-
-
-class SaveNewPoints(LoginRequiredMixin, TemplateView):
-    login_url = "/admin/"
-    template_name = "maps/utils_messages.html"
-
-    def get_context_data(self, *args, **kwargs):
-        trip = get_object_or_404(models.Trip, slug=self.kwargs.get("trip"))
-
-        context = {"message": PointsService(trip).update_points()}
-
-        return super().get_context_data(*args, **kwargs) | context
-
-
-class RewriteAllPoints(LoginRequiredMixin, TemplateView):
-    login_url = "/admin/"
-    template_name = "maps/utils_messages.html"
-
-    def get_context_data(self, *args, **kwargs):
-        trip = get_object_or_404(models.Trip, slug=self.kwargs.get("trip"))
-
-        context = {"message": PointsService(trip).update_all_points()}
-
-        return super().get_context_data(*args, **kwargs) | context
-
-
-class RegeneratePointsFile(LoginRequiredMixin, TemplateView):
-    login_url = "/admin/"
-    template_name = "maps/utils_messages.html"
-
-    def get_context_data(self, *args, **kwargs):
-        trip = get_object_or_404(models.Trip, slug=self.kwargs.get("trip"))
-
-        context = {"message": PointsService(trip).regenerate_points_file()}
 
         return super().get_context_data(*args, **kwargs) | context
 

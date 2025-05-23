@@ -3,7 +3,6 @@ from datetime import datetime
 from django.core.management.base import BaseCommand, CommandError
 
 from ...utils.garmin_service import GarminService
-from ...utils.points_service import PointsService
 from ...utils.tracks_service import TracksService
 
 
@@ -18,8 +17,6 @@ class Command(BaseCommand):
             # write tracks and statistic to database
             TracksService().save_data()
 
-            # get data from tcx files
-            PointsService().update_points()
         except Exception as e:
             raise CommandError(f"Can't sync with Garmin - {e}")
 

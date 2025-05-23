@@ -18,13 +18,7 @@
 
     <button type="button" class="btn-primary" hx-get="{% url 'maps:update_tracks' slug %}" hx-target="#message-container" hx-indicator="#indicator" onClick='$("#message-container").html("");'>Save New Tracks</button>
 
-    <button type="button" class="btn-primary" hx-get="{% url 'maps:update_points' slug %}" hx-target="#message-container" hx-indicator="#indicator" onClick='$("#message-container").html("");'>Save New Points</button>
-
     <button type="button" class="btn-danger" hx-get="{% url 'maps:update_all_tracks' slug %}" hx-target="#message-container" hx-indicator="#indicator" onClick='$("#message-container").html("");'>Rewrite All Tracks</button>
-
-    <button type="button" class="btn-danger" hx-get="{% url 'maps:update_all_points' slug %}" hx-target="#message-container" hx-indicator="#indicator" onClick='$("#message-container").html("");'>Rewrite All Points</button>
-
-    <button type="button" class="btn-danger" hx-get="{% url 'maps:regenerate_points_file' slug %}" hx-target="#message-container" hx-indicator="#indicator" onClick='$("#message-container").html("");'>Regenerate Points JS File</button>
 
     <button type="button" class="btn-secondary" onClick='$("#message-container").html("");'>Clear Messages</button>
   </div>

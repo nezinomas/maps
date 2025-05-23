@@ -20,21 +20,6 @@ urlpatterns = [
         views.RewriteAllTracks.as_view(),
         name="update_all_tracks",
     ),
-    path(
-        "<slug:trip>/update_points/",
-        views.SaveNewPoints.as_view(),
-        name="update_points",
-    ),
-    path(
-        "<slug:trip>/regenerate_points_file/",
-        views.RegeneratePointsFile.as_view(),
-        name="regenerate_points_file",
-    ),
-    path(
-        "<slug:trip>/update_all_points/",
-        views.RewriteAllPoints.as_view(),
-        name="update_all_points",
-    ),
     path("<slug:trip>/qty/", views.CommentQty.as_view(), name="comment_qty"),
     path(
         "<slug:trip>/<int:post_id>/comments/", views.Comments.as_view(), name="comments"
