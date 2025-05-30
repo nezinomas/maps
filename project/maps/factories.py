@@ -4,6 +4,7 @@ import factory
 from django.contrib.auth.models import User
 
 from .models import CommentQty, Track, Trip
+from django.contrib.gis.geos import LineString
 
 
 class TripFactory(factory.django.DjangoModelFactory):
@@ -23,10 +24,11 @@ class TrackFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = Track
 
-    title = "999"
+    title = factory.Sequence(lambda n: "Track %03d" % n)
     date = datetime(2022, 1, 1, 3, 2, 1, tzinfo=timezone.utc)
     activity_type = "cycling"
     trip = factory.SubFactory(TripFactory)
+    path = LineString((1, 2), (3, 4), srid=4326)
 
 
 class CommentQtyFactory(factory.django.DjangoModelFactory):
