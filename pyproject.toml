@@ -17,7 +17,6 @@ dependencies = [
     "python-dateutil>=2.9.0.post0",
     "python-wordpress-xmlrpc>=2.3",
     "requests>=2.32.3",
-    "tcxreader>=0.4.11",
     "wordpress-api>=1.2.9",
 ]
 
