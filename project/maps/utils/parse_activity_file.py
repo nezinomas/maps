@@ -1,8 +1,22 @@
 import contextlib
+import json
+from pathlib import Path
 from typing import Dict
 
 
-def get_statistic(activity: Dict) -> Dict:
+def get_activity_content(file_path: Path) -> Dict:
+    """
+    Reads the content of an activity file and returns it as a dictionary.
+    The file is expected to be in JSON format.
+    """
+    try:
+        return json.loads(file_path.open().read())
+    except json.JSONDecodeError:
+        return {}
+
+def get_statistic(activity_file: Path) -> Dict:
+    activity = get_activity_content(activity_file)
+
     # old activities have 'movingDuration': None
     total_time = activity.get("movingDuration") or activity.get("duration")
 

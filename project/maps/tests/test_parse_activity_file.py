@@ -1,7 +1,7 @@
 import pytest
 
 from ..utils.parse_activity_file import get_statistic
-
+from mock import patch
 
 @pytest.fixture(name="garmin_activity")
 def fixture_activity():
@@ -35,8 +35,11 @@ def fixture_activity():
     }
 
 
-def test_activity_statistic(garmin_activity):
-    actual = get_statistic(garmin_activity)
+@patch("project.maps.utils.parse_activity_file.get_activity_content")
+def test_activity_statistic(content_mck, garmin_activity):
+    content_mck.return_value = garmin_activity
+
+    actual = get_statistic("/path/to/activity/file")
 
     assert actual["start_time"] == "2022-01-01 03:02:01 +0000"
     assert actual["total_km"] == 12.345
