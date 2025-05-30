@@ -13,8 +13,10 @@ class Command(BaseCommand):
             # get data from garmin connect
             GarminService().get_data()
         except Exception as e:
-            raise CommandError(f"Can't sync with Garmin - {e}") from e
+            raise CommandError(f"It is not possible to sync data with Garmin - {e}") from e
 
         self.stdout.write(
-            self.style.SUCCESS(f"{datetime.now()}: successfully get Garmin activities")
+            self.style.SUCCESS(
+                f"{datetime.now()}: Garmin activities have been successfully synced."
+            )
         )
