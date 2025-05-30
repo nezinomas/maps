@@ -3,7 +3,6 @@ from datetime import datetime
 from django.core.management.base import BaseCommand, CommandError
 
 from ...utils.garmin_service import GarminService
-from ...utils.tracks_service import TracksService
 
 
 class Command(BaseCommand):
@@ -13,12 +12,8 @@ class Command(BaseCommand):
         try:
             # get data from garmin connect
             GarminService().get_data()
-
-            # write tracks and statistic to database
-            TracksService().save_data()
-
         except Exception as e:
-            raise CommandError(f"Can't sync with Garmin - {e}")
+            raise CommandError(f"Can't sync with Garmin - {e}") from e
 
         self.stdout.write(
             self.style.SUCCESS(f"{datetime.now()}: successfully get Garmin activities")
