@@ -4,7 +4,7 @@ import factory
 from django.contrib.auth.models import User
 from django.contrib.gis.geos import LineString
 
-from .models import CommentQty, Track, Trip
+from .models import CommentQty, Statistic, Track, Trip
 
 
 class TripFactory(factory.django.DjangoModelFactory):
@@ -29,6 +29,27 @@ class TrackFactory(factory.django.DjangoModelFactory):
     activity_type = "cycling"
     trip = factory.SubFactory(TripFactory)
     path = LineString((1, 2), (3, 4), srid=4326)
+
+
+class StatisticFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = Statistic
+
+    total_km = 10
+    total_time_seconds = 3600
+    avg_speed = 12.5
+    max_speed = 25.4
+    ascent = 150
+    descent = 160
+    min_altitude = 250
+    max_altitude = 650
+    calories = 12
+    avg_cadence = 88
+    avg_heart = 132
+    max_heart = 174
+    avg_temperature = 22.1
+
+    track = factory.SubFactory(TrackFactory)
 
 
 class CommentQtyFactory(factory.django.DjangoModelFactory):
