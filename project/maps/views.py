@@ -12,7 +12,7 @@ from . import models
 from .templatetags.datetime_filter import format_time
 from .utils import statistic_service, wp_comments_qty, wp_content
 from .utils.garmin_service import GarminService
-from .utils.tracks_service import TracksService
+from .utils.tracks_service import TracksService, TracksServiceData
 
 
 class Trips(ListView):
@@ -172,7 +172,8 @@ class SaveNewTracks(LoginRequiredMixin, TemplateView):
     def get_context_data(self, *args, **kwargs):
         trip = get_object_or_404(models.Trip, slug=self.kwargs.get("trip"))
 
-        context = {"message": TracksService(trip).save_data()}
+        data = TracksServiceData(trip)
+        context = {"message": TracksService(data).create()}
 
         return super().get_context_data(*args, **kwargs) | context
 
@@ -187,7 +188,8 @@ class RewriteAllTracks(LoginRequiredMixin, TemplateView):
         models.Track.objects.filter(trip=trip).delete()
         models.Statistic.objects.filter(track__trip=trip).delete()
 
-        context = {"message": TracksService(trip).save_data()}
+        data = TracksServiceData(trip)
+        context = {"message": TracksService(data).create_or_update()}
 
         return super().get_context_data(*args, **kwargs) | context
 
