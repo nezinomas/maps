@@ -14,6 +14,7 @@ def get_activity_content(file_path: Path) -> Dict:
     except json.JSONDecodeError:
         return {}
 
+
 def get_statistic(activity_file: Path) -> Dict:
     activity = get_activity_content(activity_file)
 
@@ -51,8 +52,6 @@ def get_statistic(activity_file: Path) -> Dict:
         stats["max_heart"] = float(activity.get("maxHR"))
 
     with contextlib.suppress(TypeError, ValueError):
-        stats["avg_cadence"] = float(
-            activity.get("averageBikingCadenceInRevPerMinute")
-        )
+        stats["avg_cadence"] = float(activity.get("averageBikingCadenceInRevPerMinute"))
 
     return stats

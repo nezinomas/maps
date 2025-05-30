@@ -2,9 +2,9 @@ from datetime import date, datetime, timezone
 
 import factory
 from django.contrib.auth.models import User
+from django.contrib.gis.geos import LineString
 
 from .models import CommentQty, Track, Trip
-from django.contrib.gis.geos import LineString
 
 
 class TripFactory(factory.django.DjangoModelFactory):

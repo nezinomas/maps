@@ -35,14 +35,13 @@ def get_track_path(file_path: Path) -> LineString:
 
     return LineString(coordinates, srid=4326)
 
+
 def get_track_date(file_path: Path) -> datetime:
     tree = etree.parse(file_path)
     root = tree.getroot()
 
     # Define the namespace for TCX
-    namespaces = {
-        "ns": "http://www.garmin.com/xmlschemas/TrainingCenterDatabase/v2"
-    }
+    namespaces = {"ns": "http://www.garmin.com/xmlschemas/TrainingCenterDatabase/v2"}
 
     # Extract datetime from the Activity Id
     activity = root.find(".//ns:Activity", namespaces)

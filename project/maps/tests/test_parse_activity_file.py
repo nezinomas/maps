@@ -1,7 +1,8 @@
 import pytest
+from mock import patch
 
 from ..utils.parse_activity_file import get_statistic
-from mock import patch
+
 
 @pytest.fixture(name="garmin_activity")
 def fixture_activity():

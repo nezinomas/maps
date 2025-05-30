@@ -1,6 +1,8 @@
-import pytest
 from datetime import datetime, timezone
-from ..utils.parse_tcx_file import get_track_path, get_track_date
+
+import pytest
+
+from ..utils.parse_tcx_file import get_track_date, get_track_path
 
 
 @pytest.fixture(name="tcx_file")
