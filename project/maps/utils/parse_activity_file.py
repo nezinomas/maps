@@ -22,7 +22,6 @@ def get_statistic(activity_file: Path) -> Dict:
     total_time = activity.get("movingDuration") or activity.get("duration")
 
     stats = {
-        "start_time": activity.get("startTimeGMT") + " +0000",
         "total_km": float(activity.get("distance")) / 1000,
         "total_time_seconds": float(total_time),
         "avg_speed": float(activity.get("averageSpeed")) * 3.6,

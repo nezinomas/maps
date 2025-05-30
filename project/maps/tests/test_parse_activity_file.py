@@ -42,7 +42,6 @@ def test_activity_statistic(content_mck, garmin_activity):
 
     actual = get_statistic("/path/to/activity/file")
 
-    assert actual["start_time"] == "2022-01-01 03:02:01 +0000"
     assert actual["total_km"] == 12.345
     assert actual["total_time_seconds"] == 1918.1
     assert round(actual["avg_speed"], 2) == 23.40
