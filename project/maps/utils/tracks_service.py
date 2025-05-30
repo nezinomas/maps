@@ -111,12 +111,24 @@ class TracksService:
             unique_fields=["track"],
         )
 
-    def create(self):
+    def _write_tracks(self, tracks):
+        try:
+            self._save_tracks(tracks)
+        except Exception as e:
+            return [f"Error occurred during saving tracks: {e}"]
+        try:
+            self._save_statistic(tracks)
+        except Exception as e:
+            return [f"Error occurred during saving statistic: {e}"]
+
+        return ["Successfully created or updated tracks and statistics"]
+
+    def create(self) -> str:
         tracks = self._create_tracks(self.new_tracks())
-        self._save_tracks(tracks)
-        self._save_statistic(tracks)
+
+        return self._write_tracks(tracks)
+
 
     def create_or_update(self):
         tracks = self._create_tracks(self.tracks_db | self.tracks_disk)
-        self._save_tracks(tracks)
-        self._save_statistic(tracks)
+        return self._write_tracks(tracks)
