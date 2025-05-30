@@ -8,6 +8,7 @@ media/
 static/admin/
 static/debug_toolbar/
 static/django_extensions/
+#
 .idea/
 _config_db.cnf
 _config_secrets.json
