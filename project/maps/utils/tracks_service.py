@@ -128,7 +128,6 @@ class TracksService:
 
         return self._write_tracks(tracks)
 
-
     def create_or_update(self):
         tracks = self._create_tracks(self.tracks_db | self.tracks_disk)
         return self._write_tracks(tracks)
