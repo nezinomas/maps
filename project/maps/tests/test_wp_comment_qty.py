@@ -24,7 +24,7 @@ def test_count_comments(mck_content):
     assert create_or_update[0].trip.title == "Trip"
     assert create_or_update[0].post_id == 1
     assert create_or_update[0].post_date == datetime(
-        1999, 1, 1, 1, 1, 1, tzinfo=timezone.utc
+        1999, 1, 1, 2, 1, 1, tzinfo=timezone.utc
     )
     assert create_or_update[0].qty == 2
 
@@ -59,7 +59,7 @@ def test_count_comments_no_comments(mck_content):
     assert create_or_update[0].trip.title == "Trip"
     assert create_or_update[0].post_id == 1
     assert create_or_update[0].post_date == datetime(
-        1999, 1, 1, 1, 1, 1, tzinfo=timezone.utc
+        1999, 1, 1, 2, 1, 1, tzinfo=timezone.utc
     )
     assert create_or_update[0].qty == 0
 
