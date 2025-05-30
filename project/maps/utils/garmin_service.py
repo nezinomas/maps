@@ -1,4 +1,3 @@
-import contextlib
 import json
 from datetime import datetime, timezone
 from pathlib import Path
@@ -65,7 +64,7 @@ class GarminService:
             return ["Nothing to sync"]
 
         # download TCX files for all activities
-        if err := self.save_tcx_and_sts_file(api, arr):
+        if err := self.save_files(api, arr):
             return [f"Error occurred during saving tcx file: {err}"]
 
         return ["Successfully synced data from Garmin Connect"]
@@ -95,48 +94,7 @@ class GarminService:
 
         return activities
 
-    def get_activity_statistic(self, activity: Dict) -> Dict:
-        # old activities have 'movingDuration': None
-        total_time = activity.get("movingDuration") or activity.get("duration")
-
-        stats = {
-            "start_time": activity.get("startTimeGMT") + " +0000",
-            "total_km": float(activity.get("distance")) / 1000,
-            "total_time_seconds": float(total_time),
-            "avg_speed": float(activity.get("averageSpeed")) * 3.6,
-            "max_speed": float(activity.get("maxSpeed")) * 3.6,
-            "calories": 0,
-            "avg_cadence": None,
-            "avg_heart": None,
-            "max_heart": None,
-            "avg_temperature": None,
-            "ascent": float(activity.get("elevationGain")),
-            "descent": float(activity.get("elevationLoss")),
-        }
-
-        with contextlib.suppress(TypeError, ValueError):
-            stats["calories"] = int(activity.get("calories"))
-
-        with contextlib.suppress(TypeError, ValueError):
-            stats["min_altitude"] = float(activity.get("minElevation"))
-
-        with contextlib.suppress(TypeError, ValueError):
-            stats["max_altitude"] = float(activity.get("maxElevation"))
-
-        with contextlib.suppress(TypeError, ValueError):
-            stats["avg_heart"] = float(activity.get("averageHR"))
-
-        with contextlib.suppress(TypeError, ValueError):
-            stats["max_heart"] = float(activity.get("maxHR"))
-
-        with contextlib.suppress(TypeError, ValueError):
-            stats["avg_cadence"] = float(
-                activity.get("averageBikingCadenceInRevPerMinute")
-            )
-
-        return stats
-
-    def save_tcx_and_sts_file(self, api: Garmin, activities: List[Dict]) -> str:
+    def save_files(self, api: Garmin, activities: List[Dict]) -> str:
         try:
             tracks_folder = Path(settings.MEDIA_ROOT) / "tracks" / str(self.trip.pk)
 
