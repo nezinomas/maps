@@ -9,12 +9,12 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RunSQL(
-            "CREATE INDEX point_track_id_idx ON maps_point (track_id);",
-            reverse_sql="DROP INDEX point_track_id_idx ON maps_point;",
-        ),
-        migrations.RunSQL(
-            "CREATE INDEX point_datetime_idx ON maps_point (datetime);",
-            reverse_sql="DROP INDEX point_datetime_idx ON maps_point;",
-        ),
+        # migrations.RunSQL(
+        #     "CREATE INDEX point_track_id_idx ON maps_point (track_id);",
+        #     reverse_sql="DROP INDEX point_track_id_idx ON maps_point;",
+        # ),
+        # migrations.RunSQL(
+        #     "CREATE INDEX point_datetime_idx ON maps_point (datetime);",
+        #     reverse_sql="DROP INDEX point_datetime_idx ON maps_point;",
+        # ),
     ]
