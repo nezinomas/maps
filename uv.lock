@@ -25,6 +25,15 @@ wheels = [
 ]
 
 [[package]]
+name = "async-timeout"
+version = "5.0.1"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/a5/ae/136395dfbfe00dfc94da3f3e136d0b13f394cba8f4841120e34226265780/async_timeout-5.0.1.tar.gz", hash = "sha256:d9321a7a3d5a6a5e187e824d2fa0793ce379a202935782d555d6e9d2735677d3", size = 9274, upload-time = "2024-11-06T16:41:39.6Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/fe/ba/e2081de779ca30d473f21f5b30e0e737c438205440784c7dfc81efc2b029/async_timeout-5.0.1-py3-none-any.whl", hash = "sha256:39e3809566ff85354557ec2398b55e096c8364bacac9405a7a1fa429e77fe76c", size = 6233, upload-time = "2024-11-06T16:41:37.9Z" },
+]
+
+[[package]]
 name = "attrs"
 version = "25.3.0"
 source = { registry = "https://pypi.org/simple" }
@@ -283,6 +292,19 @@ wheels = [
 ]
 
 [[package]]
+name = "django-redis"
+version = "5.4.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "django" },
+    { name = "redis" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/83/9d/2272742fdd9d0a9f0b28cd995b0539430c9467a2192e4de2cea9ea6ad38c/django-redis-5.4.0.tar.gz", hash = "sha256:6a02abaa34b0fea8bf9b707d2c363ab6adc7409950b2db93602e6cb292818c42", size = 52567, upload-time = "2023-10-01T20:22:01.221Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/b7/f1/63caad7c9222c26a62082f4f777de26389233b7574629996098bf6d25a4d/django_redis-5.4.0-py3-none-any.whl", hash = "sha256:ebc88df7da810732e2af9987f7f426c96204bf89319df4c6da6ca9a2942edd5b", size = 31119, upload-time = "2023-10-01T20:21:33.009Z" },
+]
+
+[[package]]
 name = "django-test-without-migrations"
 version = "0.6"
 source = { registry = "https://pypi.org/simple" }
@@ -493,6 +515,7 @@ dependencies = [
     { name = "django-bulk-update-or-create" },
     { name = "django-environ" },
     { name = "django-htmx" },
+    { name = "django-redis" },
     { name = "garminconnect" },
     { name = "numpy" },
     { name = "oauthlib" },
@@ -504,7 +527,7 @@ dependencies = [
     { name = "wordpress-api" },
 ]
 
-[package.dev-dependencies]
+[package.optional-dependencies]
 dev = [
     { name = "django-debug-toolbar" },
     { name = "django-extensions" },
@@ -536,46 +559,44 @@ dev = [
 requires-dist = [
     { name = "django", specifier = ">=5.2.1" },
     { name = "django-bulk-update-or-create", specifier = ">=0.3.0" },
+    { name = "django-debug-toolbar", marker = "extra == 'dev'", specifier = ">=5.2.0" },
     { name = "django-environ", specifier = ">=0.12.0" },
+    { name = "django-extensions", marker = "extra == 'dev'", specifier = ">=4.1" },
     { name = "django-htmx", specifier = ">=1.23.0" },
+    { name = "django-override-storage", marker = "extra == 'dev'", specifier = ">=0.3.2" },
+    { name = "django-redis", specifier = ">=5.4.0" },
+    { name = "django-test-without-migrations", marker = "extra == 'dev'", specifier = ">=0.6" },
+    { name = "django-webtest", marker = "extra == 'dev'", specifier = ">=1.9.13" },
     { name = "garminconnect", specifier = ">=0.2.26" },
+    { name = "mock", marker = "extra == 'dev'", specifier = ">=5.2.0" },
     { name = "numpy", specifier = ">=2.2.6" },
     { name = "oauthlib", specifier = ">=3.2.2" },
     { name = "postgis", specifier = ">=1.0.4" },
     { name = "psycopg2-binary", specifier = ">=2.9.10" },
+    { name = "pyfakefs", marker = "extra == 'dev'", specifier = ">=5.8.0" },
+    { name = "pytest", marker = "extra == 'dev'", specifier = ">=8.3.5" },
+    { name = "pytest-clarity", marker = "extra == 'dev'", specifier = ">=1.0.1" },
+    { name = "pytest-cov", marker = "extra == 'dev'", specifier = ">=6.1.1" },
+    { name = "pytest-diff", marker = "extra == 'dev'", specifier = ">=0.1.14" },
+    { name = "pytest-django", marker = "extra == 'dev'", specifier = ">=4.11.1" },
+    { name = "pytest-factoryboy", marker = "extra == 'dev'", specifier = ">=2.7.0" },
+    { name = "pytest-forked", marker = "extra == 'dev'", specifier = ">=1.6.0" },
+    { name = "pytest-freezegun", marker = "extra == 'dev'", specifier = ">=0.4.2" },
+    { name = "pytest-icdiff", marker = "extra == 'dev'", specifier = ">=0.9" },
+    { name = "pytest-mock", marker = "extra == 'dev'", specifier = ">=3.14.0" },
+    { name = "pytest-raises", marker = "extra == 'dev'", specifier = ">=0.11" },
+    { name = "pytest-randomly", marker = "extra == 'dev'", specifier = ">=3.16.0" },
+    { name = "pytest-sugar", marker = "extra == 'dev'", specifier = ">=1.0.0" },
+    { name = "pytest-xdist", marker = "extra == 'dev'", specifier = ">=3.6.1" },
     { name = "python-dateutil", specifier = ">=2.9.0.post0" },
     { name = "python-wordpress-xmlrpc", specifier = ">=2.3" },
     { name = "requests", specifier = ">=2.32.3" },
+    { name = "ruff", marker = "extra == 'dev'", specifier = ">=0.11.10" },
+    { name = "selenium", marker = "extra == 'dev'", specifier = ">=4.32.0" },
+    { name = "webtest", marker = "extra == 'dev'", specifier = ">=3.0.4" },
     { name = "wordpress-api", specifier = ">=1.2.9" },
 ]
-
-[package.metadata.requires-dev]
-dev = [
-    { name = "django-debug-toolbar", specifier = ">=5.2.0" },
-    { name = "django-extensions", specifier = ">=4.1" },
-    { name = "django-override-storage", specifier = ">=0.3.2" },
-    { name = "django-test-without-migrations", specifier = ">=0.6" },
-    { name = "django-webtest", specifier = ">=1.9.13" },
-    { name = "mock", specifier = ">=5.2.0" },
-    { name = "pyfakefs", specifier = ">=5.8.0" },
-    { name = "pytest", specifier = ">=8.3.5" },
-    { name = "pytest-clarity", specifier = ">=1.0.1" },
-    { name = "pytest-cov", specifier = ">=6.1.1" },
-    { name = "pytest-diff", specifier = ">=0.1.14" },
-    { name = "pytest-django", specifier = ">=4.11.1" },
-    { name = "pytest-factoryboy", specifier = ">=2.7.0" },
-    { name = "pytest-forked", specifier = ">=1.6.0" },
-    { name = "pytest-freezegun", specifier = ">=0.4.2" },
-    { name = "pytest-icdiff", specifier = ">=0.9" },
-    { name = "pytest-mock", specifier = ">=3.14.0" },
-    { name = "pytest-raises", specifier = ">=0.11" },
-    { name = "pytest-randomly", specifier = ">=3.16.0" },
-    { name = "pytest-sugar", specifier = ">=1.0.0" },
-    { name = "pytest-xdist", specifier = ">=3.6.1" },
-    { name = "ruff", specifier = ">=0.11.10" },
-    { name = "selenium", specifier = ">=4.32.0" },
-    { name = "webtest", specifier = ">=3.0.4" },
-]
+provides-extras = ["dev"]
 
 [[package]]
 name = "markdown-it-py"
@@ -1106,6 +1127,18 @@ name = "python-wordpress-xmlrpc"
 version = "2.3"
 source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/47/a6/87d2c927e8b76ca75be7f295baf24cbba4bd3b1776d0eb88147ee81c9623/python-wordpress-xmlrpc-2.3.zip", hash = "sha256:e15a8e9aca16db169369e5967299c29965570ed83c7c3ad418ed59b5ad1471bd", size = 19306, upload-time = "2014-06-29T20:04:03.09Z" }
+
+[[package]]
+name = "redis"
+version = "6.2.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "async-timeout", marker = "python_full_version < '3.11.3'" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/ea/9a/0551e01ba52b944f97480721656578c8a7c46b51b99d66814f85fe3a4f3e/redis-6.2.0.tar.gz", hash = "sha256:e821f129b75dde6cb99dd35e5c76e8c49512a5a0d8dfdc560b2fbd44b85ca977", size = 4639129, upload-time = "2025-05-28T05:01:18.91Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/13/67/e60968d3b0e077495a8fee89cf3f2373db98e528288a48f1ee44967f6e8c/redis-6.2.0-py3-none-any.whl", hash = "sha256:c8ddf316ee0aab65f04a11229e94a64b2618451dab7a67cb2f77eb799d872d5e", size = 278659, upload-time = "2025-05-28T05:01:16.955Z" },
+]
 
 [[package]]
 name = "requests"
