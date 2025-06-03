@@ -504,7 +504,7 @@ dependencies = [
     { name = "wordpress-api" },
 ]
 
-[package.dev-dependencies]
+[package.optional-dependencies]
 dev = [
     { name = "django-debug-toolbar" },
     { name = "django-extensions" },
@@ -536,46 +536,43 @@ dev = [
 requires-dist = [
     { name = "django", specifier = ">=5.2.1" },
     { name = "django-bulk-update-or-create", specifier = ">=0.3.0" },
+    { name = "django-debug-toolbar", marker = "extra == 'dev'", specifier = ">=5.2.0" },
     { name = "django-environ", specifier = ">=0.12.0" },
+    { name = "django-extensions", marker = "extra == 'dev'", specifier = ">=4.1" },
     { name = "django-htmx", specifier = ">=1.23.0" },
+    { name = "django-override-storage", marker = "extra == 'dev'", specifier = ">=0.3.2" },
+    { name = "django-test-without-migrations", marker = "extra == 'dev'", specifier = ">=0.6" },
+    { name = "django-webtest", marker = "extra == 'dev'", specifier = ">=1.9.13" },
     { name = "garminconnect", specifier = ">=0.2.26" },
+    { name = "mock", marker = "extra == 'dev'", specifier = ">=5.2.0" },
     { name = "numpy", specifier = ">=2.2.6" },
     { name = "oauthlib", specifier = ">=3.2.2" },
     { name = "postgis", specifier = ">=1.0.4" },
     { name = "psycopg2-binary", specifier = ">=2.9.10" },
+    { name = "pyfakefs", marker = "extra == 'dev'", specifier = ">=5.8.0" },
+    { name = "pytest", marker = "extra == 'dev'", specifier = ">=8.3.5" },
+    { name = "pytest-clarity", marker = "extra == 'dev'", specifier = ">=1.0.1" },
+    { name = "pytest-cov", marker = "extra == 'dev'", specifier = ">=6.1.1" },
+    { name = "pytest-diff", marker = "extra == 'dev'", specifier = ">=0.1.14" },
+    { name = "pytest-django", marker = "extra == 'dev'", specifier = ">=4.11.1" },
+    { name = "pytest-factoryboy", marker = "extra == 'dev'", specifier = ">=2.7.0" },
+    { name = "pytest-forked", marker = "extra == 'dev'", specifier = ">=1.6.0" },
+    { name = "pytest-freezegun", marker = "extra == 'dev'", specifier = ">=0.4.2" },
+    { name = "pytest-icdiff", marker = "extra == 'dev'", specifier = ">=0.9" },
+    { name = "pytest-mock", marker = "extra == 'dev'", specifier = ">=3.14.0" },
+    { name = "pytest-raises", marker = "extra == 'dev'", specifier = ">=0.11" },
+    { name = "pytest-randomly", marker = "extra == 'dev'", specifier = ">=3.16.0" },
+    { name = "pytest-sugar", marker = "extra == 'dev'", specifier = ">=1.0.0" },
+    { name = "pytest-xdist", marker = "extra == 'dev'", specifier = ">=3.6.1" },
     { name = "python-dateutil", specifier = ">=2.9.0.post0" },
     { name = "python-wordpress-xmlrpc", specifier = ">=2.3" },
     { name = "requests", specifier = ">=2.32.3" },
+    { name = "ruff", marker = "extra == 'dev'", specifier = ">=0.11.10" },
+    { name = "selenium", marker = "extra == 'dev'", specifier = ">=4.32.0" },
+    { name = "webtest", marker = "extra == 'dev'", specifier = ">=3.0.4" },
     { name = "wordpress-api", specifier = ">=1.2.9" },
 ]
-
-[package.metadata.requires-dev]
-dev = [
-    { name = "django-debug-toolbar", specifier = ">=5.2.0" },
-    { name = "django-extensions", specifier = ">=4.1" },
-    { name = "django-override-storage", specifier = ">=0.3.2" },
-    { name = "django-test-without-migrations", specifier = ">=0.6" },
-    { name = "django-webtest", specifier = ">=1.9.13" },
-    { name = "mock", specifier = ">=5.2.0" },
-    { name = "pyfakefs", specifier = ">=5.8.0" },
-    { name = "pytest", specifier = ">=8.3.5" },
-    { name = "pytest-clarity", specifier = ">=1.0.1" },
-    { name = "pytest-cov", specifier = ">=6.1.1" },
-    { name = "pytest-diff", specifier = ">=0.1.14" },
-    { name = "pytest-django", specifier = ">=4.11.1" },
-    { name = "pytest-factoryboy", specifier = ">=2.7.0" },
-    { name = "pytest-forked", specifier = ">=1.6.0" },
-    { name = "pytest-freezegun", specifier = ">=0.4.2" },
-    { name = "pytest-icdiff", specifier = ">=0.9" },
-    { name = "pytest-mock", specifier = ">=3.14.0" },
-    { name = "pytest-raises", specifier = ">=0.11" },
-    { name = "pytest-randomly", specifier = ">=3.16.0" },
-    { name = "pytest-sugar", specifier = ">=1.0.0" },
-    { name = "pytest-xdist", specifier = ">=3.6.1" },
-    { name = "ruff", specifier = ">=0.11.10" },
-    { name = "selenium", specifier = ">=4.32.0" },
-    { name = "webtest", specifier = ">=3.0.4" },
-]
+provides-extras = ["dev"]
 
 [[package]]
 name = "markdown-it-py"
