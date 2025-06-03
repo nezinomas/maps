@@ -9,18 +9,19 @@ dependencies = [
     "django-bulk-update-or-create>=0.3.0",
     "django-environ>=0.12.0",
     "django-htmx>=1.23.0",
+    "django-redis>=5.4.0",
     "garminconnect>=0.2.26",
-    "mysqlclient>=2.2.7",
     "numpy>=2.2.6",
     "oauthlib>=3.2.2",
+    "postgis>=1.0.4",
+    "psycopg2-binary>=2.9.10",
     "python-dateutil>=2.9.0.post0",
     "python-wordpress-xmlrpc>=2.3",
     "requests>=2.32.3",
-    "tcxreader>=0.4.11",
     "wordpress-api>=1.2.9",
 ]
 
-[dependency-groups]
+[project.optional-dependencies]
 dev = [
     "django-debug-toolbar>=5.2.0",
     "django-extensions>=4.1",

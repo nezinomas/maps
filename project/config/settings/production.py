@@ -6,7 +6,7 @@ TEMPLATE_DEBUG = DEBUG
 
 
 # ================   project CONFIGURATION
-ALLOWED_HOSTS = ENV.list("ALLOWED_HOSTS")
+ALLOWED_HOSTS = ENV["ALLOWED_HOSTS"]
 
 
 # ================   APP CONFIGURATION
@@ -87,4 +87,16 @@ LOGGING = {
             "propagate": False,
         },
     },
+}
+
+
+# Cache settings with Redis
+CACHES = {
+    "default": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": "redis://127.0.0.1:6379/1",
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+        },
+    }
 }

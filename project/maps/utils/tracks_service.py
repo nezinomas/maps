@@ -1,73 +1,133 @@
-import json
-import os
-from datetime import datetime
-from typing import Dict, List
+from pathlib import Path
+from typing import Dict, List, Set
 
 from django.conf import settings
 
 from ..models import Statistic, Track, Trip
 from ..utils.common import get_trip
+from . import parse_activity_file, parse_tcx_file
+
+
+class TracksServiceData:
+    def __init__(self, trip: Trip = None) -> List[str]:
+        self.trip = trip or get_trip()
+        self.tracks_db = self.get_tracks()
+        self.tracks_disk = self.get_files()
+
+    def get_tracks(self) -> Dict:
+        return self.trip.tracks.values("pk", "title", "date", "path")
+
+    def get_files(self) -> Set[str]:
+        directory = Path(settings.MEDIA_ROOT) / "tracks" / str(self.trip.pk)
+
+        if not directory.exists():
+            return set()
+
+        return {file.stem for file in directory.glob("*.tcx")}
 
 
 class TracksService:
-    def __init__(self, trip: Trip = None) -> List[str]:
-        self.trip = trip or get_trip()
+    def __init__(self, data: TracksServiceData):
+        self.trip = data.trip
 
-    def save_data(self) -> str:
-        if not self.trip:
-            return ["No trip found"]
+        try:
+            self.tracks_db = {track["title"] for track in data.tracks_db}
+        except AttributeError:
+            self.tracks_db = set()
 
-        files = self.get_files()
-        if not files:
-            return [f"No sts files in {settings.MEDIA_ROOT}/tracks/{self.trip.pk}/"]
+        try:
+            self.tracks_title_pk_map = {
+                track["title"]: track["pk"] for track in data.tracks_db
+            }
+        except AttributeError:
+            self.tracks_title_pk_map = {}
 
-        ids = self.track_list_for_update(files)
-        if not ids:
-            return ["All tracks are updated"]
+        self.tracks_disk = data.tracks_disk
 
-        self.save_track_and_statistic(ids)
+    def new_tracks(self) -> Set[str]:
+        return self.tracks_disk - self.tracks_db
 
-        return ["Successfully synced data from sts files"]
-
-    def get_files(self) -> List[str]:
-        directory = os.path.join(settings.MEDIA_ROOT, "tracks", str(self.trip.pk))
-        file_list = os.listdir(directory)
-
-        return [file[:-4] for file in file_list if file.endswith(".sts")]
-
-    def track_list_for_update(self, files: List[str]) -> List[Track]:
-        # get all tracks for current trip
-        tracks = Track.objects.filter(trip=self.trip).values_list("title", flat=True)
-
-        # find tracks withount statistic
-        ids = list(set(files) - set(tracks))
-
-        return list(ids)
-
-    def get_data_from_sts_file(self, file) -> Dict:
-        file = os.path.join(
-            settings.MEDIA_ROOT, "tracks", str(self.trip.pk), f"{file}.sts"
+    def _save_tracks(self, tracks):
+        Track.objects.bulk_create(
+            tracks,
+            update_conflicts=True,
+            update_fields=["date", "path"],
+            unique_fields=["pk"],
         )
 
-        if not os.path.exists(file):
-            return None
+    def _create_tracks(self, track_list):
+        tracks = []
 
-        with open(file, "r") as f:
-            return json.load(f)
+        for track in track_list:
+            track_file = (
+                Path(settings.MEDIA_ROOT)
+                / "tracks"
+                / str(self.trip.pk)
+                / f"{track}.tcx"
+            )
+            path = parse_tcx_file.get_track_path(track_file)
+            date = parse_tcx_file.get_track_date(track_file)
 
-    def save_track_and_statistic(self, ids: List):
-        for id in ids:
-            activity = self.get_data_from_sts_file(id)
-
-            # create track
-            track = Track.objects.create(
-                title=id,
-                date=datetime.strptime(activity["start_time"], "%Y-%m-%d %H:%M:%S %z"),
+            obj = Track(
+                title=track,
+                date=date,
                 activity_type="cycling",
                 trip=self.trip,
+                path=path,
             )
 
-            # create track statistics
-            del activity["start_time"]
+            # If the track already exists in the database
+            # set its primary key for update
+            if track in self.tracks_title_pk_map:
+                obj.pk = self.tracks_title_pk_map[track]
 
-            Statistic.objects.create(track=track, **activity)
+            tracks.append(obj)
+        return tracks
+
+    def _save_statistic(self, tracks):
+        objects = []
+        statistic_model_fields = []
+        for track in tracks:
+            activity_file = (
+                Path(settings.MEDIA_ROOT) / "tracks" / str(self.trip.pk) / track.title
+            )
+
+            stats = parse_activity_file.get_statistic(activity_file)
+            if not stats:
+                continue
+
+            obj = Statistic(track=track, **stats)
+            objects.append(obj)
+
+            # if statistic_model_fields is empty,
+            # use the keys from the first stats dictionary
+            if not statistic_model_fields:
+                statistic_model_fields = list(stats.keys())
+
+        Statistic.objects.bulk_create(
+            objects,
+            update_conflicts=True,
+            update_fields=statistic_model_fields,
+            unique_fields=["track"],
+        )
+
+    def _write_tracks(self, tracks):
+        try:
+            self._save_tracks(tracks)
+        except Exception as e:
+            return [f"Error occurred during saving tracks: {e}"]
+        try:
+            self._save_statistic(tracks)
+        except Exception as e:
+            return [f"Error occurred during saving statistic: {e}"]
+
+        return ["Successfully created or updated tracks and statistics"]
+
+    def create(self) -> str:
+        tracks = self._create_tracks(self.new_tracks())
+
+        return self._write_tracks(tracks)
+
+    def create_or_update(self):
+        tracks = self._create_tracks(self.tracks_db | self.tracks_disk)
+        return self._write_tracks(tracks)

@@ -14,9 +14,7 @@ def trip():
 
 @patch("project.maps.utils.wp_content.get_content")
 def test_get_all_pages_content_pages_lte_one(mck, trip):
-    wp = SimpleNamespace(
-        text=json.dumps([{"id": 1}]), headers={"X-WP-TotalPages": 1}
-    )
+    wp = SimpleNamespace(text=json.dumps([{"id": 1}]), headers={"X-WP-TotalPages": 1})
     mck.side_effect = [wp]
 
     actual = wp_content.get_all_pages_content(trip, "some_url")
@@ -26,12 +24,8 @@ def test_get_all_pages_content_pages_lte_one(mck, trip):
 
 @patch("project.maps.utils.wp_content.get_content")
 def test_get_all_pages_content_pages_gt_one(mck, trip):
-    wp1 = SimpleNamespace(
-        text=json.dumps([{"id": 1}]), headers={"X-WP-TotalPages": 2}
-    )
-    wp2 = SimpleNamespace(
-        text=json.dumps([{"id": 2}]), headers={"X-WP-TotalPages": 2}
-    )
+    wp1 = SimpleNamespace(text=json.dumps([{"id": 1}]), headers={"X-WP-TotalPages": 2})
+    wp2 = SimpleNamespace(text=json.dumps([{"id": 2}]), headers={"X-WP-TotalPages": 2})
     mck.side_effect = [wp1, wp2]
 
     actual = wp_content.get_all_pages_content(trip, "some_url")
@@ -41,12 +35,8 @@ def test_get_all_pages_content_pages_gt_one(mck, trip):
 
 @patch("project.maps.utils.wp_content.get_content")
 def test_get_all_pages_content_pages_link_offset(mck, trip):
-    wp1 = SimpleNamespace(
-        text=json.dumps([{"id": 1}]), headers={"X-WP-TotalPages": 2}
-    )
-    wp2 = SimpleNamespace(
-        text=json.dumps([{"id": 2}]), headers={"X-WP-TotalPages": 2}
-    )
+    wp1 = SimpleNamespace(text=json.dumps([{"id": 1}]), headers={"X-WP-TotalPages": 2})
+    wp2 = SimpleNamespace(text=json.dumps([{"id": 2}]), headers={"X-WP-TotalPages": 2})
     mck.side_effect = [wp1, wp2]
 
     wp_content.get_all_pages_content(trip, "some_url")

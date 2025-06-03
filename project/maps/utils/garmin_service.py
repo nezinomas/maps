@@ -1,4 +1,3 @@
-import contextlib
 import json
 from datetime import datetime, timezone
 from pathlib import Path
@@ -58,14 +57,14 @@ class GarminService:
             if time < trip_start_date or time > trip_end_date:
                 continue
 
-            # activities list for download as tcx file
+            # activities list for download
             arr.append(activity)
 
         if not arr:
             return ["Nothing to sync"]
 
         # download TCX files for all activities
-        if err := self.save_tcx_and_sts_file(api, arr):
+        if err := self.save_files(api, arr):
             return [f"Error occurred during saving tcx file: {err}"]
 
         return ["Successfully synced data from Garmin Connect"]
@@ -87,67 +86,15 @@ class GarminService:
     def get_activities(self, api: Garmin) -> List[Dict]:
         try:
             activities = api.get_activities(0, 15)  # 0=start, 1=limit
+            # activities = api.get_activities_by_date(
+            #     startdate="2018-09-14", enddate="2018-11-01"
+            # )
         except Exception as e:
             return None
 
         return activities
 
-    def get_activity_statistic(self, activity: Dict) -> Dict:
-        # old activities have 'movingDuration': None
-        total_time = activity.get("movingDuration") or activity.get("duration")
-
-        stats = {
-            "start_time": activity.get("startTimeGMT") + " +0000",
-            "total_km": float(activity.get("distance")) / 1000,
-            "total_time_seconds": float(total_time),
-            "avg_speed": float(activity.get("averageSpeed")) * 3.6,
-            "max_speed": float(activity.get("maxSpeed")) * 3.6,
-            "calories": 0,
-            "avg_cadence": None,
-            "avg_heart": None,
-            "max_heart": None,
-            "avg_temperature": None,
-            "ascent": float(activity.get("elevationGain")),
-            "descent": float(activity.get("elevationLoss")),
-        }
-
-        with contextlib.suppress(TypeError, ValueError):
-            stats["calories"] = int(activity.get("calories"))
-
-        with contextlib.suppress(TypeError, ValueError):
-            stats["min_altitude"] = float(activity.get("minElevation"))
-
-        with contextlib.suppress(TypeError, ValueError):
-            stats["max_altitude"] = float(activity.get("maxElevation"))
-
-        with contextlib.suppress(TypeError, ValueError):
-            stats["avg_heart"] = float(activity.get("averageHR"))
-
-        with contextlib.suppress(TypeError, ValueError):
-            stats["max_heart"] = float(activity.get("maxHR"))
-
-        with contextlib.suppress(TypeError, ValueError):
-            stats["avg_cadence"] = float(
-                activity.get("averageBikingCadenceInRevPerMinute")
-            )
-
-        return stats
-
-    def create_activity_statistic_file(self, activity):
-        data = self.get_activity_statistic(activity)
-        activity_id = activity["activityId"]
-
-        # create directory for trip if not exists
-        tracks_folder = Path(settings.MEDIA_ROOT) / "tracks" / str(self.trip.pk)
-        if not tracks_folder.exists():
-            tracks_folder.mkdir(parents=True, exist_ok=True)
-
-        # create activity statistic file
-        outfile = tracks_folder / f"{activity_id}.sts"
-        with open(outfile, "w") as f:
-            json.dump(data, f)
-
-    def save_tcx_and_sts_file(self, api: Garmin, activities: List[Dict]) -> str:
+    def save_files(self, api: Garmin, activities: List[Dict]) -> str:
         try:
             tracks_folder = Path(settings.MEDIA_ROOT) / "tracks" / str(self.trip.pk)
 
@@ -157,7 +104,7 @@ class GarminService:
             for activity in activities:
                 activity_id = activity["activityId"]
 
-                output_file = tracks_folder /  f"{activity_id}.tcx"
+                output_file = tracks_folder / str(activity_id)
 
                 if output_file.exists():
                     continue
@@ -166,11 +113,11 @@ class GarminService:
                     activity_id, dl_fmt=api.ActivityDownloadFormat.TCX
                 )
 
-                with open(output_file, "wb") as fb:
-                    fb.write(tcx_data)
+                with open(output_file, "w") as activity_file:
+                    json.dump(activity, activity_file)
 
-                # create activity statistic file
-                self.create_activity_statistic_file(activity)
+                with open(f"{output_file}.tcx", "wb") as tcx_file:
+                    tcx_file.write(tcx_data)
 
         except Exception as err:
             return err

@@ -1,16 +1,17 @@
-import os
 import re
 
-from django.conf import settings
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.core.cache import cache
+
 from django.shortcuts import get_object_or_404
 from django.utils.safestring import mark_safe
 from django.views.generic import ListView, TemplateView
 
-from . import models, utils
+from . import models
+from .utils import wp_comments_qty, wp_content
 from .utils.garmin_service import GarminService
-from .utils.points_service import PointsService
-from .utils.tracks_service import TracksService
+from .utils.tracks_service import TracksService, TracksServiceData
+from .utils import views_map
 
 
 class Trips(ListView):
@@ -21,19 +22,25 @@ class Map(TemplateView):
     template_name = "maps/map.html"
 
     def get_context_data(self, *args, **kwargs):
-        trip = get_object_or_404(models.Trip, slug=self.kwargs.get("trip"))
+        trip_slug = self.kwargs.get("trip")
+        trip = get_object_or_404(models.Trip, slug=trip_slug)
 
-        self.kwargs["trip_from_maps_view"] = trip
-        points_file = os.path.join(
-            settings.MEDIA_ROOT, "points", f"{trip.pk}-points.js"
-        )
-        context = {
-            "trip": trip,
-            "statistic": utils.statistic_service.get_statistic(trip),
-            "google_api_key": settings.ENV["GOOGLE_API_KEY"],
-            "js_version": os.path.getmtime(points_file),
-        }
+        context = views_map.base_context(trip)
 
+        cache_key = f"geojson_{trip_slug}"
+        geo_json_data = cache.get(cache_key)
+
+        if not geo_json_data:
+            tracks = (
+                models.Track.objects.filter(trip=trip)
+                .order_by("date")
+                .select_related("stats")
+            )
+            geo_json_data = views_map.geo_data(tracks)
+            cache_timeout = views_map.cache_timeout(trip)
+            cache.set(cache_key, geo_json_data, timeout=cache_timeout)
+
+        context["tracks"] = geo_json_data
         return super().get_context_data(*args, **kwargs) | context
 
 
@@ -63,7 +70,7 @@ class Posts(TemplateView):
             )
 
             try:
-                posts = utils.wp.get_json(trip.blog, link)
+                posts = wp_content.get_json(trip.blog, link)
             except Exception:
                 wp_error = "Kažkas neveikia. Bandykite prisijungti vėliau."
 
@@ -100,7 +107,7 @@ class Comments(TemplateView):
         post_id = self.kwargs.get("post_id")
         link = f"comments?post={post_id}&_fields=author_name,date,content"
         context = {
-            "comments": utils.wp_content.get_json(trip.blog, link),
+            "comments": wp_content.get_json(trip.blog, link),
         }
 
         return super().get_context_data(**kwargs) | context
@@ -136,7 +143,8 @@ class SaveNewTracks(LoginRequiredMixin, TemplateView):
     def get_context_data(self, *args, **kwargs):
         trip = get_object_or_404(models.Trip, slug=self.kwargs.get("trip"))
 
-        context = {"message": TracksService(trip).save_data()}
+        data = TracksServiceData(trip)
+        context = {"message": TracksService(data).create()}
 
         return super().get_context_data(*args, **kwargs) | context
 
@@ -151,43 +159,8 @@ class RewriteAllTracks(LoginRequiredMixin, TemplateView):
         models.Track.objects.filter(trip=trip).delete()
         models.Statistic.objects.filter(track__trip=trip).delete()
 
-        context = {"message": TracksService(trip).save_data()}
-
-        return super().get_context_data(*args, **kwargs) | context
-
-
-class SaveNewPoints(LoginRequiredMixin, TemplateView):
-    login_url = "/admin/"
-    template_name = "maps/utils_messages.html"
-
-    def get_context_data(self, *args, **kwargs):
-        trip = get_object_or_404(models.Trip, slug=self.kwargs.get("trip"))
-
-        context = {"message": PointsService(trip).update_points()}
-
-        return super().get_context_data(*args, **kwargs) | context
-
-
-class RewriteAllPoints(LoginRequiredMixin, TemplateView):
-    login_url = "/admin/"
-    template_name = "maps/utils_messages.html"
-
-    def get_context_data(self, *args, **kwargs):
-        trip = get_object_or_404(models.Trip, slug=self.kwargs.get("trip"))
-
-        context = {"message": PointsService(trip).update_all_points()}
-
-        return super().get_context_data(*args, **kwargs) | context
-
-
-class RegeneratePointsFile(LoginRequiredMixin, TemplateView):
-    login_url = "/admin/"
-    template_name = "maps/utils_messages.html"
-
-    def get_context_data(self, *args, **kwargs):
-        trip = get_object_or_404(models.Trip, slug=self.kwargs.get("trip"))
-
-        context = {"message": PointsService(trip).regenerate_points_file()}
+        data = TracksServiceData(trip)
+        context = {"message": TracksService(data).create_or_update()}
 
         return super().get_context_data(*args, **kwargs) | context
 
@@ -197,7 +170,7 @@ class CommentQty(LoginRequiredMixin, TemplateView):
 
     def get_context_data(self, *args, **kwargs):
         trip = get_object_or_404(models.Trip, slug=self.kwargs.get("trip"))
-        utils.wp_comments_qty.push_comments_qty(trip)
+        wp_comments_qty.push_comments_qty(trip)
 
         context = {"message": ["done"]}
 
