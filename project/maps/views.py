@@ -1,18 +1,17 @@
-import json
 import re
 
-from django.conf import settings
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.core.serializers.json import DjangoJSONEncoder
+from django.core.cache import cache
+
 from django.shortcuts import get_object_or_404
 from django.utils.safestring import mark_safe
 from django.views.generic import ListView, TemplateView
 
 from . import models
-from .templatetags.datetime_filter import format_time
-from .utils import statistic_service, wp_comments_qty, wp_content
+from .utils import wp_comments_qty, wp_content
 from .utils.garmin_service import GarminService
 from .utils.tracks_service import TracksService, TracksServiceData
+from .utils import views_map
 
 
 class Trips(ListView):
@@ -23,53 +22,25 @@ class Map(TemplateView):
     template_name = "maps/map.html"
 
     def get_context_data(self, *args, **kwargs):
-        trip = get_object_or_404(models.Trip, slug=self.kwargs.get("trip"))
+        trip_slug = self.kwargs.get("trip")
+        trip = get_object_or_404(models.Trip, slug=trip_slug)
 
-        # self.kwargs["trip_from_maps_view"] = trip
+        context = views_map.base_context(trip)
 
-        tracks = (
-            models.Track.objects.filter(trip=trip)
-            .order_by("date")
-            .select_related("stats")
-        )
+        cache_key = f"geojson_{trip_slug}"
+        geo_json_data = cache.get(cache_key)
 
-        # Build GeoJSON in memory
-        geo_json = {"type": "FeatureCollection", "features": []}
+        if not geo_json_data:
+            tracks = (
+                models.Track.objects.filter(trip=trip)
+                .order_by("date")
+                .select_related("stats")
+            )
+            geo_json_data = views_map.geo_data(tracks)
+            cache_timeout = views_map.cache_timeout(trip)
+            cache.set(cache_key, geo_json_data, timeout=cache_timeout)
 
-        for track in tracks:
-            # Prepare feature properties
-            properties = {
-                "total_km": round(track.stats.total_km, 2),
-                "date": track.date.strftime("%Y-%m-%d"),
-                "time": format_time(track.stats.total_time_seconds),
-                "avg_speed": round(track.stats.avg_speed, 1),
-                "ascent": track.stats.ascent,
-            }
-
-            # Add last point coordinates
-            coords = track.path.coords if track.path else []
-            last_point = list(coords[-1]) if coords else None  # [lng, lat]
-            if last_point:
-                properties["last_point"] = last_point[::-1]
-
-            # Create feature
-            feature = {
-                "type": "Feature",
-                "geometry": {
-                    "type": "LineString",
-                    "coordinates": track.path.coords if track.path else [],
-                },
-                "properties": properties,
-            }
-            geo_json["features"].append(feature)
-
-        context = {
-            "trip": trip,
-            "statistic": statistic_service.get_statistic(trip),
-            "google_api_key": settings.ENV["GOOGLE_API_KEY"],
-            "tracks": json.dumps(geo_json, cls=DjangoJSONEncoder),
-        }
-
+        context["tracks"] = geo_json_data
         return super().get_context_data(*args, **kwargs) | context
 
 
