@@ -42,7 +42,9 @@ DATABASES = {"default": DB}
 DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
 
 # ================   GENERAL CONFIGURATION
-LANGUAGE_CODE = "en-us"
+LANGUAGE_CODE = "lt"
+
+
 TIME_ZONE = "Europe/Vilnius"
 USE_I18N = True
 USE_L10N = True
@@ -117,3 +119,7 @@ AUTH_PASSWORD_VALIDATORS = [
         "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",
     },
 ]
+
+
+LOGIN_URL = "maps:login"
+LOGIN_REDIRECT_URL = "maps:utils_index"

@@ -1,17 +1,18 @@
 import re
 
+from django.contrib.auth import logout
+from django.contrib.auth import views as auth_views
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.cache import cache
-
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, redirect
+from django.urls.base import reverse
 from django.utils.safestring import mark_safe
 from django.views.generic import ListView, TemplateView
 
 from . import models
-from .utils import wp_comments_qty, wp_content
+from .utils import views_map, wp_comments_qty, wp_content
 from .utils.garmin_service import GarminService
 from .utils.tracks_service import TracksService, TracksServiceData
-from .utils import views_map
 
 
 class Trips(ListView):
@@ -113,8 +114,33 @@ class Comments(TemplateView):
         return super().get_context_data(**kwargs) | context
 
 
+class Login(auth_views.LoginView):
+    template_name = "maps/login.html"
+    redirect_authenticated_user = True
+
+
+class Logout(auth_views.LogoutView):
+    def dispatch(self, request, *args, **kwargs):
+        response = super().dispatch(request, *args, **kwargs)
+
+        if request.user.is_authenticated:
+            logout(request)
+            return redirect(reverse("maps:trips"))
+
+        return response
+
+
+class Utils(LoginRequiredMixin, TemplateView):
+    template_name = "maps/utils.html"
+
+    def get_context_data(self, **kwargs):
+        print("Utils view called")
+        context = {
+        }
+        return super().get_context_data(**kwargs) | context
+
+
 class TripUtils(LoginRequiredMixin, TemplateView):
-    login_url = "/utils/"
     template_name = "maps/utils.html"
 
     def get_context_data(self, **kwargs):
@@ -148,7 +174,6 @@ class SaveNewTracks(LoginRequiredMixin, TemplateView):
 
 
 class RewriteAllTracks(LoginRequiredMixin, TemplateView):
-    login_url = "/utils/"
     template_name = "maps/trip_utils_messages.html"
 
     def get_context_data(self, *args, **kwargs):
