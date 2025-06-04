@@ -8,7 +8,7 @@ urlpatterns = [
     path("", views.Trips.as_view(), name="trips"),
     path("<slug:trip>/", views.Map.as_view(), name="index"),
     path("<slug:trip>/posts/", views.Posts.as_view(), name="posts"),
-    path("<slug:trip>/utils/", views.TripUtils.as_view(), name="utils"),
+    path("<slug:trip>/utils/", views.TripUtils.as_view(), name="trip_utils"),
     path("<slug:trip>/download_tcx/", views.DownloadTcx.as_view(), name="download_tcx"),
     path(
         "<slug:trip>/update_tracks/",
