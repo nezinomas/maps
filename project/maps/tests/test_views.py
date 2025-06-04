@@ -41,7 +41,20 @@ def test_trips_list(client):
 #                                                                        Utilities View
 # -------------------------------------------------------------------------------------
 def test_utils_func():
-    view = resolve("/trip-title/utils/")
+    view = resolve("/utils/")
+
+    assert views.Utils == view.func.view_class
+
+
+def test_utils_index_not_logged(client):
+    url = reverse("maps:utils_index")
+    response = client.get(url, follow=True)
+
+    assert response.resolver_match.view_name == "maps:login"
+
+
+def test_trip_utils_func():
+    view = resolve("/utils/trip-title/")
 
     assert views.TripUtils == view.func.view_class
 
@@ -68,7 +81,7 @@ def test_trip__utils_not_logged(client):
 #                                                                  Donwload Garmin Data
 # -------------------------------------------------------------------------------------
 def test_download_tcx_func():
-    view = resolve("/trip-title/download_tcx/")
+    view = resolve("/utils/download_tcx/trip-title/")
 
     assert views.DownloadTcx == view.func.view_class
 
@@ -95,7 +108,7 @@ def test_download_tcx_not_logged(client):
 #                                                                        New Tracks View
 # -------------------------------------------------------------------------------------
 def test_update_tracks_func():
-    view = resolve("/trip-title/update_tracks/")
+    view = resolve("/utils/update_tracks/trip-title/")
 
     assert views.SaveNewTracks == view.func.view_class
 
@@ -122,7 +135,7 @@ def test_update_tracks_not_logged(client):
 #                                                               Rewrite All Tracks View
 # -------------------------------------------------------------------------------------
 def test_update_all_tracks_func():
-    view = resolve("/trip-title/update_all_tracks/")
+    view = resolve("/utils/update_all_tracks/trip-title/")
 
     assert views.RewriteAllTracks == view.func.view_class
 
