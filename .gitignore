@@ -5,7 +5,6 @@ __pycache__/
 # my folders
 .conf
 media/
-static/admin/
 static/debug_toolbar/
 static/django_extensions/
 #
