@@ -114,7 +114,7 @@ class Comments(TemplateView):
 
 
 class Utils(LoginRequiredMixin, TemplateView):
-    login_url = "/admin/"
+    login_url = "/utils/"
     template_name = "maps/utils.html"
 
     def get_context_data(self, **kwargs):
@@ -125,7 +125,7 @@ class Utils(LoginRequiredMixin, TemplateView):
 
 
 class DownloadTcx(LoginRequiredMixin, TemplateView):
-    login_url = "/admin/"
+    login_url = "/utils/"
     template_name = "maps/utils_messages.html"
 
     def get_context_data(self, *args, **kwargs):
@@ -137,7 +137,7 @@ class DownloadTcx(LoginRequiredMixin, TemplateView):
 
 
 class SaveNewTracks(LoginRequiredMixin, TemplateView):
-    login_url = "/admin/"
+    login_url = "/utils/"
     template_name = "maps/utils_messages.html"
 
     def get_context_data(self, *args, **kwargs):
@@ -150,7 +150,7 @@ class SaveNewTracks(LoginRequiredMixin, TemplateView):
 
 
 class RewriteAllTracks(LoginRequiredMixin, TemplateView):
-    login_url = "/admin/"
+    login_url = "/utils/"
     template_name = "maps/utils_messages.html"
 
     def get_context_data(self, *args, **kwargs):
