@@ -113,7 +113,7 @@ class Comments(TemplateView):
         return super().get_context_data(**kwargs) | context
 
 
-class Utils(LoginRequiredMixin, TemplateView):
+class TripUtils(LoginRequiredMixin, TemplateView):
     login_url = "/utils/"
     template_name = "maps/utils.html"
 

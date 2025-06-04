@@ -43,7 +43,7 @@ def test_trips_list(client):
 def test_utils_func():
     view = resolve("/trip-title/utils/")
 
-    assert views.Utils == view.func.view_class
+    assert views.TripUtils == view.func.view_class
 
 
 def test_utils_index_200(client_logged):
