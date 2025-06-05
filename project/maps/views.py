@@ -9,7 +9,7 @@ from django.urls.base import reverse
 from django.utils.safestring import mark_safe
 from django.views.generic import ListView, TemplateView
 
-from . import models
+from . import forms, models
 from .utils import views_map, wp_comments_qty, wp_content
 from .utils.garmin_service import GarminService
 from .utils.tracks_service import TracksService, TracksServiceData
@@ -115,6 +115,7 @@ class Comments(TemplateView):
 
 
 class Login(auth_views.LoginView):
+    form_class = forms.CustomAuthForm
     template_name = "maps/login.html"
     redirect_authenticated_user = True
 
