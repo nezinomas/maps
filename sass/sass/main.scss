@@ -1,8 +1,6 @@
-* {
-	box-sizing: border-box;
-    padding: 0;
-    margin: 0;
-}
+@import 'reset';
+@import 'utils';
+
 
 body {
     font-family: 'Lora', serif;
@@ -10,10 +8,6 @@ body {
     color: #222222;
     background-color: #f3f3f3;
 }
-
-
-@import 'utils';
-
 
 // Map
 .map-container{
