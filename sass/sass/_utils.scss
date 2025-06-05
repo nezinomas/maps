@@ -1,7 +1,7 @@
 
 $black:   black;
 $danger: #dc3545;
-
+$valid:  #157347;
 
 button {
     color: inherit;
@@ -15,7 +15,6 @@ button {
 
 
 .utils {
-    font-family: Roboto, sans-serif;
     font-size: 0.85rem;
 
     .container {
@@ -37,15 +36,17 @@ button {
 
 
 .btn-primary {
+    --bg-color: rgb(108, 117, 125);
+
     color: #fff;
-    background-color: rgb(108, 117, 125);
+    background-color: var(--bg-color);
     border-color: rgb(84, 90, 96);
 
     &:hover,
     &:focus,
     &:focus-within,
     &:active {
-        background-color: #5c6e64;
+        background-color: hsl(from var(--bg-color) h s calc(l * 0.95%));
         outline: 0;
         box-shadow:
             inset 0 1px 2px rgba($black, .075),
