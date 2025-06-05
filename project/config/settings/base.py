@@ -92,7 +92,6 @@ INSTALLED_APPS = [
     "django.contrib.humanize",
     "django.contrib.gis",
     "bulk_update_or_create",
-    "crispy_forms",
     "project.maps",
 ]
 
