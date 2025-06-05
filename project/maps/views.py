@@ -134,7 +134,6 @@ class Utils(LoginRequiredMixin, TemplateView):
     template_name = "maps/utils.html"
 
     def get_context_data(self, **kwargs):
-        print("Utils view called")
         context = {
         }
         return super().get_context_data(**kwargs) | context

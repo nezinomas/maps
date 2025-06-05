@@ -121,6 +121,5 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 LOGIN_URL = "maps:login"
 LOGIN_REDIRECT_URL = "maps:utils_index"
