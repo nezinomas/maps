@@ -12,13 +12,13 @@
 <main class="utils">
   <div id="message-container"> </div>
   <div class="container">
-    <button type="button" class="btn-success" hx-get="{% url 'maps:comment_qty' slug %}" hx-target="#message-container" hx-indicator="#indicator" onClick='$("#message-container").html("");'>Push Comment Qty</button>
+    <button type="button" class="btn-success" hx-get="{% url 'maps:comment_qty' view.kwargs.trip %}" hx-target="#message-container" hx-indicator="#indicator" onClick='$("#message-container").html("");'>Push Comment Qty</button>
 
-    <button type="button" class="btn-success" hx-get="{% url 'maps:download_tcx' slug %}" hx-target="#message-container" hx-indicator="#indicator" onClick='$("#message-container").html("");'>Download From Garmin</button>
+    <button type="button" class="btn-success" hx-get="{% url 'maps:download_tcx' view.kwargs.trip %}" hx-target="#message-container" hx-indicator="#indicator" onClick='$("#message-container").html("");'>Download From Garmin</button>
 
-    <button type="button" class="btn-primary" hx-get="{% url 'maps:update_tracks' slug %}" hx-target="#message-container" hx-indicator="#indicator" onClick='$("#message-container").html("");'>Save New Tracks</button>
+    <button type="button" class="btn-primary" hx-get="{% url 'maps:update_tracks' view.kwargs.trip %}" hx-target="#message-container" hx-indicator="#indicator" onClick='$("#message-container").html("");'>Save New Tracks</button>
 
-    <button type="button" class="btn-danger" hx-get="{% url 'maps:update_all_tracks' slug %}" hx-target="#message-container" hx-indicator="#indicator" onClick='$("#message-container").html("");'>Rewrite All Tracks</button>
+    <button type="button" class="btn-danger" hx-get="{% url 'maps:update_all_tracks' view.kwargs.trip %}" hx-target="#message-container" hx-indicator="#indicator" onClick='$("#message-container").html("");'>Rewrite All Tracks</button>
 
     <button type="button" class="btn-secondary" onClick='$("#message-container").html("");'>Clear Messages</button>
   </div>

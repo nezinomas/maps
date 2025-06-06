@@ -141,13 +141,7 @@ class Utils(LoginRequiredMixin, TemplateView):
 
 
 class TripUtils(LoginRequiredMixin, TemplateView):
-    template_name = "maps/utils.html"
-
-    def get_context_data(self, **kwargs):
-        context = {
-            "slug": self.kwargs.get("trip"),
-        }
-        return super().get_context_data(**kwargs) | context
+    template_name = "maps/trip_utils.html"
 
 
 class DownloadTcx(LoginRequiredMixin, TemplateView):
