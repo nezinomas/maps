@@ -130,13 +130,9 @@ class Logout(auth_views.LogoutView):
         return response
 
 
-class Utils(LoginRequiredMixin, TemplateView):
+class Utils(LoginRequiredMixin, ListView):
+    model = models.Trip
     template_name = "maps/utils.html"
-
-    def get_context_data(self, **kwargs):
-        context = {
-        }
-        return super().get_context_data(**kwargs) | context
 
 
 class TripUtils(LoginRequiredMixin, TemplateView):

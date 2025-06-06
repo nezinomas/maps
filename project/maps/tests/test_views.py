@@ -1,5 +1,4 @@
 import pytest
-from django.contrib.auth.models import User
 from django.urls import resolve, reverse
 
 from .. import views
@@ -51,6 +50,25 @@ def test_utils_index_not_logged(client):
     response = client.get(url, follow=True)
 
     assert response.resolver_match.view_name == "maps:login"
+
+
+def test_utils_index_200(admin_client):
+    url = reverse("maps:utils_index")
+    response = admin_client.get(url)
+
+    assert response.status_code == 200
+
+
+def test_utils_index_trip_list(admin_client):
+    trip1 = TripFactory(title="Trip 1")
+    trip2 = TripFactory(title="Trip 2")
+
+    url = reverse("maps:utils_index")
+    response = admin_client.get(url)
+    content = response.content.decode("utf8")
+
+    assert "Trip 1" in content
+    assert "Trip 2" in content
 
 
 def test_trip_utils_func():

@@ -62,22 +62,32 @@
 }
 
 
-.utils {
-    // font-size: 0.85rem;
+.utils-main {
+    display: grid;
+    grid-template-columns: 1fr 2fr 2fr 1fr;
 
-    .container {
-        display: flex;
-        justify-content: center;
-        flex-direction: column;
-        max-width: 250px;
-        width: 250px;
-        margin: 0 auto;
-        gap: 1rem;
-    }
-
-    #message-container {
+    #utils-messages {
         min-height: 65px;
         text-align: center;
         padding: 1.5rem 0;
+        grid-column: 2 / 4;
+    }
+
+    #utils-trips {
+        grid-column-start: 2;
+    }
+
+    #utils-buttons {
+        grid-column-start: 3;
+
+        .container {
+            display: flex;
+            justify-content: center;
+            flex-direction: column;
+            max-width: 250px;
+            width: 250px;
+            margin: 0 auto;
+            gap: 1rem;
+        }
     }
 }

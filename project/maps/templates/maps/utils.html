@@ -1,1 +1,21 @@
-utils index
+{% extends 'base.html' %}
+
+{% block content %}
+
+<!-- Loader -->
+<div class="htmx-indicator loader loader-default is-active" id="indicator"></div>
+
+<div class="utils-main">
+    <div id="utils-messages"> </div>
+    <div id="utils-trips">
+        <ul>
+        {% for trip in object_list %}
+            <li><span>{{trip.start_date|date:"Y-m-d"}}</span> <a role="button" hx-get="{% url 'maps:trip_utils' trip.slug  %}" hx-target="#utils-buttons">{{trip.title}}</a></li>
+        {% endfor %}
+        </ul>
+    </div>
+
+    <div id="utils-buttons" {% if object_list %}hx-get="{% url 'maps:trip_utils' object_list.0.slug  %}" hx-trigger="load"{% endif %}></div>
+</div>
+
+{% endblock content %}
