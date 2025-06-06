@@ -16,7 +16,6 @@ class TripFactory(factory.django.DjangoModelFactory):
     description = "Trip description"
     start_date = date(2022, 1, 1)
     end_date = date(2022, 1, 31)
-    blog = "http://www.trip.com"
     blog_category = "666"
 
 

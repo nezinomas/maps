@@ -9,10 +9,6 @@ class Trip(models.Model):
     description = models.TextField(blank=True, null=True)
     start_date = models.DateField()
     end_date = models.DateField()
-    blog = models.URLField(
-        blank=True,
-        null=True,
-    )
     blog_category = models.CharField(
         blank=True,
         null=True,
