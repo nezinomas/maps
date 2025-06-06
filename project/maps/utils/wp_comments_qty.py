@@ -3,6 +3,7 @@ from collections import Counter
 from operator import itemgetter
 
 from dateutil.relativedelta import relativedelta
+from django.conf import settings
 
 from ..models import CommentQty, Trip
 from . import wp_content
@@ -11,7 +12,7 @@ from . import wp_content
 def count_comments(trip):
     # get all posts id
     link = f"posts?categories={trip.blog_category}&_fields=id,date"
-    posts = wp_content.get_all_pages_content(trip, link)
+    posts = wp_content.get_all_pages_content(link)
 
     # return None if  there are no posts for given category
     if not posts:
@@ -22,7 +23,7 @@ def count_comments(trip):
 
     # get comments for posts
     link = f"comments?post={','.join(map(str, post_id_list))}&_fields=post"
-    comments = wp_content.get_all_pages_content(trip, link)
+    comments = wp_content.get_all_pages_content(link)
 
     # count comments
     arr = list(map(itemgetter("post"), comments))

@@ -77,8 +77,8 @@ def test_count_comments_link(mck_content):
     wp_comments_qty.count_comments(trip)
 
     expected = [
-        call(trip, "posts?categories=666&_fields=id,date"),
-        call(trip, "comments?post=1&_fields=post"),
+        call("posts?categories=666&_fields=id,date"),
+        call("comments?post=1&_fields=post"),
     ]
 
     assert mck_content.call_args_list == expected

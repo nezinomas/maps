@@ -71,7 +71,7 @@ class Posts(TemplateView):
             )
 
             try:
-                posts = wp_content.get_json(trip.blog, link)
+                posts = wp_content.get_content(link)
             except Exception:
                 wp_error = "Kažkas neveikia. Bandykite prisijungti vėliau."
 
@@ -104,11 +104,10 @@ class Comments(TemplateView):
     template_name = "maps/comments.html"
 
     def get_context_data(self, **kwargs):
-        trip = get_object_or_404(models.Trip, slug=self.kwargs.get("trip"))
         post_id = self.kwargs.get("post_id")
         link = f"comments?post={post_id}&_fields=author_name,date,content"
         context = {
-            "comments": wp_content.get_json(trip.blog, link),
+            "comments": wp_content.get_content(link),
         }
 
         return super().get_context_data(**kwargs) | context
@@ -189,6 +188,6 @@ class CommentQty(LoginRequiredMixin, TemplateView):
         trip = get_object_or_404(models.Trip, slug=self.kwargs.get("trip"))
         wp_comments_qty.push_comments_qty(trip)
 
-        context = {"message": ["done"]}
+        context = {"message": ["Successfully synced with wordpress blog"]}
 
         return super().get_context_data(*args, **kwargs) | context
