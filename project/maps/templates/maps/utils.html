@@ -7,15 +7,15 @@
 
 <div class="utils-main">
     <div id="utils-messages"> </div>
-    <div id="utils-trips">
-        <ul>
+    <div id="utils-trips" class="accordion">
         {% for trip in object_list %}
-            <li><span>{{trip.start_date|date:"Y-m-d"}}</span> <a role="button" hx-get="{% url 'maps:trip_utils' trip.slug  %}" hx-target="#utils-buttons">{{trip.title}}</a></li>
+        <input type="radio" name="accordion" id="trip-{{trip.pk}}" {% if forloop.first%}checked{%endif%}>
+        <section>
+            <label class="box-title" for="trip-{{trip.pk}}">{{trip.title}} / <span>{{trip.start_date|date:"Y-m-d"}}</span></label>
+            <label class="box-close" for="acc-close"></label>
+            <div class="box-content"><c-buttons :trip_slug=trip.slug /></div>
+        </section>
         {% endfor %}
-        </ul>
-    </div>
-
-    <div id="utils-buttons" {% if object_list %}hx-get="{% url 'maps:trip_utils' object_list.0.slug  %}" hx-trigger="load"{% endif %}></div>
+      </div>
 </div>
-
 {% endblock content %}
