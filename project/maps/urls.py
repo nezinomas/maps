@@ -9,7 +9,6 @@ urlpatterns = [
     path("utils/", views.Utils.as_view(), name="utils_index"),
     path("utils/login/", views.Login.as_view(), name="login"),
     path("utils/logout/", views.Logout.as_view(), name="logout"),
-    path("utils/<slug:trip>/", views.TripUtils.as_view(), name="trip_utils"),
     path("utils/download_tcx/<slug:trip>/", views.DownloadTcx.as_view(), name="download_tcx"),
     path(
         "utils/update_tracks/<slug:trip>/",

@@ -71,30 +71,6 @@ def test_utils_index_trip_list(admin_client):
     assert "Trip 2" in content
 
 
-def test_trip_utils_func():
-    view = resolve("/utils/trip-title/")
-
-    assert views.TripUtils == view.func.view_class
-
-
-def test_trip_utils_index_200(client_logged):
-    trip = TripFactory()
-
-    url = reverse("maps:trip_utils", kwargs={"trip": trip.slug})
-    response = client_logged.get(url, follow=True)
-
-    assert response.status_code == 200
-
-
-def test_trip__utils_not_logged(client):
-    trip = TripFactory()
-
-    url = reverse("maps:trip_utils", kwargs={"trip": trip.slug})
-    response = client.get(url)
-
-    assert response.status_code == 302
-
-
 # -------------------------------------------------------------------------------------
 #                                                                  Donwload Garmin Data
 # -------------------------------------------------------------------------------------

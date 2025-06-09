@@ -135,10 +135,6 @@ class Utils(LoginRequiredMixin, ListView):
     template_name = "maps/utils.html"
 
 
-class TripUtils(LoginRequiredMixin, TemplateView):
-    template_name = "maps/trip_utils.html"
-
-
 class DownloadTcx(LoginRequiredMixin, TemplateView):
     template_name = "maps/trip_utils_messages.html"
 
