@@ -91,6 +91,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "django.contrib.humanize",
     "django.contrib.gis",
+    "django_cotton",
     "bulk_update_or_create",
     "project.maps",
 ]
