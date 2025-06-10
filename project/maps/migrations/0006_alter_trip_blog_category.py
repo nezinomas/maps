@@ -4,15 +4,14 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('maps', '0005_remove_trip_blog'),
+        ("maps", "0005_remove_trip_blog"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='trip',
-            name='blog_category',
+            model_name="trip",
+            name="blog_category",
             field=models.SmallIntegerField(),
         ),
     ]

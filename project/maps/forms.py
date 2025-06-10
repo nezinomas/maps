@@ -22,7 +22,6 @@ class TripForm(forms.ModelForm):
         model = models.Trip
         fields = ["title", "description", "blog_category", "start_date", "end_date"]
 
-
     def clean(self):
         cleaned = super().clean()
 
@@ -30,6 +29,8 @@ class TripForm(forms.ModelForm):
         ended = cleaned.get("end_date")
 
         if ended and started and ended < started:
-            self.add_error("end_date", "The trip finish date must always be after the start date.")
+            self.add_error(
+                "end_date", "The trip finish date must always be after the start date."
+            )
 
         return cleaned
