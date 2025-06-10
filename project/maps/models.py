@@ -22,6 +22,9 @@ class Trip(models.Model):
     def save(self, *args, **kwargs):
         self.slug = slugify(self.title)
 
+        if qs := Trip.objects.filter(slug__contains=self.slug).count():
+            self.slug = f"{self.slug}-{qs + 1}"
+
         super().save(*args, **kwargs)
 
 
