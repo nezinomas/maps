@@ -9,11 +9,7 @@ class Trip(models.Model):
     description = models.TextField(blank=True, null=True)
     start_date = models.DateField()
     end_date = models.DateField()
-    blog_category = models.CharField(
-        blank=True,
-        null=True,
-        max_length=20,
-    )
+    blog_category = models.SmallIntegerField()
 
     class Meta:
         ordering = [
