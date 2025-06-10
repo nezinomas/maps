@@ -92,6 +92,7 @@ INSTALLED_APPS = [
     "django.contrib.humanize",
     "django.contrib.gis",
     "django_cotton",
+    "django_htmx",
     "bulk_update_or_create",
     "project.maps",
 ]
