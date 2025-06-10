@@ -1,5 +1,6 @@
 from bulk_update_or_create import BulkUpdateOrCreateQuerySet
 from django.contrib.gis.db import models
+from django.urls import reverse_lazy
 from django.utils.text import slugify
 
 
@@ -26,6 +27,9 @@ class Trip(models.Model):
             self.slug = f"{self.slug}-{qs + 1}"
 
         super().save(*args, **kwargs)
+
+    def get_absolute_url(self):
+        return reverse_lazy("maps:update_trip", kwargs={"pk": self.pk})
 
 
 class CommentQty(models.Model):

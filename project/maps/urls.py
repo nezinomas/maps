@@ -20,6 +20,11 @@ urlpatterns = [
         name="update_tracks",
     ),
     path(
+        "utils/update/<int:pk>/",
+        views.TripUpdate.as_view(),
+        name="update_trip"
+    ),
+    path(
         "utils/update_all_tracks/<slug:trip>/",
         views.RewriteAllTracks.as_view(),
         name="update_all_tracks",

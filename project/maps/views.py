@@ -5,11 +5,18 @@ from django.contrib.auth import views as auth_views
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.cache import cache
 from django.shortcuts import get_object_or_404, redirect
+from django.urls import reverse_lazy
 from django.urls.base import reverse
 from django.utils.safestring import mark_safe
-from django.views.generic import ListView, TemplateView
+from vanilla import ListView, TemplateView
 
 from . import forms, models
+from .mixins.views import (
+    CreateViewMixin,
+    DeleteViewMixin,
+    UpdateViewMixin,
+    rendered_content,
+)
 from .utils import views_map, wp_comments_qty, wp_content
 from .utils.garmin_service import GarminService
 from .utils.tracks_service import TracksService, TracksServiceData
@@ -133,6 +140,16 @@ class Logout(auth_views.LogoutView):
 class Utils(LoginRequiredMixin, ListView):
     model = models.Trip
     template_name = "maps/utils.html"
+
+
+class TripUpdate(LoginRequiredMixin, UpdateViewMixin):
+    model = models.Trip
+    form_class = forms.TripForm
+    success_url = reverse_lazy("maps:utils_index")
+    title = "Update Trip"
+
+    def url(self):
+        return self.object.get_absolute_url() if self.object else None
 
 
 class DownloadTcx(LoginRequiredMixin, TemplateView):

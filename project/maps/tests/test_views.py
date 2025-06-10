@@ -1,7 +1,9 @@
+from datetime import date
+
 import pytest
 from django.urls import resolve, reverse
 
-from .. import views
+from .. import models, views
 from ..factories import TripFactory
 
 pytestmark = pytest.mark.django_db
@@ -69,6 +71,41 @@ def test_utils_index_trip_list(admin_client):
 
     assert "Trip 1" in content
     assert "Trip 2" in content
+
+
+def test_update_trip_func():
+    view = resolve("/utils/update/1/")
+
+    assert views.TripUpdate == view.func.view_class
+
+
+def test_update_trip_must_be_logged_in(client):
+    url = reverse("maps:update_trip", kwargs={"pk": 1})
+    response = client.get(url, follow=True)
+
+    assert response.resolver_match.view_name == "maps:login"
+
+
+def test_update_trip(admin_client):
+    obj = TripFactory()
+
+    url = reverse("maps:update_trip", kwargs={"pk": obj.pk})
+    data = {
+        "title": "Trip Updated",
+        "blog_category": 1,
+        "description": "Description",
+        "start_date": date(1999, 1, 1),
+        "end_date": date(1999, 12, 31),
+    }
+    admin_client.post(url, data, follow=True)
+
+    obj.refresh_from_db()
+
+    assert obj.title == "Trip Updated"
+    assert obj.blog_category == "1"
+    assert obj.description == "Description"
+    assert obj.start_date == date(1999, 1, 1)
+    assert obj.end_date == date(1999, 12, 31)
 
 
 # -------------------------------------------------------------------------------------
