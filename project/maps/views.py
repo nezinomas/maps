@@ -13,7 +13,6 @@ from vanilla import ListView, TemplateView
 from . import forms, models
 from .mixins.views import (
     CreateViewMixin,
-    DeleteViewMixin,
     UpdateViewMixin,
     rendered_content,
 )
@@ -138,9 +137,18 @@ class Logout(auth_views.LogoutView):
         return response
 
 
-class Utils(LoginRequiredMixin, ListView):
+class Utils(LoginRequiredMixin, TemplateView):
     model = models.Trip
     template_name = "maps/utils.html"
+
+    def get_context_data(self, **kwargs):
+        context = {"trips": rendered_content(self.request, TripList)}
+
+        return super().get_context_data(**kwargs) | context
+
+
+class TripList(LoginRequiredMixin, ListView):
+    model = models.Trip
 
 
 class TripUpdate(LoginRequiredMixin, UpdateViewMixin):

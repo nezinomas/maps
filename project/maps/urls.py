@@ -10,6 +10,16 @@ urlpatterns = [
     path("utils/login/", views.Login.as_view(), name="login"),
     path("utils/logout/", views.Logout.as_view(), name="logout"),
     path(
+        "utils/update/<int:pk>/",
+        views.TripUpdate.as_view(),
+        name="update_trip"
+    ),
+    path(
+        "utils/trip_list/",
+        views.TripList.as_view(),
+        name="list_trips"
+    ),
+    path(
         "utils/download_tcx/<slug:trip>/",
         views.DownloadTcx.as_view(),
         name="download_tcx",
@@ -18,11 +28,6 @@ urlpatterns = [
         "utils/update_tracks/<slug:trip>/",
         views.SaveNewTracks.as_view(),
         name="update_tracks",
-    ),
-    path(
-        "utils/update/<int:pk>/",
-        views.TripUpdate.as_view(),
-        name="update_trip"
     ),
     path(
         "utils/update_all_tracks/<slug:trip>/",

@@ -1,0 +1,15 @@
+<div class="utils-main">
+    <div id="utils-messages"> </div>
+    <div id="utils-trips" class="accordion">
+        {% for trip in object_list %}
+        <input type="radio" name="accordion" id="trip-{{trip.pk}}" {% if forloop.first%}checked{%endif%}>
+        <section>
+            <label class="box-title" for="trip-{{trip.pk}}">
+                <div>{{trip.title}} / <span>{{trip.start_date|date:"Y-m-d"}}</span></div>
+                <a role="button" hx-get="{% url 'maps:update_trip' trip.pk %}" hx-target="#mainModal"><i class="bi bi-sliders"></i></a>
+            </label>
+            <div class="box-content"><c-buttons :trip_slug=trip.slug /></div>
+        </section>
+        {% endfor %}
+    </div>
+</div>

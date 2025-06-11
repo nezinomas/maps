@@ -61,7 +61,7 @@ def test_utils_index_200(admin_client):
     assert response.status_code == 200
 
 
-def test_utils_index_trip_list(admin_client):
+def test_utils_index_content(admin_client):
     trip1 = TripFactory(title="Trip 1")
     trip2 = TripFactory(title="Trip 2")
 
@@ -69,8 +69,40 @@ def test_utils_index_trip_list(admin_client):
     response = admin_client.get(url)
     content = response.content.decode("utf8")
 
-    assert "Trip 1" in content
-    assert "Trip 2" in content
+    assert trip1.title in content
+    assert trip2.title in content
+
+
+def test_utils_trip_list_func():
+    view = resolve("/utils/trip_list/")
+
+    assert views.TripList == view.func.view_class
+
+
+def test_utils_trip_list_not_logged(client):
+    url = reverse("maps:list_trips")
+    response = client.get(url, follow=True)
+
+    assert response.resolver_match.view_name == "maps:login"
+
+
+def test_utils_trip_list_index_200(admin_client):
+    url = reverse("maps:list_trips")
+    response = admin_client.get(url)
+
+    assert response.status_code == 200
+
+
+def test_utils_trip_list(admin_client):
+    trip1 = TripFactory(title="Trip 1")
+    trip2 = TripFactory(title="Trip 2")
+
+    url = reverse("maps:list_trips")
+    response = admin_client.get(url)
+    content = response.content.decode("utf8")
+
+    assert trip1.title in content
+    assert trip2.title in content
 
 
 def test_update_trip_func():
