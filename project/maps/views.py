@@ -23,6 +23,7 @@ from .utils.tracks_service import TracksService, TracksServiceData
 
 
 class Trips(ListView):
+    template_name = "maps/trips.html"
     model = models.Trip
 
 
