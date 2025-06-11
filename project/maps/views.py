@@ -154,7 +154,7 @@ class TripUpdate(LoginRequiredMixin, UpdateViewMixin):
 
 
 class DownloadTcx(LoginRequiredMixin, TemplateView):
-    template_name = "maps/trip_utils_messages.html"
+    template_name = "maps/utils_messages.html"
 
     def get_context_data(self, *args, **kwargs):
         trip = get_object_or_404(models.Trip, slug=self.kwargs.get("trip"))
@@ -165,7 +165,7 @@ class DownloadTcx(LoginRequiredMixin, TemplateView):
 
 
 class SaveNewTracks(LoginRequiredMixin, TemplateView):
-    template_name = "maps/trip_utils_messages.html"
+    template_name = "maps/utils_messages.html"
 
     def get_context_data(self, *args, **kwargs):
         trip = get_object_or_404(models.Trip, slug=self.kwargs.get("trip"))
@@ -177,7 +177,7 @@ class SaveNewTracks(LoginRequiredMixin, TemplateView):
 
 
 class RewriteAllTracks(LoginRequiredMixin, TemplateView):
-    template_name = "maps/trip_utils_messages.html"
+    template_name = "maps/utils_messages.html"
 
     def get_context_data(self, *args, **kwargs):
         trip = get_object_or_404(models.Trip, slug=self.kwargs.get("trip"))
@@ -192,7 +192,7 @@ class RewriteAllTracks(LoginRequiredMixin, TemplateView):
 
 
 class CommentQty(LoginRequiredMixin, TemplateView):
-    template_name = "maps/trip_utils_messages.html"
+    template_name = "maps/utils_messages.html"
 
     def get_context_data(self, *args, **kwargs):
         trip = get_object_or_404(models.Trip, slug=self.kwargs.get("trip"))
