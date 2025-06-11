@@ -37,6 +37,22 @@ def test_trip_form_title_is_not_valid():
     assert "title" in form.errors
 
 
+def test_trip_form_title_is_not_valid_and_has_is_invalid_css_class():
+    form = forms.TripForm(
+        data={
+            "title": None,
+            "description": None,
+            "blog_category": 1,
+            "start_date": "1999-1-1",
+            "end_date": "1999-12-31",
+        }
+    )
+
+    assert not form.is_valid()
+    assert "title" in form.errors
+    assert 'class="is-invalid"' in form.as_p()
+
+
 def test_trip_form_blog_category_is_not_valid():
     form = forms.TripForm(
         data={

@@ -19,6 +19,8 @@ class CustomAuthForm(AuthenticationForm):
 
 
 class TripForm(forms.ModelForm):
+    error_css_class = "is-invalid"
+
     class Meta:
         model = models.Trip
         fields = ["title", "description", "blog_category", "start_date", "end_date"]
