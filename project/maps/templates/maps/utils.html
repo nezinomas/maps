@@ -17,7 +17,7 @@
 <div class="htmx-indicator loader loader-default is-active" id="indicator"></div>
 
 
-<div id="trip_list">{{trips}}</div>
+<div id="trip_list" hx-get="{% url 'maps:list_trips' %}" hx-trigger="reload from:body">{{trips}}</div>
 
 
 <!-- Modal -->
