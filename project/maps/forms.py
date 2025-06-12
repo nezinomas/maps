@@ -39,7 +39,7 @@ class TripForm(forms.ModelForm):
         return cleaned
 
 
-class GetTcxForm(forms.Form):
+class GetGarminDataByDateForm(forms.Form):
     start_date = forms.DateField(required=True)
     end_date = forms.DateField(required=True)
 

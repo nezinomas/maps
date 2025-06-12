@@ -191,11 +191,11 @@ def test_trip_form_unique_slug_for_same_trip_title():
 
 
 def test_get_tcx_form():
-    forms.GetTcxForm()
+    forms.GetGarminDataByDateForm()
 
 
 def test_get_tcx_fields():
-    form = forms.GetTcxForm().as_p()
+    form = forms.GetGarminDataByDateForm().as_p()
 
     assert '<input type="text" name="start_date"' in form
     assert '<input type="text" name="end_date"' in form
@@ -206,7 +206,7 @@ def test_get_tcx_fields():
     [("x"), (None), ("1999.1.1"), ("1999-1")],
 )
 def test_get_tcx_start_date_is_not_valid(dt):
-    form = forms.GetTcxForm(
+    form = forms.GetGarminDataByDateForm(
         data={
             "start_date": dt,
             "end_date": "1999-12-31",
@@ -223,7 +223,7 @@ def test_get_tcx_start_date_is_not_valid(dt):
     [("x"), (None), ("1999.1.1"), ("1999-1")],
 )
 def test_get_tcx_end_date_is_not_valid(dt):
-    form = forms.GetTcxForm(
+    form = forms.GetGarminDataByDateForm(
         data={
             "start_date": "1999-1-1",
             "end_date": dt,
@@ -236,7 +236,7 @@ def test_get_tcx_end_date_is_not_valid(dt):
 
 
 def test_get_tcx_end_date_earlier_than_start_date():
-    form = forms.GetTcxForm(
+    form = forms.GetGarminDataByDateForm(
         data={
             "start_date": "1999-1-1",
             "end_date": "1998-1-1",
@@ -249,7 +249,7 @@ def test_get_tcx_end_date_earlier_than_start_date():
 
 
 def test_get_tcx_dates_valid():
-    form = forms.GetTcxForm(
+    form = forms.GetGarminDataByDateForm(
         data={
             "start_date": "1999-1-1",
             "end_date": "1999-12-31",
