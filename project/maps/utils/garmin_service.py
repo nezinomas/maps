@@ -2,8 +2,7 @@ import contextlib
 import json
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Dict, List, Optional
-
+from typing import Dict, List
 from django.conf import settings
 from garminconnect import (
     Garmin,
@@ -12,7 +11,6 @@ from garminconnect import (
     GarminConnectTooManyRequestsError,
 )
 
-from ..models import Trip
 from ..utils.common import get_trip
 
 
@@ -38,12 +36,11 @@ class GarminServiceError(Exception):
 class GarminService:
     def __init__(
         self,
-        trip: Optional[
-            "Trip"
-        ] = None,  # Type hint for Django model, quoted to avoid import
-        start_date: Optional[str] = None,
-        end_date: Optional[str] = None,
-        activity_types: Optional[List[str]] = None,
+        trip = None,
+        start_date = None,
+        end_date = None,
+        activity_types = None,
+        api = None
     ):
         self.trip = (
             trip or get_trip()
@@ -52,7 +49,7 @@ class GarminService:
         self.end_date = end_date
         self.activity_types = activity_types or ["biking", "cycling"]
 
-        self.api = create_api()
+        self.api = api or create_api()
 
     def get_data(self) -> str:
         if not self.trip:
