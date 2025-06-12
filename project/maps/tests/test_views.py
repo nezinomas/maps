@@ -105,6 +105,55 @@ def test_utils_trip_list(admin_client):
     assert trip2.title in content
 
 
+def test_utils_trip_create_func():
+    view = resolve("/utils/create/")
+
+    assert views.TripCreate == view.func.view_class
+
+
+def test_utils_trip_create_not_logged(client):
+    url = reverse("maps:create_trip")
+    response = client.get(url, follow=True)
+
+    assert response.resolver_match.view_name == "maps:login"
+
+
+def test_utils_trip_create_200(admin_client):
+    url = reverse("maps:create_trip")
+    response = admin_client.get(url)
+
+    assert response.status_code == 200
+
+
+def test_utils_trip_create_form_url(admin_client):
+    url = reverse("maps:create_trip",)
+
+    request = admin_client.get(url)
+    form = request.content.decode("utf-8")
+
+    assert f'hx-post="{url}"' in form
+
+
+def test_utils_trip_create(admin_client):
+    url = reverse("maps:create_trip",)
+    data = {
+        "title": "Trip",
+        "blog_category": 1,
+        "description": "Description",
+        "start_date": date(1999, 1, 1),
+        "end_date": date(1999, 12, 31),
+    }
+    admin_client.post(url, data, follow=True)
+
+    actual = models.Trip.objects.last()
+
+    assert actual.title == "Trip"
+    assert actual.blog_category == "1"
+    assert actual.description == "Description"
+    assert actual.start_date == date(1999, 1, 1)
+    assert actual.end_date == date(1999, 12, 31)
+
+
 def test_update_trip_func():
     view = resolve("/utils/update/1/")
 

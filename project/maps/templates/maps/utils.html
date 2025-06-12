@@ -19,6 +19,7 @@
 
 <div id="trip_list" hx-get="{% url 'maps:list_trips' %}" hx-trigger="reload from:body">{{trips}}</div>
 
+<button class="btn-success" hx-get="{% url 'maps:create_trip' %}" hx-target="#mainModal">Create Trip</button>
 
 <!-- Modal -->
 <div id="mainModalContainer" class="modal">

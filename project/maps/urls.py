@@ -10,6 +10,11 @@ urlpatterns = [
     path("utils/login/", views.Login.as_view(), name="login"),
     path("utils/logout/", views.Logout.as_view(), name="logout"),
     path(
+        "utils/create/",
+        views.TripCreate.as_view(),
+        name="create_trip"
+    ),
+    path(
         "utils/update/<int:pk>/",
         views.TripUpdate.as_view(),
         name="update_trip"
