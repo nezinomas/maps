@@ -17,9 +17,17 @@
 <div class="htmx-indicator loader loader-default is-active" id="indicator"></div>
 
 
-<div id="trip_list" hx-get="{% url 'maps:list_trips' %}" hx-trigger="reload from:body">{{trips}}</div>
+<div id="trip_list" hx-get="{% url 'maps:list_trips' %}" hx-trigger="reload from:body">
+    {{trips}}
+</div>
 
-<button class="btn-success" hx-get="{% url 'maps:create_trip' %}" hx-target="#mainModal">Create Trip</button>
+
+<div class="utils-main">
+    <div class="utils-buttons">
+        <button class="btn-success" hx-get="{% url 'maps:create_trip' %}" hx-target="#mainModal">Create New Trip</button>
+    </div>
+</div>
+
 
 <!-- Modal -->
 <div id="mainModalContainer" class="modal">

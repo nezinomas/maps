@@ -4,7 +4,7 @@
 
     min-height: 100vh;
     display: grid;
-    place-items: center; /* Centers content both horizontally and vertically */
+    place-items: center;
 
     form {
         min-width: 50%;
@@ -43,6 +43,15 @@
 }
 
 
+.trip-buttons {
+    display: flex;
+    gap: .5rem;
+    > * {
+        flex: 1;
+    }
+}
+
+
 .utils-main {
     display: grid;
     grid-template-columns: 1rem 1fr 1rem;
@@ -54,7 +63,7 @@
         grid-column: 2 / 3;
     }
 
-    #utils-trips {
+    .utils-trips {
         grid-column: 2 / 3 ;
 
         > div {
@@ -68,13 +77,15 @@
     }
 
     .utils-buttons {
-        margin-bottom: 2rem!important;
-        display: flex;
-        gap: 1rem;
+        grid-column: 2 / 3;
+        margin-top: $gap;
+        place-self: center;
 
+        > * {
+            padding: .35rem 5rem;
+        }
     }
 }
-
 
 @media only screen and (min-width: 992px) {
     .utils-main {
@@ -110,8 +121,6 @@
         }
     }
 
-    
-    
     section {
         position: relative;
         background: white;
@@ -162,18 +171,7 @@
             width: 100%;
             padding: 30px 20px;
             display: none;
-
-            .buttons {
-                display: flex;
-                gap: .5rem;
-
-                > button {
-                    flex: 1;
-                    padding: .35rem;
-                }
-            }
         }
-
     }
 }
 

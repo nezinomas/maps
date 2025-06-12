@@ -1,6 +1,6 @@
 <div class="utils-main">
     <div id="utils-messages"> </div>
-    <div id="utils-trips" class="accordion">
+    <div class="utils-trips accordion">
         {% for trip in object_list %}
         <input type="radio" name="accordion" id="trip-{{trip.pk}}" {% if forloop.first%}checked{%endif%}>
         <section>

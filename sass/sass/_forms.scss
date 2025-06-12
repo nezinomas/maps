@@ -3,6 +3,17 @@ ul.errorlist {
     font-weight: 550;
 }
 
+
+button {
+    padding: .35rem;
+}
+
+
+textarea {
+    height: 5rem;
+}
+
+
 input, textarea {
     width: 100%;
     padding: .35rem .25rem .35rem .75rem;
@@ -21,9 +32,6 @@ input, textarea {
     }
 }
 
-textarea {
-    height: 5rem;
-}
 
 .is-invalid {
     input {
