@@ -167,6 +167,16 @@ def test_update_trip_must_be_logged_in(client):
     assert response.resolver_match.view_name == "maps:login"
 
 
+def test_update_trip_form_url(admin_client):
+    obj = TripFactory()
+
+    url = reverse("maps:update_trip", kwargs={"pk": obj.pk})
+    request = admin_client.get(url)
+    form = request.content.decode("utf-8")
+
+    assert f'hx-post="{url}"' in form
+
+
 def test_update_trip(admin_client):
     obj = TripFactory()
 
