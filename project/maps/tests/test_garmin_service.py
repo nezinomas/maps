@@ -18,7 +18,11 @@ pytestmark = pytest.mark.django_db
 @pytest.fixture(name="garmin_api", autouse=True)
 def fixture_garmin_api(monkeypatch):
     mock_func = "project.maps.utils.garmin_service.create_api"
-    monkeypatch.setattr(mock_func, lambda: Mock())
+
+    mck = Mock()
+    mck.download_activity.return_value = b"tcx data"
+
+    return monkeypatch.setattr(mock_func, lambda: mck)
 
 
 def test_garmin_service_init_with_trip():
@@ -44,8 +48,8 @@ def test_get_data_no_trip(mck):
 
 
 @patch("project.maps.utils.garmin_service.create_api")
-def test_get_data_failed_get_api(mck_api):
-    mck_api.return_value = None
+def test_get_data_failed_get_api(garmin_api):
+    garmin_api.return_value = None
 
     actual = GarminService(trip=TripFactory.build()).get_data()
 
@@ -131,7 +135,7 @@ def test_get_data_success(mck_activities, mck_save):
     assert actual == "Successfully synced data from Garmin Connect"
 
 
-def test_tcx_new_file(tmp_path):
+def test_tcx_new_file(garmin_api, tmp_path):
     trip = TripFactory()
 
     _activities = [
@@ -142,41 +146,37 @@ def test_tcx_new_file(tmp_path):
 
     tmp_path.mkdir(parents=True, exist_ok=True)
     with override_settings(MEDIA_ROOT=tmp_path):
-        obj = GarminService(trip=trip)
-
-        obj.api = Mock()
-        obj.api.download_activity.return_value = b"tcx data"
+        obj = GarminService(trip=trip, api=garmin_api)
 
         obj._save_activities(_activities)
+
+        assert obj.api.download_activity.call_count == 1
 
         file = Path(settings.MEDIA_ROOT, "tracks", str(trip.pk), "999.tcx")
         with open(file, "r") as f:
             assert f.read() == "tcx data"
 
 
-def test_tcx_file_exist(fs):
+def test_tcx_file_exist(garmin_api, fs):
+    trip = TripFactory()
     _activities = [
         {
             "activityId": 999,
         }
     ]
 
-    file_tcx = os.path.join(settings.MEDIA_ROOT, "tracks", "999.tcx")
+    file_tcx = os.path.join(settings.MEDIA_ROOT, "tracks", str(trip.pk), "999.tcx")
     fs.create_file(file_tcx, contents="test")
 
-    activity_file = os.path.join(settings.MEDIA_ROOT, "tracks", "999")
+    activity_file = os.path.join(settings.MEDIA_ROOT, "tracks", str(trip.pk), "999")
     fs.create_file(activity_file, contents="test")
 
-    obj = GarminService(trip=TripFactory.build())
-
-    # mock api
-    obj.api = Mock()
-    obj.api.download_activity.return_value = b"tcx data"
+    obj = GarminService(trip=trip, api=garmin_api)
 
     # save activities
     obj._save_activities(_activities)
 
-    assert obj.api.download_activity.call_count == 1
+    assert obj.api.download_activity.call_count == 0
 
     with open(file_tcx, "r") as f:
         assert f.read() == "test"

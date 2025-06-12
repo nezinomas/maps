@@ -119,7 +119,6 @@ class GarminService:
                 activity_id = activity["activityId"]
 
                 output_file = tracks_folder / str(activity_id)
-
                 if output_file.exists():
                     continue
 
