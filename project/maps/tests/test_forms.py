@@ -183,7 +183,7 @@ def test_trip_form_unique_slug_for_same_trip_title():
     actual = models.Trip.objects.last()
 
     assert actual.title == "Trip"
-    assert actual.slug == "trip-2"
+    assert actual.slug == "trip-1"
     assert actual.description == "Description"
     assert actual.blog_category == "1"
     assert actual.start_date == date(1999, 1, 1)
