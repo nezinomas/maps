@@ -20,11 +20,33 @@ class Trip(models.Model):
     def __str__(self):
         return str(self.title)
 
-    def save(self, *args, **kwargs):
-        self.slug = slugify(self.title)
+    def _generate_unique_slug(self):
+        """Generate a unique slug based on the title."""
+        base_slug = slugify(self.title)
 
-        if qs := Trip.objects.filter(slug__contains=self.slug).count():
-            self.slug = f"{self.slug}-{qs + 1}"
+        # Check if slug exists for other instances (excluding self)
+        slug_filter = Trip.objects.filter(slug=base_slug)
+        if self.pk:
+            slug_filter = slug_filter.exclude(pk=self.pk)
+
+        # If slug doesn't exist, return it
+        if not slug_filter.exists():
+            return base_slug
+
+        # Append numeric suffix for uniqueness
+        suffix = 1
+        while Trip.objects.filter(slug=f"{base_slug}-{suffix}").exists():
+            suffix += 1
+        return f"{base_slug}-{suffix}"
+
+    def save(self, *args, **kwargs):
+        # Check if new instance or title changed
+        is_new = not self.pk
+        title_changed = False if is_new else Trip.objects.get(pk=self.pk).title != self.title
+
+        # Update slug only if new instance or title changed
+        if is_new or title_changed:
+            self.slug = self._generate_unique_slug()
 
         super().save(*args, **kwargs)
 

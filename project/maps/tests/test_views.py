@@ -140,6 +140,45 @@ def test_update_trip(admin_client):
     assert obj.end_date == date(1999, 12, 31)
 
 
+def test_update_trip_not_change_slug_if_title_same(admin_client):
+    obj = TripFactory()
+
+    url = reverse("maps:update_trip", kwargs={"pk": obj.pk})
+    data = {
+        "title": obj.title,
+        "blog_category": 1,
+        "description": "Description",
+        "start_date": date(1999, 1, 1),
+        "end_date": date(1999, 12, 31),
+    }
+    admin_client.post(url, data, follow=True)
+
+    obj.refresh_from_db()
+
+    assert obj.title == "Trip"
+    assert obj.slug == "trip"
+
+
+def test_update_trip_change_slug_if_title_modified(admin_client):
+    TripFactory(title="Trip")
+    obj = TripFactory(title="test")
+
+    url = reverse("maps:update_trip", kwargs={"pk": obj.pk})
+    data = {
+        "title": "Trip M",
+        "blog_category": 1,
+        "description": "Description",
+        "start_date": date(1999, 1, 1),
+        "end_date": date(1999, 12, 31),
+    }
+    admin_client.post(url, data, follow=True)
+
+    obj.refresh_from_db()
+
+    assert obj.title == "Trip M"
+    assert obj.slug == "trip-m"
+
+
 # -------------------------------------------------------------------------------------
 #                                                                  Donwload Garmin Data
 # -------------------------------------------------------------------------------------
