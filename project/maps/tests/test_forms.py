@@ -188,3 +188,72 @@ def test_trip_form_unique_slug_for_same_trip_title():
     assert actual.blog_category == "1"
     assert actual.start_date == date(1999, 1, 1)
     assert actual.end_date == date(1999, 12, 31)
+
+
+def test_get_tcx_form():
+    forms.GetTcxForm()
+
+
+def test_get_tcx_fields():
+    form = forms.GetTcxForm().as_p()
+
+    assert '<input type="text" name="start_date"' in form
+    assert '<input type="text" name="end_date"' in form
+
+
+@pytest.mark.parametrize(
+    "dt",
+    [("x"), (None), ("1999.1.1"), ("1999-1")],
+)
+def test_get_tcx_start_date_is_not_valid(dt):
+    form = forms.GetTcxForm(
+        data={
+            "start_date": dt,
+            "end_date": "1999-12-31",
+        }
+    )
+
+    assert not form.is_valid()
+    assert len(form.errors) == 1
+    assert "start_date" in form.errors
+
+
+@pytest.mark.parametrize(
+    "dt",
+    [("x"), (None), ("1999.1.1"), ("1999-1")],
+)
+def test_get_tcx_end_date_is_not_valid(dt):
+    form = forms.GetTcxForm(
+        data={
+            "start_date": "1999-1-1",
+            "end_date": dt,
+        }
+    )
+
+    assert not form.is_valid()
+    assert len(form.errors) == 1
+    assert "end_date" in form.errors
+
+
+def test_get_tcx_end_date_earlier_than_start_date():
+    form = forms.GetTcxForm(
+        data={
+            "start_date": "1999-1-1",
+            "end_date": "1998-1-1",
+        }
+    )
+
+    assert not form.is_valid()
+    assert len(form.errors) == 1
+    assert "end_date" in form.errors
+
+
+def test_get_tcx_dates_valid():
+    form = forms.GetTcxForm(
+        data={
+            "start_date": "1999-1-1",
+            "end_date": "1999-12-31",
+        }
+    )
+
+    assert form.is_valid()
