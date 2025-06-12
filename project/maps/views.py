@@ -154,6 +154,7 @@ class TripList(LoginRequiredMixin, ListView):
 class TripCreate(LoginRequiredMixin, CreateViewMixin):
     model = models.Trip
     form_class = forms.TripForm
+    title = "Create Trip"
 
     def url(self):
         return reverse_lazy("maps:create_trip")
