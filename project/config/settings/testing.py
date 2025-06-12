@@ -12,10 +12,10 @@ EMAIL_BACKEND = "django.core.mail.backends.locmem.EmailBackend"
 
 CACHES = {
     "default": {
-        "BACKEND": "django.core.cache.backends.db.DatabaseCache",
-        "LOCATION": "exchange_rate_cache",
+        "BACKEND": "django.core.cache.backends.dummy.DummyCache",
     }
 }
+
 
 TEMPLATES[0]["OPTIONS"]["loaders"] = [
     [

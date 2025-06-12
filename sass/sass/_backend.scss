@@ -1,0 +1,177 @@
+
+.login {
+    --gap: 2rem;
+
+    min-height: 100vh;
+    display: grid;
+    place-items: center;
+
+    form {
+        min-width: 50%;
+        width: 50%;
+        border: #cecece 1px solid;
+        border-radius: 1px;
+        padding: 2rem;
+        box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+    }
+
+    form > div {
+        display: grid;
+        grid-template-columns: 4fr;
+        gap: var(--gap);
+
+        > * {
+            align-self: center;
+        }
+
+        > ul {
+            grid-row-start: 2;
+            margin-top: calc(-0.75 * var(--gap));
+            color: $danger;
+            font-weight: 550;
+        }
+
+    }
+
+    label {
+        text-align: right;
+    }
+
+    button {
+        width: 100%;
+    }
+}
+
+
+.trip-buttons {
+    display: flex;
+    gap: .5rem;
+    > * {
+        flex: 1;
+    }
+}
+
+
+.utils-main {
+    display: grid;
+    grid-template-columns: 1rem 1fr 1rem;
+
+    #utils-messages {
+        min-height: 65px;
+        text-align: center;
+        padding: 1.5rem 0;
+        grid-column: 2 / 3;
+    }
+
+    .utils-trips {
+        grid-column: 2 / 3 ;
+
+        > div {
+            margin-bottom: 1rem;
+        }
+
+        span {
+            color: #818181;
+            font-size: .75rem;
+        }
+    }
+
+    .utils-buttons {
+        grid-column: 2 / 3;
+        margin-top: $gap;
+        place-self: center;
+
+        > * {
+            padding: .35rem 5rem;
+        }
+    }
+}
+
+@media only screen and (min-width: 992px) {
+    .utils-main {
+        grid-template-columns: 1fr 5fr 1fr;
+    }
+}
+
+
+.accordion {
+    --height: 64px;
+    --padding-left: 44px;
+
+    input {
+        display: none;
+
+        &:checked + section {
+            height: auto;
+            margin: 16px 0;
+            box-shadow: 0 0 6px rgba(0,0,0,.16),0 6px 12px rgba(0,0,0,.32);
+        }
+
+        &:checked + section .box-title {
+            border-bottom: 1px solid rgba(0,0,0,.18);
+        }
+
+        &:checked + section .box-content,
+        &:checked + section .box-close {
+            display: inline-block;
+        }
+
+        &:checked + section .box-title:before {
+            transform: rotate(90deg);
+        }
+    }
+
+    section {
+        position: relative;
+        background: white;
+        height: var(--height);
+        transition: all .15s ease-in-out;
+
+        &::before {
+            content: '';
+            position: absolute;
+            display: block;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            pointer-events: none;
+            box-shadow: 0 -1px 0 #e5e5e5,0 0 2px rgba(0,0,0,.12),0 2px 4px rgba(0,0,0,.24);
+        }
+
+        .box-title {
+            padding-left: var(--padding-left);
+            height: var(--height);
+            line-height: var(--height);
+            display: flex;
+            // cursor: pointer;
+            font-size: 1.1rem;
+
+            > div {
+                flex-grow: 1;
+            }
+
+            > a {
+                padding: 0 1rem;
+            }
+        }
+
+        .box-title:before {
+            position: absolute;
+            display: block;
+            content: '\203a';
+            font-size: 18pt;
+            left: 20px;
+            top: -2px;
+            transition: transform .15s ease-in-out;
+            color: rgba(0,0,0,.54);
+        }
+
+        .box-content {
+            width: 100%;
+            padding: 30px 20px;
+            display: none;
+        }
+    }
+}
+

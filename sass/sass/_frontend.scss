@@ -1,0 +1,230 @@
+// Map
+.map-container{
+    background:#fff;
+    padding:15px;
+    box-shadow: 0 0 20px #999;
+    border-radius:2px;
+}
+
+#map {
+    height:400px;
+    background:#6699cc;
+}
+
+
+
+// Trip list
+.trip-list {
+	font-family: 'Segoe UI', serif;
+	font-size: .8rem;
+
+    .wrapper {
+        display: flex;
+        flex-direction: column;
+        max-width: max-content;
+        margin: 0 auto;
+    }
+
+    a,
+    a:visited {
+        color: palevioletred;
+    }
+
+    h1 {
+        margin-bottom: 1rem;
+    }
+
+    ul {
+        list-style: none;
+
+        li {
+            > * {
+                display: block;
+            }
+
+            > *:last-child {
+                font-style: italic;
+                margin-bottom: 1rem;
+                color: #686868;
+            }
+
+            &:last-child {
+                margin-bottom: 1rem;
+            }
+        }
+    }
+
+    .trip-container {
+        display: flex;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+    }
+
+    .year {
+        font-size: .9rem;
+        font-weight: bold;
+    }
+}
+
+
+// Map and posts grid
+.grid {
+    display: grid;
+    grid-template-columns: 1fr 7fr 1fr;
+    row-gap: 1rem;
+
+    > div {
+        grid-column: 2/3;
+    }
+}
+
+@media screen and (max-width: 768px) {
+    .grid {
+        grid-template-columns: 1rem 1fr 1rem;
+    }
+}
+
+
+header {
+    margin-bottom: 2rem;
+
+    .trip-title {
+        text-align: center;
+
+        h1 {
+            font-size: 2rem;
+            font-weight: 400;
+            font-family: 'Playfair Display', serif;
+        }
+
+        p {
+            font-style: italic;
+            font-size: .8rem;
+            color: #686868;
+        }
+    }
+
+    .trip-statistic {
+        display: flex;
+        justify-content: center;
+        gap: 1rem;
+    }
+}
+
+
+// Post
+.post {
+    margin-bottom: 2rem;
+
+    img {
+        max-width: 100%;
+        width: 100%;
+        max-height: auto;
+        height: auto;
+        object-fit: cover;
+    }
+
+    figcaption {
+        margin-bottom: 1rem;
+        text-align: center;
+    }
+
+    figure:not(:has(figcaption)) {
+        margin-bottom: 1rem;
+    }
+
+    .post-header {
+        text-align: center;
+
+        // Post title
+        h2 {
+            font-family: 'Playfair Display', serif;
+            font-weight: 400;
+            font-size: 1.5rem;
+
+            > a {
+                color: hsl(337, 100%, 40%);
+            }
+        }
+
+        // Post date
+        p {
+            font-size: .8rem;
+            color: #686868;
+        }
+    }
+
+    .post-content {
+        margin: 1rem 0;
+
+        p {
+            margin-bottom: 1rem;
+        }
+    }
+
+    .post-footer {
+        text-align: center;
+
+        a {
+            color: #ea4c88;
+        }
+    }
+
+    .post-comments{
+        margin: 2rem 0;
+
+        .comment-context {
+            margin: 2rem 0;
+        }
+
+        .comment-date {
+            color: #686868;
+            font-size: .7rem;
+        }
+
+        .comment-content {
+            margin: 1rem 0;
+        }
+    }
+
+
+    .wp-block-video video {
+        vertical-align: middle;
+        width: 100%;
+        margin-top: 1rem;
+        margin-bottom: 1rem;
+    }
+}
+
+.wp-error {
+    text-align: center;
+
+    p:first-child {
+        font-size: 1rem;
+        color: #58151c;
+        background-color: #f8d7da;
+        border: 1px solid #f1aeb5;
+        padding: 1rem;
+        border-radius: 2px;
+
+        margin-bottom: 1rem;
+    }
+}
+
+
+div.popup {
+    table tr > td:first-child {
+        text-align: right;
+        padding-right: 0.25rem;
+    }
+
+    table td > span {
+        font-weight: 550;
+        color: #0e0e0e;
+    }
+
+    p {
+        text-align: center;
+        font-weight: 600;
+    }
+}

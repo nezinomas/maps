@@ -4,7 +4,6 @@ from datetime import datetime
 from django.conf import settings
 from django.core.serializers.json import DjangoJSONEncoder
 
-from ..models import Track
 from ..templatetags.datetime_filter import format_time
 from .statistic_service import get_statistic
 

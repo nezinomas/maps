@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<main class="trip-list">
+    <div class="wrapper">
+        <h1>Kelionių sąrašas</h1>
+        {% regroup object_list by start_date|date:'Y' as trips_group %}
+        {% for trips in trips_group  %}
+        <div class="trip-container">
+            <div class="year">{{trips.grouper}}</div>
+            <ul>
+                {% for trip in trips.list %}
+                <li>
+                    <span><a href="{% url 'maps:index' trip.slug %}">{{trip.title}}</a></span>
+                    <span>{{trip.description}}</span>
+                </li>
+                {%endfor%}
+            </ul>
+        </div>
+        {% endfor %}
+    </div>
+</main>
+
+{% endblock content %}

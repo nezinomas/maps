@@ -4,7 +4,6 @@ from pathlib import Path
 from django.contrib.gis.geos import LineString
 from lxml import etree
 
-
 NAMESPACES = {
     "ns": "http://www.garmin.com/xmlschemas/TrainingCenterDatabase/v2",
     "ns3": "http://www.garmin.com/xmlschemas/ActivityExtension/v2",

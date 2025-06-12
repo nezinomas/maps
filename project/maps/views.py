@@ -1,20 +1,28 @@
 import re
 
+from django.contrib.auth import logout
+from django.contrib.auth import views as auth_views
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.cache import cache
-
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, redirect
+from django.urls import reverse_lazy
+from django.urls.base import reverse
 from django.utils.safestring import mark_safe
-from django.views.generic import ListView, TemplateView
+from vanilla import ListView, TemplateView
 
-from . import models
-from .utils import wp_comments_qty, wp_content
+from . import forms, models
+from .mixins.views import (
+    CreateViewMixin,
+    UpdateViewMixin,
+    rendered_content,
+)
+from .utils import views_map, wp_comments_qty, wp_content
 from .utils.garmin_service import GarminService
 from .utils.tracks_service import TracksService, TracksServiceData
-from .utils import views_map
 
 
 class Trips(ListView):
+    template_name = "maps/trips.html"
     model = models.Trip
 
 
@@ -70,7 +78,7 @@ class Posts(TemplateView):
             )
 
             try:
-                posts = wp_content.get_json(trip.blog, link)
+                posts = wp_content.get_content(link)
             except Exception:
                 wp_error = "Kažkas neveikia. Bandykite prisijungti vėliau."
 
@@ -103,29 +111,66 @@ class Comments(TemplateView):
     template_name = "maps/comments.html"
 
     def get_context_data(self, **kwargs):
-        trip = get_object_or_404(models.Trip, slug=self.kwargs.get("trip"))
         post_id = self.kwargs.get("post_id")
         link = f"comments?post={post_id}&_fields=author_name,date,content"
         context = {
-            "comments": wp_content.get_json(trip.blog, link),
+            "comments": wp_content.get_content(link),
         }
 
         return super().get_context_data(**kwargs) | context
+
+
+class Login(auth_views.LoginView):
+    form_class = forms.CustomAuthForm
+    template_name = "maps/login.html"
+    redirect_authenticated_user = True
+
+
+class Logout(auth_views.LogoutView):
+    def dispatch(self, request, *args, **kwargs):
+        response = super().dispatch(request, *args, **kwargs)
+
+        if request.user.is_authenticated:
+            logout(request)
+            return redirect(reverse("maps:trips"))
+
+        return response
 
 
 class Utils(LoginRequiredMixin, TemplateView):
-    login_url = "/admin/"
+    model = models.Trip
     template_name = "maps/utils.html"
 
     def get_context_data(self, **kwargs):
-        context = {
-            "slug": self.kwargs.get("trip"),
-        }
+        context = {"trips": rendered_content(self.request, TripList)}
+
         return super().get_context_data(**kwargs) | context
 
 
+class TripList(LoginRequiredMixin, ListView):
+    model = models.Trip
+
+
+class TripCreate(LoginRequiredMixin, CreateViewMixin):
+    model = models.Trip
+    form_class = forms.TripForm
+    title = "Create Trip"
+
+    def url(self):
+        return reverse_lazy("maps:create_trip")
+
+
+class TripUpdate(LoginRequiredMixin, UpdateViewMixin):
+    model = models.Trip
+    form_class = forms.TripForm
+    success_url = reverse_lazy("maps:utils_index")
+    title = "Update Trip"
+
+    def url(self):
+        return self.object.get_absolute_url() if self.object else None
+
+
 class DownloadTcx(LoginRequiredMixin, TemplateView):
-    login_url = "/admin/"
     template_name = "maps/utils_messages.html"
 
     def get_context_data(self, *args, **kwargs):
@@ -137,7 +182,6 @@ class DownloadTcx(LoginRequiredMixin, TemplateView):
 
 
 class SaveNewTracks(LoginRequiredMixin, TemplateView):
-    login_url = "/admin/"
     template_name = "maps/utils_messages.html"
 
     def get_context_data(self, *args, **kwargs):
@@ -150,7 +194,6 @@ class SaveNewTracks(LoginRequiredMixin, TemplateView):
 
 
 class RewriteAllTracks(LoginRequiredMixin, TemplateView):
-    login_url = "/admin/"
     template_name = "maps/utils_messages.html"
 
     def get_context_data(self, *args, **kwargs):
@@ -172,6 +215,6 @@ class CommentQty(LoginRequiredMixin, TemplateView):
         trip = get_object_or_404(models.Trip, slug=self.kwargs.get("trip"))
         wp_comments_qty.push_comments_qty(trip)
 
-        context = {"message": ["done"]}
+        context = {"message": ["Successfully synced with wordpress blog"]}
 
         return super().get_context_data(*args, **kwargs) | context

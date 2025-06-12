@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+
+{% block content %}
+
+
+<div class="login">
+    <form method="post" novalidate>
+        {% csrf_token %}
+        <input type="hidden" name="next" value="{{ next }}">
+        {{form}}
+        <button type="submit" class="btn-primary">Log in</button>
+    </form>
+</div>
+
+
+{% endblock %}
