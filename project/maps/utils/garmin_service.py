@@ -1,7 +1,8 @@
+import contextlib
 import json
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Dict, List
+from typing import Dict, List, Optional
 
 from django.conf import settings
 from garminconnect import (
@@ -15,86 +16,102 @@ from ..models import Trip
 from ..utils.common import get_trip
 
 
+def create_api():
+    api = None
+
+    with contextlib.suppress(
+        GarminConnectConnectionError,
+        GarminConnectAuthenticationError,
+        GarminConnectTooManyRequestsError,
+    ):
+        api = Garmin(settings.ENV["GARMIN_USER"], settings.ENV["GARMIN_PASS"])
+        api.login()
+
+    return api
+
+
+# Custom exception
+class GarminServiceError(Exception):
+    pass
+
+
 class GarminService:
-    def __init__(self, trip: Trip = None):
-        self.trip = trip or get_trip()
+    def __init__(
+        self,
+        trip: Optional[
+            "Trip"
+        ] = None,  # Type hint for Django model, quoted to avoid import
+        start_date: Optional[str] = None,
+        end_date: Optional[str] = None,
+        activity_types: Optional[List[str]] = None,
+    ):
+        self.trip = (
+            trip or get_trip()
+        )  # Assume get_trip() returns a Trip model instance
+        self.start_date = start_date
+        self.end_date = end_date
+        self.activity_types = activity_types or ["biking", "cycling"]
 
-    def get_data(self) -> List[str]:
+        self.api = create_api()
+
+    def get_data(self) -> str:
         if not self.trip:
-            return ["No trip found"]
+            return "No trip found"
 
-        # login to garmin connect
-        api = self.get_api()
-        if not api:
-            return ["Error occurred during Garmin Connect communication"]
+        if not self.api:
+            return "Error occurred during Garmin Connect communication"
 
-        # get activities
-        activities = self.get_activities(api)
-        if not activities:
-            return ["Error occurred during getting garmin activities"]
-
-        arr = []
-        for activity in activities:
-            # filter non cycling activities
-            activity_type = activity["activityType"]["typeKey"]
-            if all(x not in activity_type.lower() for x in ("biking", "cycling")):
-                continue
-
-            # activity start time must be:
-            # greater than trip start time and
-            # less than trip end time
-            time = activity.get("startTimeGMT")
-            time = datetime.strptime(time, "%Y-%m-%d %H:%M:%S")
-            time = time.astimezone(timezone.utc)
-
-            trip_start_date = datetime.combine(
-                self.trip.start_date, datetime.min.time(), tzinfo=timezone.utc
-            )
-            trip_end_date = datetime.combine(
-                self.trip.end_date, datetime.min.time(), tzinfo=timezone.utc
-            )
-
-            if time < trip_start_date or time > trip_end_date:
-                continue
-
-            # activities list for download
-            arr.append(activity)
-
-        if not arr:
-            return ["Nothing to sync"]
-
-        # download TCX files for all activities
-        if err := self.save_files(api, arr):
-            return [f"Error occurred during saving tcx file: {err}"]
-
-        return ["Successfully synced data from Garmin Connect"]
-
-    def get_api(self) -> Garmin:
         try:
-            api = Garmin(settings.ENV["GARMIN_USER"], settings.ENV["GARMIN_PASS"])
+            activities = self._fetch_activities()
+            filtered_activities = self._filter_activities(activities)
 
-            api.login()
-        except (
-            GarminConnectConnectionError,
-            GarminConnectAuthenticationError,
-            GarminConnectTooManyRequestsError,
-        ):
-            return None
+            if not filtered_activities:
+                return "Nothing to sync"
 
-        return api
+            self._save_activities(filtered_activities)
 
-    def get_activities(self, api: Garmin) -> List[Dict]:
+            return "Successfully synced data from Garmin Connect"
+        except GarminServiceError as e:
+            return f"Error: {e}"
+
+    def _fetch_activities(self) -> List[Dict]:
         try:
-            activities = api.get_activities(0, 15)  # 0=start, 1=limit
-            # activities = api.get_activities_by_date(
-            #     startdate="2018-09-14", enddate="2018-11-01"
-            # )
+            if self.start_date and self.end_date:
+                return self.api.get_activities_by_date(self.start_date, self.end_date)
+            return self.api.get_activities(0, 15)
         except Exception as e:
-            return None
+            raise GarminServiceError(f"Failed to fetch activities: {str(e)}") from e
 
-        return activities
+    def _filter_activities(self, activities: List[Dict]) -> List[Dict]:
+        def is_valid_activity(activity: Dict) -> bool:
+            # Filter by activity type
+            activity_type = activity["activityType"]["typeKey"].lower()
+            if all(x not in activity_type for x in self.activity_types):
+                return False
 
-    def save_files(self, api: Garmin, activities: List[Dict]) -> str:
+            # Skip date filter if start_date and end_date are provided
+            if self.start_date and self.end_date:
+                return True
+
+            # Filter by trip date range
+            try:
+                time = datetime.strptime(
+                    activity.get("startTimeGMT"), "%Y-%m-%d %H:%M:%S"
+                )
+                time = time.astimezone(timezone.utc)
+                trip_start = datetime.combine(
+                    self.trip.start_date, datetime.min.time(), tzinfo=timezone.utc
+                )
+                trip_end = datetime.combine(
+                    self.trip.end_date, datetime.min.time(), tzinfo=timezone.utc
+                )
+                return trip_start <= time <= trip_end
+            except (ValueError, TypeError):
+                return False
+
+        return [activity for activity in activities if is_valid_activity(activity)]
+
+    def _save_activities(self, activities: List[Dict]) -> None:
         try:
             tracks_folder = Path(settings.MEDIA_ROOT) / "tracks" / str(self.trip.pk)
 
@@ -109,8 +126,8 @@ class GarminService:
                 if output_file.exists():
                     continue
 
-                tcx_data = api.download_activity(
-                    activity_id, dl_fmt=api.ActivityDownloadFormat.TCX
+                tcx_data = self.api.download_activity(
+                    activity_id, dl_fmt=self.api.ActivityDownloadFormat.TCX
                 )
 
                 with open(output_file, "w") as activity_file:
@@ -118,6 +135,5 @@ class GarminService:
 
                 with open(f"{output_file}.tcx", "wb") as tcx_file:
                     tcx_file.write(tcx_data)
-
-        except Exception as err:
-            return err
+        except Exception as e:
+            raise GarminServiceError(f"Failed to save activities: {e}") from e
