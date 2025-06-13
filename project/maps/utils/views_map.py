@@ -2,8 +2,10 @@ import json
 from datetime import datetime
 
 from django.conf import settings
+from django.core.cache import cache
 from django.core.serializers.json import DjangoJSONEncoder
 
+from .. import models
 from ..templatetags.datetime_filter import format_time
 from .statistic_service import get_statistic
 
@@ -60,3 +62,24 @@ def geo_data(tracks):
 
     # Serialize once
     return json.dumps(geo_json, cls=DjangoJSONEncoder)
+
+
+def create_context(trip):
+    context = base_context(trip)
+
+    cache_key = f"geojson_{trip.slug}"
+    geo_json_data = cache.get(cache_key)
+
+    if not geo_json_data:
+        tracks = (
+            models.Track.objects.filter(trip=trip)
+            .order_by("date")
+            .select_related("stats")
+        )
+        geo_json_data = geo_data(tracks)
+        _cache_timeout = cache_timeout(trip)
+        cache.set(cache_key, geo_json_data, timeout=_cache_timeout)
+
+    context["tracks"] = geo_json_data
+
+    return context

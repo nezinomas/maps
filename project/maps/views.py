@@ -3,7 +3,6 @@ import re
 from django.contrib.auth import logout
 from django.contrib.auth import views as auth_views
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.core.cache import cache
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse_lazy
 from django.urls.base import reverse
@@ -33,23 +32,8 @@ class Map(TemplateView):
     def get_context_data(self, *args, **kwargs):
         trip_slug = self.kwargs.get("trip")
         trip = get_object_or_404(models.Trip, slug=trip_slug)
+        context = views_map.create_context(trip)
 
-        context = views_map.base_context(trip)
-
-        cache_key = f"geojson_{trip_slug}"
-        geo_json_data = cache.get(cache_key)
-
-        if not geo_json_data:
-            tracks = (
-                models.Track.objects.filter(trip=trip)
-                .order_by("date")
-                .select_related("stats")
-            )
-            geo_json_data = views_map.geo_data(tracks)
-            cache_timeout = views_map.cache_timeout(trip)
-            cache.set(cache_key, geo_json_data, timeout=cache_timeout)
-
-        context["tracks"] = geo_json_data
         return super().get_context_data(*args, **kwargs) | context
 
 
