@@ -4,11 +4,12 @@ from django.contrib.auth import logout
 from django.contrib.auth import views as auth_views
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.cache import cache
-from django.shortcuts import get_object_or_404, redirect
+from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse_lazy
 from django.urls.base import reverse
 from django.utils.safestring import mark_safe
-from vanilla import ListView, TemplateView
+from django_htmx.http import retarget
+from vanilla import FormView, ListView, TemplateView
 
 from . import forms, models
 from .mixins.views import (
@@ -179,6 +180,30 @@ class DownloadTcx(LoginRequiredMixin, TemplateView):
         context = {"message": GarminService(trip).get_data()}
 
         return super().get_context_data(*args, **kwargs) | context
+
+
+class GetTcxByDate(LoginRequiredMixin, FormView):
+    form_class = forms.GetTcxByDateForm
+    hx_trigger_django = "reload"
+    template_name = "maps/download_tcx_form.html"
+    success_url = reverse_lazy("maps:utils_index")
+
+    def url(self):
+        return reverse_lazy("maps:tcx_date", kwargs={"trip": self.kwargs.get("trip")})
+
+    def form_valid(self, form, **kwargs):
+        trip = trip = get_object_or_404(models.Trip, slug=self.kwargs.get("trip"))
+        start_date = form.cleaned_data.get("start_date")
+        end_date = form.cleaned_data.get("end_date")
+
+        msg = GarminService(
+            trip=trip,
+            start_date=start_date.strftime("%Y-%m-%d"),
+            end_date=end_date.strftime("%Y-%m-%d"),
+        ).get_data()
+
+        response = render(self.request, "maps/utils_messages.html", {"message": msg})
+        return retarget(response, "#utils-messages")
 
 
 class SaveNewTracks(LoginRequiredMixin, TemplateView):

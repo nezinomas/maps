@@ -1,0 +1,16 @@
+<form method="POST" id="modal-form" class="modal-content modal-form" novalidate autocomplete="off" tabindex="-1" hx-post="{{ view.url }}" hx-headers='{"X-CSRFToken":"{{ csrf_token }}"}' hx-indicator="#indicator">
+
+    <div class="modal-header">
+        <h5 class="modal-title">Get Garmin Data by Date</h5>
+        <button type="button" class="button-close modal-close" data-dismiss="mainModal" aria-label="Close"></button>
+    </div>
+    <div class="modal-body">
+        {{form}}
+    </div>
+
+    <div class="modal-footer">
+        <button type="submit" id="_close" class="btn-primary">Get Data</button>
+        <button type="button" class="btn-secondary modal-close" data-dismiss="mainModal">Close</button>
+    </div>
+
+</form>
