@@ -47,18 +47,23 @@ htmx.on("htmx:afterSwap", (e) => {
 htmx.on("htmx:beforeSwap", (e) => {
     let target = e.detail.target.id;
 
+    // Create/Update/Delete forms
     if (target == "mainModal" && !e.detail.xhr.response) {
         /* find submit button id */
         let subbmiter = e.detail.requestConfig.triggeringEvent.submitter.id;
 
         if(subbmiter == '_close') {
             /* remove error messages */
-            $('.invalid-feedback').remove();
             $('.is-invalid').removeClass('is-invalid');
         }
 
         modal_hide(target);
         e.detail.shouldSwap = false;
+    }
+
+    // get activites by date form
+    if (e.detail.xhr.response.includes("form") === false && e.detail.requestConfig.triggeringEvent.submitter.id == '_close') {
+        $(`#mainModalContainer`).hide();
     }
 })
 

@@ -2,6 +2,7 @@ from datetime import date
 
 import pytest
 from django.urls import resolve, reverse
+from mock import patch
 
 from .. import models, views
 from ..factories import TripFactory
@@ -263,6 +264,54 @@ def test_download_tcx_not_logged(client):
     response = client.get(url)
 
     assert response.status_code == 302
+
+
+def test_get_tcx_by_date_func():
+    view = resolve("/utils/tcx_date/trip/")
+
+    assert views.GetTcxByDate == view.func.view_class
+
+
+def test_get_tcx_by_date_index_not_logged(client):
+    trip = TripFactory()
+
+    url = reverse("maps:tcx_date", kwargs={"trip": trip.slug})
+    response = client.get(url, follow=True)
+
+    assert response.resolver_match.view_name == "maps:login"
+
+
+def test_get_tcx_by_date_index_200(admin_client):
+    trip = TripFactory()
+
+    url = reverse("maps:tcx_date", kwargs={"trip": trip.slug})
+    response = admin_client.get(url, follow=True)
+
+    assert response.status_code == 200
+
+
+def test_get_tcx_by_date_form_url(admin_client):
+    trip = TripFactory()
+
+    url = reverse("maps:tcx_date", kwargs={"trip": trip.slug})
+    request = admin_client.get(url)
+    form = request.content.decode("utf-8")
+
+    assert f'hx-post="{url}"' in form
+
+
+@patch("project.maps.utils.garmin_service.GarminService.get_data")
+def test_get_tcx_by_date(mck, monkeypatch, admin_client):
+    monkeypatch.setattr("project.maps.utils.garmin_service.GarminApi", lambda: "api")
+    trip = TripFactory()
+    url = reverse("maps:tcx_date", kwargs={"trip": trip.slug})
+    data = {
+        "start_date": "1999-1-1",
+        "end_date": "1999-1-3",
+    }
+    response = admin_client.post(url, data)
+
+    assert mck.call_count == 1
 
 
 # -------------------------------------------------------------------------------------

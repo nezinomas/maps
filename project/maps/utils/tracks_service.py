@@ -115,13 +115,13 @@ class TracksService:
         try:
             self._save_tracks(tracks)
         except Exception as e:
-            return [f"Error occurred during saving tracks: {e}"]
+            return f"Error occurred during saving tracks: {e}"
         try:
             self._save_statistic(tracks)
         except Exception as e:
-            return [f"Error occurred during saving statistic: {e}"]
+            return f"Error occurred during saving statistic: {e}"
 
-        return ["Successfully created or updated tracks and statistics"]
+        return "Successfully created or updated tracks and statistics"
 
     def create(self) -> str:
         tracks = self._create_tracks(self.new_tracks())

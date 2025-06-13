@@ -30,6 +30,11 @@ urlpatterns = [
         name="download_tcx",
     ),
     path(
+        "utils/tcx_date/<slug:trip>/",
+        views.GetTcxByDate.as_view(),
+        name="tcx_date",
+    ),
+    path(
         "utils/update_tracks/<slug:trip>/",
         views.SaveNewTracks.as_view(),
         name="update_tracks",
