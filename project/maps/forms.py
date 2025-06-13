@@ -40,6 +40,8 @@ class TripForm(forms.ModelForm):
 
 
 class GetTcxByDateForm(forms.Form):
+    error_css_class = "is-invalid"
+
     start_date = forms.DateField(required=True)
     end_date = forms.DateField(required=True)
 

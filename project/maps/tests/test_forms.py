@@ -257,3 +257,15 @@ def test_get_tcx_dates_valid():
     )
 
     assert form.is_valid()
+
+
+def test_get_tcx_dates_is_invalid_css_class():
+    form = forms.GetTcxByDateForm(
+        data={
+            "start_date": "",
+            "end_date": "",
+        }
+    )
+
+    assert not form.is_valid()
+    assert 'class="is-invalid"' in form.as_p()
