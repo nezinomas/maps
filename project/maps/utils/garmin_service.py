@@ -1,6 +1,6 @@
 import contextlib
 import json
-from datetime import datetime, timezone
+from datetime import date, datetime, timezone
 from pathlib import Path
 from typing import Dict, List
 
@@ -36,6 +36,12 @@ class GarminApi:
         return self._api.get_activities(start, limit)
 
     def get_activities_by_date(self, start_date: str, end_date: str):
+        if isinstance(start_date, date):
+            start_date = start_date.strftime("%Y-%m-%d")
+
+        if isinstance(end_date, date):
+            end_date = end_date.strftime("%Y-%m-%d")
+
         return self._api.get_activities_by_date(start_date, end_date)
 
     def download_tcx(self, activity_id):

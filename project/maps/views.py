@@ -198,8 +198,8 @@ class GetTcxByDate(LoginRequiredMixin, FormView):
 
         msg = GarminService(
             trip=trip,
-            start_date=start_date.strftime("%Y-%m-%d"),
-            end_date=end_date.strftime("%Y-%m-%d"),
+            start_date=start_date,
+            end_date=end_date,
         ).get_data()
 
         response = render(self.request, "maps/utils_messages.html", {"message": msg})
@@ -240,6 +240,6 @@ class CommentQty(LoginRequiredMixin, TemplateView):
         trip = get_object_or_404(models.Trip, slug=self.kwargs.get("trip"))
         wp_comments_qty.push_comments_qty(trip)
 
-        context = {"message": ["Successfully synced with wordpress blog"]}
+        context = {"message": "Successfully synced with wordpress blog"}
 
         return super().get_context_data(*args, **kwargs) | context
