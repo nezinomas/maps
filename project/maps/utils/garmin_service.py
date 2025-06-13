@@ -3,6 +3,7 @@ import json
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Dict, List
+
 from django.conf import settings
 from garminconnect import (
     Garmin,
@@ -10,6 +11,7 @@ from garminconnect import (
     GarminConnectConnectionError,
     GarminConnectTooManyRequestsError,
 )
+
 from ..utils.common import get_trip
 
 

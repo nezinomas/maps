@@ -127,7 +127,9 @@ def test_utils_trip_create_200(admin_client):
 
 
 def test_utils_trip_create_form_url(admin_client):
-    url = reverse("maps:create_trip",)
+    url = reverse(
+        "maps:create_trip",
+    )
 
     request = admin_client.get(url)
     form = request.content.decode("utf-8")
@@ -136,7 +138,9 @@ def test_utils_trip_create_form_url(admin_client):
 
 
 def test_utils_trip_create(admin_client):
-    url = reverse("maps:create_trip",)
+    url = reverse(
+        "maps:create_trip",
+    )
     data = {
         "title": "Trip",
         "blog_category": 1,

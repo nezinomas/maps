@@ -42,7 +42,9 @@ class Trip(models.Model):
     def save(self, *args, **kwargs):
         # Check if new instance or title changed
         is_new = not self.pk
-        title_changed = False if is_new else Trip.objects.get(pk=self.pk).title != self.title
+        title_changed = (
+            False if is_new else Trip.objects.get(pk=self.pk).title != self.title
+        )
 
         # Update slug only if new instance or title changed
         if is_new or title_changed:

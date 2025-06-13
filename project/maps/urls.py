@@ -9,21 +9,9 @@ urlpatterns = [
     path("utils/", views.Utils.as_view(), name="utils_index"),
     path("utils/login/", views.Login.as_view(), name="login"),
     path("utils/logout/", views.Logout.as_view(), name="logout"),
-    path(
-        "utils/create/",
-        views.TripCreate.as_view(),
-        name="create_trip"
-    ),
-    path(
-        "utils/update/<int:pk>/",
-        views.TripUpdate.as_view(),
-        name="update_trip"
-    ),
-    path(
-        "utils/trip_list/",
-        views.TripList.as_view(),
-        name="list_trips"
-    ),
+    path("utils/create/", views.TripCreate.as_view(), name="create_trip"),
+    path("utils/update/<int:pk>/", views.TripUpdate.as_view(), name="update_trip"),
+    path("utils/trip_list/", views.TripList.as_view(), name="list_trips"),
     path(
         "utils/download_tcx/<slug:trip>/",
         views.DownloadTcx.as_view(),
