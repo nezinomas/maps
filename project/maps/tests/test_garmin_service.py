@@ -7,22 +7,18 @@ from django.test import override_settings
 from mock import Mock, patch
 
 from ..factories import TripFactory
-from ..utils.garmin_service import GarminService, GarminServiceError
+from ..utils.garmin_service import GarminApi, GarminService, GarminServiceError
 
+GARMIN_API = "project.maps.utils.garmin_service.GarminApi"
 GARMIN_SERVICE = "project.maps.utils.garmin_service.GarminService"
 GET_TRIP = "project.maps.utils.garmin_service.get_trip"
 
 pytestmark = pytest.mark.django_db
 
 
-@pytest.fixture(name="garmin_api", autouse=True)
-def fixture_garmin_api(monkeypatch):
-    mock_func = "project.maps.utils.garmin_service.create_api"
-
-    mck = Mock()
-    mck.download_activity.return_value = b"tcx data"
-
-    return monkeypatch.setattr(mock_func, lambda: mck)
+@pytest.fixture(autouse=True)
+def mck_download_tcx(monkeypatch):
+    monkeypatch.setattr(f"{GARMIN_API}._create_api", Mock())
 
 
 def test_garmin_service_init_with_trip():
@@ -32,24 +28,23 @@ def test_garmin_service_init_with_trip():
 
 
 @patch(GET_TRIP)
-def test_garmin_service_init_without_trip(mck):
-    mck.return_value = TripFactory.build()
+def test_garmin_service_init_without_trip(mck_download_tcx):
+    mck_download_tcx.return_value = TripFactory.build()
     actual = GarminService()
 
     assert actual.trip.title == "Trip"
 
 
 @patch(GET_TRIP)
-def test_get_data_no_trip(mck):
-    mck.return_value = None
+def test_get_data_no_trip(mck_download_tcx):
+    mck_download_tcx.return_value = None
     actual = GarminService().get_data()
 
     assert actual == "No trip found"
 
 
-@patch("project.maps.utils.garmin_service.create_api")
-def test_get_data_failed_get_api(garmin_api):
-    garmin_api.return_value = None
+def test_get_data_failed_get_api(monkeypatch):
+    monkeypatch.setattr(GARMIN_API, lambda: None)
 
     actual = GarminService(trip=TripFactory.build()).get_data()
 
@@ -60,7 +55,7 @@ def test_get_data_failed_get_api(garmin_api):
     f"{GARMIN_SERVICE}._fetch_activities",
     side_effect=GarminServiceError("X"),
 )
-def test_get_data_failed_get_activities(mck):
+def test_get_data_failed_get_activities(mck_download_tcx):
     actual = GarminService(trip=TripFactory.build()).get_data()
 
     assert actual == "Error: X"
@@ -135,7 +130,8 @@ def test_get_data_success(mck_activities, mck_save):
     assert actual == "Successfully synced data from Garmin Connect"
 
 
-def test_tcx_new_file(garmin_api, tmp_path):
+@patch(f"{GARMIN_API}.download_tcx", return_value=b"tcx data")
+def test_tcx_new_file(mck_download_tcx, tmp_path):
     trip = TripFactory()
 
     _activities = [
@@ -146,18 +142,17 @@ def test_tcx_new_file(garmin_api, tmp_path):
 
     tmp_path.mkdir(parents=True, exist_ok=True)
     with override_settings(MEDIA_ROOT=tmp_path):
-        obj = GarminService(trip=trip, api=garmin_api)
+        GarminService(trip=trip)._save_activities(_activities)
 
-        obj._save_activities(_activities)
-
-        assert obj.api.download_activity.call_count == 1
+        assert mck_download_tcx.call_count == 1
 
         file = Path(settings.MEDIA_ROOT, "tracks", str(trip.pk), "999.tcx")
         with open(file, "r") as f:
             assert f.read() == "tcx data"
 
 
-def test_tcx_file_exist(garmin_api, fs):
+@patch(f"{GARMIN_API}.download_tcx", return_value=b"tcx data")
+def test_tcx_file_exist(mck_download_tcx, fs):
     trip = TripFactory()
     _activities = [
         {
@@ -171,12 +166,9 @@ def test_tcx_file_exist(garmin_api, fs):
     activity_file = os.path.join(settings.MEDIA_ROOT, "tracks", str(trip.pk), "999")
     fs.create_file(activity_file, contents="test")
 
-    obj = GarminService(trip=trip, api=garmin_api)
+    obj = GarminService(trip=trip)._save_activities(_activities)
 
-    # save activities
-    obj._save_activities(_activities)
-
-    assert obj.api.download_activity.call_count == 0
+    assert mck_download_tcx.call_count == 0
 
     with open(file_tcx, "r") as f:
         assert f.read() == "test"

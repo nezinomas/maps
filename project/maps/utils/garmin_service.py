@@ -10,22 +10,36 @@ from garminconnect import (
     GarminConnectConnectionError,
     GarminConnectTooManyRequestsError,
 )
-
 from ..utils.common import get_trip
 
 
-def create_api():
-    api = None
+class GarminApi:
+    def __init__(self):
+        self._api = self._create_api()
 
-    with contextlib.suppress(
-        GarminConnectConnectionError,
-        GarminConnectAuthenticationError,
-        GarminConnectTooManyRequestsError,
-    ):
-        api = Garmin(settings.ENV["GARMIN_USER"], settings.ENV["GARMIN_PASS"])
-        api.login()
+    def _create_api(self):
+        api = None
 
-    return api
+        with contextlib.suppress(
+            GarminConnectConnectionError,
+            GarminConnectAuthenticationError,
+            GarminConnectTooManyRequestsError,
+        ):
+            api = Garmin(settings.ENV["GARMIN_USER"], settings.ENV["GARMIN_PASS"])
+            api.login()
+
+        return api
+
+    def get_activities(self, start: int, limit: int):
+        return self._api.get_activities(start, limit)
+
+    def get_activities_by_date(self, start_date: str, end_date: str):
+        return self._api.get_activities_by_date(start_date, end_date)
+
+    def download_tcx(self, activity_id):
+        return self._api.download_activity(
+            activity_id, dl_fmt=self._api.ActivityDownloadFormat.TCX
+        )
 
 
 # Custom exception
@@ -35,21 +49,14 @@ class GarminServiceError(Exception):
 
 class GarminService:
     def __init__(
-        self,
-        trip = None,
-        start_date = None,
-        end_date = None,
-        activity_types = None,
-        api = None
+        self, trip=None, start_date=None, end_date=None, activity_types=None, api=None
     ):
-        self.trip = (
-            trip or get_trip()
-        )  # Assume get_trip() returns a Trip model instance
+        self.trip = trip or get_trip()
         self.start_date = start_date
         self.end_date = end_date
         self.activity_types = activity_types or ["biking", "cycling"]
 
-        self.api = api or create_api()
+        self.api = api or GarminApi()
 
     def get_data(self) -> str:
         if not self.trip:
@@ -122,9 +129,7 @@ class GarminService:
                 if output_file.exists():
                     continue
 
-                tcx_data = self.api.download_activity(
-                    activity_id, dl_fmt=self.api.ActivityDownloadFormat.TCX
-                )
+                tcx_data = self.api.download_tcx(activity_id)
 
                 with open(output_file, "w") as activity_file:
                     json.dump(activity, activity_file)
