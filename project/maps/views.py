@@ -30,8 +30,7 @@ class Map(TemplateView):
     template_name = "maps/map.html"
 
     def get_context_data(self, *args, **kwargs):
-        trip_slug = self.kwargs.get("trip")
-        trip = get_object_or_404(models.Trip, slug=trip_slug)
+        trip = get_object_or_404(models.Trip, slug=self.kwargs.get("trip"))
         context = views_map.create_context(trip)
 
         return super().get_context_data(*args, **kwargs) | context
