@@ -1,3 +1,4 @@
+import contextlib
 import json
 from datetime import datetime
 
@@ -27,21 +28,31 @@ def base_context(trip):
     }
 
 
+def create_stats(track):
+    properties = {
+        "total_km": 0,
+        "date": track.date.strftime("%Y-%m-%d"),
+        "time": 0,
+        "avg_speed": 0,
+        "ascent": 0,
+    }
+
+    with contextlib.suppress(Exception):
+        properties["total_km"] = round(track.stats.total_km, 1)
+        properties["date"] = track.date.strftime("%Y-%m-%d")
+        properties["time"] = format_time(track.stats.total_time_seconds)
+        properties["avg_speed"] = round(track.stats.avg_speed, 1)
+        properties["ascent"] = round(track.stats.ascent, 0)
+
+    return properties
+
 def geo_data(tracks):
     # Build GeoJSON in memory if not cached
     geo_json = {"type": "FeatureCollection", "features": []}
 
     for track in tracks:
         # Prepare feature properties
-        properties = {
-            "total_km": round(track.stats.total_km, 2)
-            if hasattr(track.stats, "total_km")
-            else 0,
-            "date": track.date.strftime("%Y-%m-%d"),
-            "time": format_time(getattr(track.stats, "total_time_seconds", 0)),
-            "avg_speed": round(getattr(track.stats, "avg_speed", 0), 1),
-            "ascent": getattr(track.stats, "ascent", 0),
-        }
+        properties = create_stats(track)
 
         # Add last point coordinates
         coords = track.path.coords if track.path else []
