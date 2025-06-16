@@ -49,6 +49,11 @@ class GarminApi:
             activity_id, dl_fmt=self._api.ActivityDownloadFormat.TCX
         )
 
+    def download_fit(self, activity_id):
+        return self._api.download_activity(
+            activity_id, dl_fmt=self._api.ActivityDownloadFormat.ORIGINAL
+        )
+
 
 # Custom exception
 class GarminServiceError(Exception):
@@ -124,6 +129,7 @@ class GarminService:
         return [activity for activity in activities if is_valid_activity(activity)]
 
     def _save_activities(self, activities: List[Dict]) -> None:
+        file_type = "fit"
         try:
             tracks_folder = Path(settings.MEDIA_ROOT) / "tracks" / str(self.trip.pk)
 
@@ -133,16 +139,16 @@ class GarminService:
             for activity in activities:
                 activity_id = activity["activityId"]
 
-                output_file = tracks_folder / str(activity_id)
-                if output_file.exists():
+                activity_summary_file = tracks_folder / str(activity_id)
+                if activity_summary_file.exists():
                     continue
 
-                tcx_data = self.api.download_tcx(activity_id)
+                activity_file = self.api.download_fit(activity_id)
+                with open(f"{activity_summary_file}.{file_type}", "wb") as f:
+                    f.write(activity_file)
 
-                with open(output_file, "w") as activity_file:
-                    json.dump(activity, activity_file)
+                with open(activity_summary_file, "w") as f:
+                    json.dump(activity, f)
 
-                with open(f"{output_file}.tcx", "wb") as tcx_file:
-                    tcx_file.write(tcx_data)
         except Exception as e:
             raise GarminServiceError(f"Failed to save activities: {e}") from e
