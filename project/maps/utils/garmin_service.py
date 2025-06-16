@@ -1,5 +1,7 @@
 import contextlib
+import io
 import json
+import zipfile
 from datetime import date, datetime, timezone
 from pathlib import Path
 from typing import Dict, List
@@ -50,10 +52,23 @@ class GarminApi:
         )
 
     def download_fit(self, activity_id):
-        return self._api.download_activity(
+        data = self._api.download_activity(
             activity_id, dl_fmt=self._api.ActivityDownloadFormat.ORIGINAL
         )
 
+        # Check if data is a ZIP archive
+        if data.startswith(b'PK\x03\x04'):  # ZIP magic number
+            with io.BytesIO(data) as zip_buffer:
+                with zipfile.ZipFile(zip_buffer) as z:
+                    if fit_files := [
+                        f for f in z.namelist() if f.lower().endswith('.fit')
+                    ]:
+                        # Extract first .FIT file
+                        data = z.read(fit_files[0])
+
+                    else:
+                        return None
+        return data
 
 # Custom exception
 class GarminServiceError(Exception):
