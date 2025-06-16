@@ -1,12 +1,9 @@
-import re
-
 from django.contrib.auth import logout
 from django.contrib.auth import views as auth_views
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse_lazy
 from django.urls.base import reverse
-from django.utils.safestring import mark_safe
 from django_htmx.http import retarget
 from vanilla import FormView, ListView, TemplateView
 
@@ -16,7 +13,7 @@ from .mixins.views import (
     UpdateViewMixin,
     rendered_content,
 )
-from .utils import views_map, wp_comments_qty, wp_content
+from .utils import views_map, wp_comments_qty, wp_content, views_posts
 from .utils.garmin_service import GarminService
 from .utils.tracks_service import TracksService, TracksServiceData
 
@@ -41,52 +38,8 @@ class Posts(TemplateView):
 
     def get_context_data(self, *args, **kwargs):
         trip = get_object_or_404(models.Trip, slug=self.kwargs.get("trip"))
-
         offset = int(self.request.GET.get("offset", 0))
-        next_offset = offset + 10
-
-        posts = None
-        modula_gallery = False
-        wp_error = False
-        comments_qty = {}
-
-        if (
-            qs := models.CommentQty.objects.filter(trip=trip)
-            .values("post_id", "qty")
-            .order_by("-post_date")[offset:next_offset]
-        ):
-            comments_qty = {row["post_id"]: row["qty"] for row in qs}
-            ids = ",".join(map(str, comments_qty.keys()))
-            link = (
-                f"posts?include={ids}&per_page=100&_fields=id,link,title,date,content"
-            )
-
-            try:
-                posts = wp_content.get_content(link)
-            except Exception:
-                wp_error = "Kažkas neveikia. Bandykite prisijungti vėliau."
-
-        if posts:
-            for post in posts:
-                cashed_post = post["content"]["rendered"]
-
-                if "modula" in cashed_post:
-                    modula_gallery = True
-                    cashed_post = re.sub(
-                        r'<a class="post-edit-link".*?</a>', "", cashed_post
-                    )
-
-                cashed_post = mark_safe(cashed_post)
-                post["content"]["rendered"] = cashed_post
-
-        context = {
-            "trip": trip,
-            "posts": posts,
-            "comments_qty": comments_qty,
-            "offset": next_offset,
-            "wp_error": wp_error,
-            "modula_gallery": modula_gallery,
-        }
+        context = views_posts.create_context(trip, offset)
 
         return super().get_context_data(*args, **kwargs) | context
 
