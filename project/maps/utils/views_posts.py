@@ -1,61 +1,67 @@
 import re
-from typing import Dict, List, Optional, Tuple
-
-from django.db.models import QuerySet
 from django.utils.safestring import mark_safe
 
 from . import wp_content
 from .. import models
 
 
-def get_post_comment_map(trip: models.Trip, offset: int) -> QuerySet:
+def get_comment_qty(trip: models.Trip, offset: int):
     return (
         models.CommentQty.objects.filter(trip=trip)
         .values("post_id", "qty")
-        .order_by("-post_date")[offset:offset + 10]
+        .order_by("-post_date")[offset : offset + 10]
     )
 
 
-def get_posts(trip, offset):
-    posts = None
-    wp_error = False
+def get_wordpress_posts(comment_quantities):
+    """Fetch WordPress posts based on comment quantities."""
+    if not comment_quantities:
+        return None, None
 
-    if qs := get_post_comment_map(trip, offset):
-        comments_qty = {row["post_id"]: row["qty"] for row in qs}
-        ids = ",".join(map(str, comments_qty.keys()))
-        link = f"posts?include={ids}&per_page=100&_fields=id,link,title,date,content"
+    post_ids = [row["post_id"] for row in comment_quantities]
+    ids_str = ",".join(map(str, post_ids))
+    endpoint = (
+        f"posts?include={ids_str}&per_page=100&_fields=id,link,title,date,content"
+    )
 
-        try:
-            posts = wp_content.get_content(link)
-        except Exception:
-            wp_error = "Kažkas neveikia. Bandykite prisijungti vėliau."
+    try:
+        posts = wp_content.get_content(endpoint)
+        return posts, None
+    except Exception:
+        return None, "Kažkas neveikia. Bandykite prisijungti vėliau."
 
-    return posts, wp_error
+
+def process_post_content(posts):
+    """Process post content, handle modula gallery, and sanitize content."""
+    has_modula_gallery = False
+    if not posts:
+        return has_modula_gallery, posts
+
+    for post in posts:
+        cashed_post = post["content"]["rendered"]
+
+        if "modula" in cashed_post:
+            has_modula_gallery = True
+            cashed_post = re.sub(r'<a class="post-edit-link".*?</a>', "", cashed_post)
+
+        cashed_post = mark_safe(cashed_post)
+        post["content"]["rendered"] = cashed_post
+
+    return has_modula_gallery, posts
+
 
 def create_context(trip, offset):
-    modula_gallery = False
-    comments_qty = {}
-
-    posts, wp_error = get_posts (trip, offset)
-
-    if posts:
-        for post in posts:
-            cashed_post = post["content"]["rendered"]
-
-            if "modula" in cashed_post:
-                modula_gallery = True
-                cashed_post = re.sub(
-                    r'<a class="post-edit-link".*?</a>', "", cashed_post
-                )
-
-            cashed_post = mark_safe(cashed_post)
-            post["content"]["rendered"] = cashed_post
+    comments_qty = get_comment_qty(trip, offset)
+    posts, wp_error = get_wordpress_posts(comments_qty)
+    has_modula_gallery, posts = process_post_content(posts)
 
     return {
         "trip": trip,
         "posts": posts,
-        "comments_qty": comments_qty,
+        "comments_qty": {row["post_id"]: row["qty"] for row in comments_qty}
+        if comments_qty
+        else {},
         "offset": offset + 10,
         "wp_error": wp_error,
-        "modula_gallery": modula_gallery,
+        "modula_gallery": has_modula_gallery,
     }
