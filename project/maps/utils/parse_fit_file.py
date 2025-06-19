@@ -6,7 +6,7 @@ from django.contrib.gis.geos import LineString
 from django.utils import timezone
 
 
-def get_track_path(fit_file_path):
+def parse_coordinates_pyton(fit_file_path):
     coordinates = []
 
     try:
@@ -45,7 +45,7 @@ def get_track_path(fit_file_path):
         return None
 
 
-def get_track_date(fit_file_path):
+def parse_timestamp_pyton(fit_file_path):
     def get_timestamp(frame):
         """Helper to extract timestamp from a frame."""
         if frame.name in ("file_id", "session"):
