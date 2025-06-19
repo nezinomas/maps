@@ -1,8 +1,9 @@
 import re
+
 from django.utils.safestring import mark_safe
 
-from . import wp_content
 from .. import models
+from . import wp_content
 
 
 def get_comment_qty(trip: models.Trip, offset: int):

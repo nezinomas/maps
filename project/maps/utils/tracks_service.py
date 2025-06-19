@@ -5,8 +5,7 @@ from django.conf import settings
 
 from ..models import Statistic, Track, Trip
 from ..utils.common import get_trip
-from . import parse_activity_file, parse_tcx_file
-
+from . import parse_activity_file, parse_fit_file
 
 class TracksServiceData:
     def __init__(self, trip: Trip = None) -> List[str]:
@@ -23,7 +22,7 @@ class TracksServiceData:
         if not directory.exists():
             return set()
 
-        return {file.stem for file in directory.glob("*.tcx")}
+        return {file.stem for file in directory.glob("*.fit")}
 
 
 class TracksService:
@@ -57,16 +56,18 @@ class TracksService:
 
     def _create_tracks(self, track_list):
         tracks = []
+        file_type = "fit"
 
         for track in track_list:
             track_file = (
                 Path(settings.MEDIA_ROOT)
                 / "tracks"
                 / str(self.trip.pk)
-                / f"{track}.tcx"
+                / f"{track}.{file_type}"
             )
-            path = parse_tcx_file.get_track_path(track_file)
-            date = parse_tcx_file.get_track_date(track_file)
+
+            path = parse_fit_file.get_track_path(track_file)
+            date = parse_fit_file.get_track_date(track_file)
 
             obj = Track(
                 title=track,

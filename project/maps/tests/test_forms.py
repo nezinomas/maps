@@ -190,12 +190,12 @@ def test_trip_form_unique_slug_for_same_trip_title():
     assert actual.end_date == date(1999, 12, 31)
 
 
-def test_get_tcx_form():
-    forms.GetTcxByDateForm()
+def test_get_fit_form():
+    forms.GetFitByDateForm()
 
 
-def test_get_tcx_fields():
-    form = forms.GetTcxByDateForm().as_p()
+def test_get_fit_fields():
+    form = forms.GetFitByDateForm().as_p()
 
     assert '<input type="text" name="start_date"' in form
     assert '<input type="text" name="end_date"' in form
@@ -205,8 +205,8 @@ def test_get_tcx_fields():
     "dt",
     [("x"), (None), ("1999.1.1"), ("1999-1")],
 )
-def test_get_tcx_start_date_is_not_valid(dt):
-    form = forms.GetTcxByDateForm(
+def test_get_fit_start_date_is_not_valid(dt):
+    form = forms.GetFitByDateForm(
         data={
             "start_date": dt,
             "end_date": "1999-12-31",
@@ -222,8 +222,8 @@ def test_get_tcx_start_date_is_not_valid(dt):
     "dt",
     [("x"), (None), ("1999.1.1"), ("1999-1")],
 )
-def test_get_tcx_end_date_is_not_valid(dt):
-    form = forms.GetTcxByDateForm(
+def test_get_fit_end_date_is_not_valid(dt):
+    form = forms.GetFitByDateForm(
         data={
             "start_date": "1999-1-1",
             "end_date": dt,
@@ -235,8 +235,8 @@ def test_get_tcx_end_date_is_not_valid(dt):
     assert "end_date" in form.errors
 
 
-def test_get_tcx_end_date_earlier_than_start_date():
-    form = forms.GetTcxByDateForm(
+def test_get_fit_end_date_earlier_than_start_date():
+    form = forms.GetFitByDateForm(
         data={
             "start_date": "1999-1-1",
             "end_date": "1998-1-1",
@@ -248,8 +248,8 @@ def test_get_tcx_end_date_earlier_than_start_date():
     assert "end_date" in form.errors
 
 
-def test_get_tcx_dates_valid():
-    form = forms.GetTcxByDateForm(
+def test_get_fit_dates_valid():
+    form = forms.GetFitByDateForm(
         data={
             "start_date": "1999-1-1",
             "end_date": "1999-12-31",
@@ -259,8 +259,8 @@ def test_get_tcx_dates_valid():
     assert form.is_valid()
 
 
-def test_get_tcx_dates_is_invalid_css_class():
-    form = forms.GetTcxByDateForm(
+def test_get_fit_dates_is_invalid_css_class():
+    form = forms.GetFitByDateForm(
         data={
             "start_date": "",
             "end_date": "",

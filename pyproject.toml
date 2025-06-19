@@ -12,6 +12,7 @@ dependencies = [
     "django-htmx>=1.23.0",
     "django-redis>=5.4.0",
     "django-vanilla-views>=3.0.0",
+    "fitdecode>=0.10.0",
     "garminconnect>=0.2.26",
     "numpy>=2.2.6",
     "oauthlib>=3.2.2",

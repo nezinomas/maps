@@ -377,6 +377,15 @@ wheels = [
 ]
 
 [[package]]
+name = "fitdecode"
+version = "0.10.0"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/9e/8c/7cf1d2865fc0d593dfd389704b751ca1ed2a98860c41d4587c5b49637da3/fitdecode-0.10.0.tar.gz", hash = "sha256:1b85d1303c87650c11377a7322757eaa1caf229776bbd5b545591dd6815123e4", size = 89048, upload-time = "2021-09-12T15:55:26.83Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/4b/de/cf0f223255bf12c885acdc3bcce7fdc5607db496d3e3b682c001a51406e0/fitdecode-0.10.0-py3-none-any.whl", hash = "sha256:527dc2e4b0fe45dbe868a2131af0a544cb686f631f608d94e392bcce57b047cf", size = 90890, upload-time = "2021-09-12T15:55:23.979Z" },
+]
+
+[[package]]
 name = "freezegun"
 version = "1.5.2"
 source = { registry = "https://pypi.org/simple" }
@@ -539,6 +548,7 @@ dependencies = [
     { name = "django-htmx" },
     { name = "django-redis" },
     { name = "django-vanilla-views" },
+    { name = "fitdecode" },
     { name = "garminconnect" },
     { name = "numpy" },
     { name = "oauthlib" },
@@ -592,6 +602,7 @@ requires-dist = [
     { name = "django-test-without-migrations", marker = "extra == 'dev'", specifier = ">=0.6" },
     { name = "django-vanilla-views", specifier = ">=3.0.0" },
     { name = "django-webtest", marker = "extra == 'dev'", specifier = ">=1.9.13" },
+    { name = "fitdecode", specifier = ">=0.10.0" },
     { name = "garminconnect", specifier = ">=0.2.26" },
     { name = "mock", marker = "extra == 'dev'", specifier = ">=5.2.0" },
     { name = "numpy", specifier = ">=2.2.6" },

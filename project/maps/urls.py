@@ -13,14 +13,14 @@ urlpatterns = [
     path("utils/update/<int:pk>/", views.TripUpdate.as_view(), name="update_trip"),
     path("utils/trip_list/", views.TripList.as_view(), name="list_trips"),
     path(
-        "utils/download_tcx/<slug:trip>/",
-        views.DownloadTcx.as_view(),
-        name="download_tcx",
+        "utils/download_fit/<slug:trip>/",
+        views.DownloadFit.as_view(),
+        name="download_fit",
     ),
     path(
-        "utils/tcx_date/<slug:trip>/",
-        views.GetTcxByDate.as_view(),
-        name="tcx_date",
+        "utils/fit_date/<slug:trip>/",
+        views.GetFitByDate.as_view(),
+        name="fit_date",
     ),
     path(
         "utils/update_tracks/<slug:trip>/",

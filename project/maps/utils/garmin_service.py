@@ -1,5 +1,7 @@
 import contextlib
+import io
 import json
+import zipfile
 from datetime import date, datetime, timezone
 from pathlib import Path
 from typing import Dict, List
@@ -44,10 +46,29 @@ class GarminApi:
 
         return self._api.get_activities_by_date(start_date, end_date)
 
-    def download_tcx(self, activity_id):
+    def download_fit(self, activity_id):
         return self._api.download_activity(
             activity_id, dl_fmt=self._api.ActivityDownloadFormat.TCX
         )
+
+    def download_fit(self, activity_id):
+        data = self._api.download_activity(
+            activity_id, dl_fmt=self._api.ActivityDownloadFormat.ORIGINAL
+        )
+
+        # Check if data is a ZIP archive
+        if data.startswith(b"PK\x03\x04"):  # ZIP magic number
+            with io.BytesIO(data) as zip_buffer:
+                with zipfile.ZipFile(zip_buffer) as z:
+                    if fit_files := [
+                        f for f in z.namelist() if f.lower().endswith(".fit")
+                    ]:
+                        # Extract first .FIT file
+                        data = z.read(fit_files[0])
+
+                    else:
+                        return None
+        return data
 
 
 # Custom exception
@@ -124,6 +145,7 @@ class GarminService:
         return [activity for activity in activities if is_valid_activity(activity)]
 
     def _save_activities(self, activities: List[Dict]) -> None:
+        file_type = "fit"
         try:
             tracks_folder = Path(settings.MEDIA_ROOT) / "tracks" / str(self.trip.pk)
 
@@ -133,16 +155,16 @@ class GarminService:
             for activity in activities:
                 activity_id = activity["activityId"]
 
-                output_file = tracks_folder / str(activity_id)
-                if output_file.exists():
+                activity_summary_file = tracks_folder / str(activity_id)
+                if activity_summary_file.exists():
                     continue
 
-                tcx_data = self.api.download_tcx(activity_id)
+                activity_file = self.api.download_fit(activity_id)
+                with open(f"{activity_summary_file}.{file_type}", "wb") as f:
+                    f.write(activity_file)
 
-                with open(output_file, "w") as activity_file:
-                    json.dump(activity, activity_file)
+                with open(activity_summary_file, "w") as f:
+                    json.dump(activity, f)
 
-                with open(f"{output_file}.tcx", "wb") as tcx_file:
-                    tcx_file.write(tcx_data)
         except Exception as e:
             raise GarminServiceError(f"Failed to save activities: {e}") from e
