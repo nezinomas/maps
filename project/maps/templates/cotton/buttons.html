@@ -1,9 +1,9 @@
 <div class="trip-buttons">
     <button type="button" class="btn-success" hx-get="{% url 'maps:comment_qty' trip_slug %}" hx-target="#utils-messages" hx-indicator="#indicator" onClick='$("#utils-messages").html("");'>Push Comment Qty</button>
 
-    <button type="button" class="btn-success" hx-get="{% url 'maps:download_tcx' trip_slug %}" hx-target="#utils-messages" hx-indicator="#indicator" onClick='$("#utils-messages").html("");'>Get Latest Tracks</button>
+    <button type="button" class="btn-success" hx-get="{% url 'maps:download_fit' trip_slug %}" hx-target="#utils-messages" hx-indicator="#indicator" onClick='$("#utils-messages").html("");'>Get Latest Tracks</button>
 
-    <button type="button" class="btn-success" hx-get="{% url 'maps:tcx_date' trip_slug %}" hx-target="#mainModal" hx-indicator="#indicator" onClick='$("#utils-messages").html("");'>Get Tracks By Date</button>
+    <button type="button" class="btn-success" hx-get="{% url 'maps:fit_date' trip_slug %}" hx-target="#mainModal" hx-indicator="#indicator" onClick='$("#utils-messages").html("");'>Get Tracks By Date</button>
 
     <button type="button" class="btn-success" hx-get="{% url 'maps:update_tracks' trip_slug %}" hx-target="#utils-messages" hx-indicator="#indicator" onClick='$("#utils-messages").html("");'>Save New Tracks</button>
 

@@ -88,8 +88,8 @@ def test_no_new_tracks():
 
 
 @patch("project.maps.utils.parse_activity_file.get_statistic", return_value={})
-@patch("project.maps.utils.parse_tcx_file.get_track_path")
-@patch("project.maps.utils.parse_tcx_file.get_track_date")
+@patch("project.maps.utils.parse_fit_file.get_track_path")
+@patch("project.maps.utils.parse_fit_file.get_track_date")
 def test_create_new_tracks(date_mock, path_mock, stats_mock):
     path_mock.return_value = LineString((5, 6), (7, 8))
     date_mock.return_value = datetime(2022, 3, 4, 5, 6, 7, tzinfo=timezone.utc)
@@ -108,8 +108,8 @@ def test_create_new_tracks(date_mock, path_mock, stats_mock):
 
 
 @patch("project.maps.utils.parse_activity_file.get_statistic", return_value={})
-@patch("project.maps.utils.parse_tcx_file.get_track_path")
-@patch("project.maps.utils.parse_tcx_file.get_track_date")
+@patch("project.maps.utils.parse_fit_file.get_track_path")
+@patch("project.maps.utils.parse_fit_file.get_track_date")
 def test_create_new_tracks_one_exists(date_mock, path_mock, stats_mock):
     path_mock.return_value = LineString((5, 6), (7, 8))
     date_mock.return_value = datetime(2022, 3, 4, 5, 6, 7, tzinfo=timezone.utc)
@@ -130,8 +130,8 @@ def test_create_new_tracks_one_exists(date_mock, path_mock, stats_mock):
 
 
 @patch("project.maps.utils.parse_activity_file.get_statistic", return_value={})
-@patch("project.maps.utils.parse_tcx_file.get_track_path")
-@patch("project.maps.utils.parse_tcx_file.get_track_date")
+@patch("project.maps.utils.parse_fit_file.get_track_path")
+@patch("project.maps.utils.parse_fit_file.get_track_date")
 def test_not_create_new_tracks(date_mock, path_mock, stats_mock):
     path_mock.return_value = LineString((5, 6), (7, 8))
     date_mock.return_value = datetime(2022, 3, 4, 5, 6, 7, tzinfo=timezone.utc)
@@ -148,8 +148,8 @@ def test_not_create_new_tracks(date_mock, path_mock, stats_mock):
 
 
 @patch("project.maps.utils.parse_activity_file.get_statistic", return_value={})
-@patch("project.maps.utils.parse_tcx_file.get_track_path")
-@patch("project.maps.utils.parse_tcx_file.get_track_date")
+@patch("project.maps.utils.parse_fit_file.get_track_path")
+@patch("project.maps.utils.parse_fit_file.get_track_date")
 def test_update_track(date_mock, path_mock, stats_mock):
     track = TrackFactory(title="1")
 
@@ -172,8 +172,8 @@ def test_update_track(date_mock, path_mock, stats_mock):
 
 
 @patch("project.maps.utils.parse_activity_file.get_statistic")
-@patch("project.maps.utils.parse_tcx_file.get_track_path")
-@patch("project.maps.utils.parse_tcx_file.get_track_date")
+@patch("project.maps.utils.parse_fit_file.get_track_path")
+@patch("project.maps.utils.parse_fit_file.get_track_date")
 def test_create_new_statistic(date_mock, path_mock, stats_mock):
     path_mock.return_value = LineString((5, 6), (7, 8))
     date_mock.return_value = datetime(2022, 3, 4, 5, 6, 7, tzinfo=timezone.utc)
@@ -206,8 +206,8 @@ def test_create_new_statistic(date_mock, path_mock, stats_mock):
 
 
 @patch("project.maps.utils.parse_activity_file.get_statistic")
-@patch("project.maps.utils.parse_tcx_file.get_track_path")
-@patch("project.maps.utils.parse_tcx_file.get_track_date")
+@patch("project.maps.utils.parse_fit_file.get_track_path")
+@patch("project.maps.utils.parse_fit_file.get_track_date")
 def test_update_statistic(date_mock, path_mock, stats_mock):
     # mock return values
     date_mock.return_value = datetime(2024, 1, 2, 3, 4, 5, tzinfo=timezone.utc)

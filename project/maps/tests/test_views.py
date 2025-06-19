@@ -246,58 +246,58 @@ def test_update_trip_change_slug_if_title_modified(admin_client):
 # -------------------------------------------------------------------------------------
 #                                                                  Donwload Garmin Data
 # -------------------------------------------------------------------------------------
-def test_download_tcx_func():
-    view = resolve("/utils/download_tcx/trip-title/")
+def test_download_fit_func():
+    view = resolve("/utils/download_fit/trip-title/")
 
-    assert views.DownloadTcx == view.func.view_class
+    assert views.DownloadFit == view.func.view_class
 
 
-def test_download_tcx_index_200(client_logged):
+def test_download_fit_index_200(client_logged):
     trip = TripFactory()
 
-    url = reverse("maps:download_tcx", kwargs={"trip": trip.slug})
+    url = reverse("maps:download_fit", kwargs={"trip": trip.slug})
     response = client_logged.get(url, follow=True)
 
     assert response.status_code == 200
 
 
-def test_download_tcx_not_logged(client):
+def test_download_fit_not_logged(client):
     trip = TripFactory()
 
-    url = reverse("maps:download_tcx", kwargs={"trip": trip.slug})
+    url = reverse("maps:download_fit", kwargs={"trip": trip.slug})
     response = client.get(url)
 
     assert response.status_code == 302
 
 
-def test_get_tcx_by_date_func():
-    view = resolve("/utils/tcx_date/trip/")
+def test_get_fit_by_date_func():
+    view = resolve("/utils/fit_date/trip/")
 
-    assert views.GetTcxByDate == view.func.view_class
+    assert views.GetFitByDate == view.func.view_class
 
 
-def test_get_tcx_by_date_index_not_logged(client):
+def test_get_fit_by_date_index_not_logged(client):
     trip = TripFactory()
 
-    url = reverse("maps:tcx_date", kwargs={"trip": trip.slug})
+    url = reverse("maps:fit_date", kwargs={"trip": trip.slug})
     response = client.get(url, follow=True)
 
     assert response.resolver_match.view_name == "maps:login"
 
 
-def test_get_tcx_by_date_index_200(admin_client):
+def test_get_fit_by_date_index_200(admin_client):
     trip = TripFactory()
 
-    url = reverse("maps:tcx_date", kwargs={"trip": trip.slug})
+    url = reverse("maps:fit_date", kwargs={"trip": trip.slug})
     response = admin_client.get(url, follow=True)
 
     assert response.status_code == 200
 
 
-def test_get_tcx_by_date_form_url(admin_client):
+def test_get_fit_by_date_form_url(admin_client):
     trip = TripFactory()
 
-    url = reverse("maps:tcx_date", kwargs={"trip": trip.slug})
+    url = reverse("maps:fit_date", kwargs={"trip": trip.slug})
     request = admin_client.get(url)
     form = request.content.decode("utf-8")
 
@@ -305,10 +305,10 @@ def test_get_tcx_by_date_form_url(admin_client):
 
 
 @patch("project.maps.utils.garmin_service.GarminService.get_data")
-def test_get_tcx_by_date(mck, monkeypatch, admin_client):
+def test_get_fit_by_date(mck, monkeypatch, admin_client):
     monkeypatch.setattr("project.maps.utils.garmin_service.GarminApi", lambda: "api")
     trip = TripFactory()
-    url = reverse("maps:tcx_date", kwargs={"trip": trip.slug})
+    url = reverse("maps:fit_date", kwargs={"trip": trip.slug})
     data = {
         "start_date": "1999-1-1",
         "end_date": "1999-1-3",

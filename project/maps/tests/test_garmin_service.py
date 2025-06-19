@@ -17,7 +17,7 @@ pytestmark = pytest.mark.django_db
 
 
 @pytest.fixture(autouse=True)
-def mck_download_tcx(monkeypatch):
+def mck_download_fit(monkeypatch):
     monkeypatch.setattr(f"{GARMIN_API}._create_api", Mock())
 
 
@@ -28,16 +28,16 @@ def test_garmin_service_init_with_trip():
 
 
 @patch(GET_TRIP)
-def test_garmin_service_init_without_trip(mck_download_tcx):
-    mck_download_tcx.return_value = TripFactory.build()
+def test_garmin_service_init_without_trip(mck_download_fit):
+    mck_download_fit.return_value = TripFactory.build()
     actual = GarminService()
 
     assert actual.trip.title == "Trip"
 
 
 @patch(GET_TRIP)
-def test_get_data_no_trip(mck_download_tcx):
-    mck_download_tcx.return_value = None
+def test_get_data_no_trip(mck_download_fit):
+    mck_download_fit.return_value = None
     actual = GarminService().get_data()
 
     assert actual == "No trip found"
@@ -55,7 +55,7 @@ def test_get_data_failed_get_api(monkeypatch):
     f"{GARMIN_SERVICE}._fetch_activities",
     side_effect=GarminServiceError("X"),
 )
-def test_get_data_failed_get_activities(mck_download_tcx):
+def test_get_data_failed_get_activities(mck_download_fit):
     actual = GarminService(trip=TripFactory.build()).get_data()
 
     assert actual == "Error: X"
@@ -130,8 +130,8 @@ def test_get_data_success(mck_activities, mck_save):
     assert actual == "Successfully synced data from Garmin Connect"
 
 
-@patch(f"{GARMIN_API}.download_tcx", return_value=b"tcx data")
-def test_tcx_new_file(mck_download_tcx, tmp_path):
+@patch(f"{GARMIN_API}.download_fit", return_value=b"fit data")
+def test_fit_new_file(mck_download_fit, tmp_path):
     trip = TripFactory()
 
     _activities = [
@@ -144,15 +144,15 @@ def test_tcx_new_file(mck_download_tcx, tmp_path):
     with override_settings(MEDIA_ROOT=tmp_path):
         GarminService(trip=trip)._save_activities(_activities)
 
-        assert mck_download_tcx.call_count == 1
+        assert mck_download_fit.call_count == 1
 
-        file = Path(settings.MEDIA_ROOT, "tracks", str(trip.pk), "999.tcx")
+        file = Path(settings.MEDIA_ROOT, "tracks", str(trip.pk), "999.fit")
         with open(file, "r") as f:
-            assert f.read() == "tcx data"
+            assert f.read() == "fit data"
 
 
-@patch(f"{GARMIN_API}.download_tcx", return_value=b"tcx data")
-def test_tcx_file_exist(mck_download_tcx, fs):
+@patch(f"{GARMIN_API}.download_fit", return_value=b"fit data")
+def test_fit_file_exist(mck_download_fit, fs):
     trip = TripFactory()
     _activities = [
         {
@@ -160,17 +160,17 @@ def test_tcx_file_exist(mck_download_tcx, fs):
         }
     ]
 
-    file_tcx = os.path.join(settings.MEDIA_ROOT, "tracks", str(trip.pk), "999.tcx")
-    fs.create_file(file_tcx, contents="test")
+    file_fit = os.path.join(settings.MEDIA_ROOT, "tracks", str(trip.pk), "999.fit")
+    fs.create_file(file_fit, contents="test")
 
     activity_file = os.path.join(settings.MEDIA_ROOT, "tracks", str(trip.pk), "999")
     fs.create_file(activity_file, contents="test")
 
     obj = GarminService(trip=trip)._save_activities(_activities)
 
-    assert mck_download_tcx.call_count == 0
+    assert mck_download_fit.call_count == 0
 
-    with open(file_tcx, "r") as f:
+    with open(file_fit, "r") as f:
         assert f.read() == "test"
 
     with open(activity_file, "r") as f:

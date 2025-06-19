@@ -107,7 +107,7 @@ class TripUpdate(LoginRequiredMixin, UpdateViewMixin):
         return self.object.get_absolute_url() if self.object else None
 
 
-class DownloadTcx(LoginRequiredMixin, TemplateView):
+class DownloadFit(LoginRequiredMixin, TemplateView):
     template_name = "maps/utils_messages.html"
 
     def get_context_data(self, *args, **kwargs):
@@ -118,14 +118,14 @@ class DownloadTcx(LoginRequiredMixin, TemplateView):
         return super().get_context_data(*args, **kwargs) | context
 
 
-class GetTcxByDate(LoginRequiredMixin, FormView):
-    form_class = forms.GetTcxByDateForm
+class GetFitByDate(LoginRequiredMixin, FormView):
+    form_class = forms.GetFitByDateForm
     hx_trigger_django = "reload"
-    template_name = "maps/download_tcx_form.html"
+    template_name = "maps/download_fit_form.html"
     success_url = reverse_lazy("maps:utils_index")
 
     def url(self):
-        return reverse_lazy("maps:tcx_date", kwargs={"trip": self.kwargs.get("trip")})
+        return reverse_lazy("maps:fit_date", kwargs={"trip": self.kwargs.get("trip")})
 
     def form_valid(self, form, **kwargs):
         trip = trip = get_object_or_404(models.Trip, slug=self.kwargs.get("trip"))

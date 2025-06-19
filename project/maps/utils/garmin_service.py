@@ -46,7 +46,7 @@ class GarminApi:
 
         return self._api.get_activities_by_date(start_date, end_date)
 
-    def download_tcx(self, activity_id):
+    def download_fit(self, activity_id):
         return self._api.download_activity(
             activity_id, dl_fmt=self._api.ActivityDownloadFormat.TCX
         )
