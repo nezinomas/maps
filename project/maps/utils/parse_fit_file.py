@@ -25,6 +25,7 @@ def get_track_date(fit_file_path):
 
 def parse_coordinates_pyton(fit_file_path):
     coordinates = []
+    to_deg = lambda x: round(x * (180.0 / 2**31), 5)
 
     try:
         with fitdecode.FitReader(fit_file_path) as fit:
@@ -42,7 +43,6 @@ def parse_coordinates_pyton(fit_file_path):
 
             # Convert semicircles to degrees rounded to 5 decimals
             #  using map for speed
-            to_deg = lambda x: round(x * (180.0 / 2**31), 5)
             coordinates = list(
                 zip(
                     map(
