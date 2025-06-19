@@ -57,11 +57,11 @@ class GarminApi:
         )
 
         # Check if data is a ZIP archive
-        if data.startswith(b'PK\x03\x04'):  # ZIP magic number
+        if data.startswith(b"PK\x03\x04"):  # ZIP magic number
             with io.BytesIO(data) as zip_buffer:
                 with zipfile.ZipFile(zip_buffer) as z:
                     if fit_files := [
-                        f for f in z.namelist() if f.lower().endswith('.fit')
+                        f for f in z.namelist() if f.lower().endswith(".fit")
                     ]:
                         # Extract first .FIT file
                         data = z.read(fit_files[0])
@@ -69,6 +69,7 @@ class GarminApi:
                     else:
                         return None
         return data
+
 
 # Custom exception
 class GarminServiceError(Exception):

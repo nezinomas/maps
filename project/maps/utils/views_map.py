@@ -46,6 +46,7 @@ def create_stats(track):
 
     return properties
 
+
 def geo_data(tracks):
     # Build GeoJSON in memory if not cached
     geo_json = {"type": "FeatureCollection", "features": []}

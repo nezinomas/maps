@@ -5,7 +5,7 @@ from django.conf import settings
 
 from ..models import Statistic, Track, Trip
 from ..utils.common import get_trip
-from . import parse_activity_file, parse_tcx_file, parse_fit_file
+from . import parse_activity_file, parse_fit_file, parse_tcx_file
 
 
 class TracksServiceData:
@@ -13,7 +13,6 @@ class TracksServiceData:
         self.trip = trip or get_trip()
         self.tracks_db = self.get_tracks()
         self.tracks_disk = self.get_files()
-
 
     def get_tracks(self) -> Dict:
         return self.trip.tracks.values("pk", "title", "date", "path")
