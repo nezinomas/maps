@@ -13,7 +13,7 @@ from .mixins.views import (
     UpdateViewMixin,
     rendered_content,
 )
-from .utils import views_map, wp_comments_qty, wp_content, views_posts
+from .utils import views_map, views_posts, wp_comments_qty, wp_content
 from .utils.garmin_service import GarminService
 from .utils.tracks_service import TracksService, TracksServiceData
 
