@@ -4,6 +4,23 @@ from datetime import datetime
 import fitdecode
 from django.contrib.gis.geos import LineString
 from django.utils import timezone
+from parser import parse_coordinates, parse_timestamp
+
+
+def get_track_path(fit_file_path):
+    try:
+        return LineString(parse_coordinates(str(fit_file_path)))
+    except Exception as e:
+        print(f"Something wrong with rust parser: {e}")
+        return parse_coordinates_pyton(fit_file_path)
+
+
+def get_track_date(fit_file_path):
+    try:
+        return parse_timestamp(str(fit_file_path))
+    except Exception as e:
+        print(f"Something wrong with rust parser: {e}")
+        return parse_timestamp_pyton(fit_file_path)
 
 
 def parse_coordinates_pyton(fit_file_path):
