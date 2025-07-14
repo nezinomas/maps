@@ -79,18 +79,18 @@ def geo_data(tracks):
 def create_context(trip):
     context = base_context(trip)
 
-    # cache_key = f"geojson_{trip.slug}"
-    # geo_json_data = cache.get(cache_key)
+    cache_key = f"geojson_{trip.slug}"
+    geo_json_data = cache.get(cache_key)
 
-    # if not geo_json_data:
-    #     tracks = (
-    #         models.Track.objects.filter(trip=trip)
-    #         .order_by("date")
-    #         .select_related("stats")
-    #     )
-    #     geo_json_data = geo_data(tracks)
-    #     _cache_timeout = cache_timeout(trip)
-    #     cache.set(cache_key, geo_json_data, timeout=_cache_timeout)
+    if not geo_json_data:
+        tracks = (
+            models.Track.objects.filter(trip=trip)
+            .order_by("date")
+            .select_related("stats")
+        )
+        geo_json_data = geo_data(tracks)
+        _cache_timeout = cache_timeout(trip)
+        cache.set(cache_key, geo_json_data, timeout=_cache_timeout)
 
 
     tracks = (
