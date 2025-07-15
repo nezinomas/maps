@@ -92,15 +92,6 @@ def create_context(trip):
         _cache_timeout = cache_timeout(trip)
         cache.set(cache_key, geo_json_data, timeout=_cache_timeout)
 
-
-    tracks = (
-        models.Track.objects.filter(trip=trip)
-        .order_by("date")
-        .select_related("stats")
-    )
-    geo_json_data = geo_data(tracks)
-
-
     context["tracks"] = geo_json_data
 
     return context
