@@ -1,5 +1,6 @@
 import contextlib
 import orjson
+import zlib
 from datetime import datetime
 
 from django.conf import settings
@@ -24,16 +25,6 @@ def generate_cache_timeout(trip):
         if trip.start_date <= current_date <= trip.end_date
         else settings.GEOJSON_CACHE_TIMEOUTS["past_trip"]
     )
-
-
-def base_context(trip):
-    """Builds the base context dictionary for the map view."""
-    return {
-        "trip": trip,
-        "statistic": get_statistic(trip),
-        "google_api_key": settings.ENV["GOOGLE_API_KEY"],
-        "tracks": {},
-    }
 
 
 def create_stats(track):
@@ -92,23 +83,27 @@ def create_geo_json(trip):
 
 
 def set_cache(trip, cache_key=None, cache_timeout=None):
-    geo_data = create_geo_json(trip)
-
     if not cache_key:
         cache_key = generate_cache_key(trip)
 
-    if not cache_timeout:
-        cache_timeout = generate_cache_timeout(trip)
+    if cached_data := cache.get(cache_key):
+        return zlib.decompress(cached_data).decode("utf-8")
 
-    cache.set(cache_key, geo_data, timeout=cache_timeout)
+    geo_data = create_geo_json(trip)
+
+    cache.set(
+        key=cache_key,
+        value=zlib.compress(geo_data.encode("utf-8")),
+        timeout=cache_timeout or generate_cache_timeout(trip),
+    )
 
     return geo_data
 
 
 def create_context(trip):
-    cache_key = generate_cache_key(trip)
-
-    context = base_context(trip)
-    context["tracks"] = cache.get(cache_key) or set_cache(trip, cache_key)
-
-    return context
+    return {
+        "trip": trip,
+        "statistic": get_statistic(trip),
+        "google_api_key": settings.ENV["GOOGLE_API_KEY"],
+        "tracks": set_cache(trip),
+    }
