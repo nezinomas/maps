@@ -1,10 +1,9 @@
 import contextlib
-import json
+import orjson
 from datetime import datetime
 
 from django.conf import settings
 from django.core.cache import cache
-from django.core.serializers.json import DjangoJSONEncoder
 
 from .. import models
 from ..templatetags.datetime_filter import format_time
@@ -85,11 +84,11 @@ def create_geo_dict(tracks):
 
 def create_geo_json(trip):
     tracks = (
-        models.Track.objects.filter(trip=trip)
-        .order_by("date")
-        .select_related("stats")
+        models.Track.objects.filter(trip=trip).order_by("date").select_related("stats")
     )
-    return json.dumps(create_geo_dict(tracks), cls=DjangoJSONEncoder)
+    return orjson.dumps(
+        create_geo_dict(tracks), option=orjson.OPT_PASSTHROUGH_DATETIME
+    ).decode("utf-8")
 
 
 def set_cache(trip, cache_key=None, cache_timeout=None):
