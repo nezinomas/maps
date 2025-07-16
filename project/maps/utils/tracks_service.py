@@ -131,11 +131,11 @@ class TracksService:
         new_tracks = self.new_tracks()
         tracks = self._create_tracks(new_tracks)
 
-        return self._write_tracks(tracks), len(new_tracks)
+        return (self._write_tracks(tracks), len(new_tracks))
 
     def create_or_update(self) -> tuple[str, int]:
         """
         Returns a tuple with a message and the number of new tracks created.
         """
         tracks = self._create_tracks(self.tracks_db | self.tracks_disk)
-        return self._write_tracks(tracks)
+        return (self._write_tracks(tracks), len(tracks))
