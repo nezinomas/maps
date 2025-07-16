@@ -80,12 +80,8 @@ def create_context(trip):
     context = base_context(trip)
 
     cache_key = f"geojson_{trip.pk}"
-    geo_json_data = cache.get(cache_key)
 
-    if not geo_json_data:
-        geo_json_data = set_cache(trip, cache_key)
-
-    context["tracks"] = geo_json_data
+    context["tracks"] = cache.get(cache_key) or set_cache(trip, cache_key)
 
     return context
 
