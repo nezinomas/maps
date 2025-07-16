@@ -47,9 +47,8 @@ def create_stats(track):
     return properties
 
 
-def geo_data(tracks):
-    # Build GeoJSON in memory if not cached
-    geo_json = {"type": "FeatureCollection", "features": []}
+def create_geo_dict(tracks):
+    geo = {"type": "FeatureCollection", "features": []}
 
     for track in tracks:
         # Prepare feature properties
@@ -70,10 +69,16 @@ def geo_data(tracks):
             },
             "properties": properties,
         }
-        geo_json["features"].append(feature)
+        geo["features"].append(feature)
 
-    # Serialize once
-    return json.dumps(geo_json, cls=DjangoJSONEncoder)
+    return geo
+
+
+def create_geo_json(trip):
+    tracks = (
+        models.Track.objects.filter(trip=trip).order_by("date").select_related("stats")
+    )
+    return json.dumps(create_geo_dict(tracks), cls=DjangoJSONEncoder)
 
 
 def create_context(trip):
@@ -86,17 +91,15 @@ def create_context(trip):
     return context
 
 
-def set_cache(trip, cache_key = None):
+def set_cache(trip, cache_key=None):
+    geo_data = create_geo_json(trip)
+
     if not cache_key:
         cache_key = generate_cache_key(trip)
 
-    tracks = (
-        models.Track.objects.filter(trip=trip).order_by("date").select_related("stats")
-    )
-    geo_json_data = geo_data(tracks)
-    _cache_timeout = cache_timeout(trip)
-    cache.set(cache_key, geo_json_data, timeout=_cache_timeout)
-    return geo_json_data
+    cache.set(cache_key, geo_data, timeout=cache_timeout(trip))
+
+    return geo_data
 
 
 def generate_cache_key(trip):
