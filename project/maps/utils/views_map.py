@@ -91,13 +91,16 @@ def create_context(trip):
     return context
 
 
-def set_cache(trip, cache_key=None):
+def set_cache(trip, cache_key=None, cache_timeout=None):
     geo_data = create_geo_json(trip)
 
     if not cache_key:
         cache_key = generate_cache_key(trip)
 
-    cache.set(cache_key, geo_data, timeout=cache_timeout(trip))
+    if not cache_timeout:
+        _cache_timeout = cache_timeout(trip)
+
+    cache.set(cache_key, geo_data, timeout=_cache_timeout)
 
     return geo_data
 
