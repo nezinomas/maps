@@ -11,6 +11,13 @@ from ..templatetags.datetime_filter import format_time
 from .statistic_service import get_statistic
 
 
+
+def generate_cache_key(trip):
+    """
+    Generates a unique cache key based on the trip's primary key.
+    """
+    return f"geojson_{trip.pk}"
+
 def generate_cache_timeout(trip):
     current_date = datetime.now().date()
 
@@ -81,16 +88,6 @@ def create_geo_json(trip):
     return json.dumps(create_geo_dict(tracks), cls=DjangoJSONEncoder)
 
 
-def create_context(trip):
-    context = base_context(trip)
-
-    cache_key = generate_cache_key(trip)
-
-    context["tracks"] = cache.get(cache_key) or set_cache(trip, cache_key)
-
-    return context
-
-
 def set_cache(trip, cache_key=None, cache_timeout=None):
     geo_data = create_geo_json(trip)
 
@@ -105,8 +102,11 @@ def set_cache(trip, cache_key=None, cache_timeout=None):
     return geo_data
 
 
-def generate_cache_key(trip):
-    """
-    Generates a unique cache key based on the trip's primary key.
-    """
-    return f"geojson_{trip.pk}"
+def create_context(trip):
+    context = base_context(trip)
+
+    cache_key = generate_cache_key(trip)
+
+    context["tracks"] = cache.get(cache_key) or set_cache(trip, cache_key)
+
+    return context
