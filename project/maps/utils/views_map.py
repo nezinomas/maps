@@ -86,7 +86,6 @@ def create_geo_json(trip):
         models.Track.objects.filter(trip=trip)
         .order_by("date")
         .select_related("stats")
-        .prefetch_related("path")
     )
     return json.dumps(create_geo_dict(tracks), cls=DjangoJSONEncoder)
 
