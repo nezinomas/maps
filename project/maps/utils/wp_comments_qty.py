@@ -3,7 +3,6 @@ from collections import Counter
 from operator import itemgetter
 
 from dateutil.relativedelta import relativedelta
-from django.conf import settings
 
 from ..models import CommentQty, Trip
 from . import wp_content
