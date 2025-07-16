@@ -10,10 +10,8 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         try:
-            # get data from garmin connect
             data = TracksServiceData()
-            service = TracksService(data)
-            service.create()
+            msg, track_qty = TracksService(data).create()
         except Exception as e:
             raise CommandError(f"Can't write data to DB - {e}") from e
 

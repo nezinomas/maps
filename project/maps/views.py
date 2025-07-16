@@ -149,7 +149,8 @@ class SaveNewTracks(LoginRequiredMixin, TemplateView):
         trip = get_object_or_404(models.Trip, slug=self.kwargs.get("trip"))
 
         data = TracksServiceData(trip)
-        context = {"message": TracksService(data).create()}
+        msg, _ = TracksService(data).create()
+        context = {"message": msg}
 
         return super().get_context_data(*args, **kwargs) | context
 
@@ -164,7 +165,8 @@ class RewriteAllTracks(LoginRequiredMixin, TemplateView):
         models.Statistic.objects.filter(track__trip=trip).delete()
 
         data = TracksServiceData(trip)
-        context = {"message": TracksService(data).create_or_update()}
+        msg, _ = TracksService(data).create_or_update()
+        context = {"message": msg}
 
         return super().get_context_data(*args, **kwargs) | context
 

@@ -124,11 +124,18 @@ class TracksService:
 
         return "Successfully created or updated tracks and statistics"
 
-    def create(self) -> str:
-        tracks = self._create_tracks(self.new_tracks())
+    def create(self) -> tuple[str, int]:
+        """
+        Returns a tuple with a message and the number of new tracks created.
+        """
+        new_tracks = self.new_tracks()
+        tracks = self._create_tracks(new_tracks), len(new_tracks)
 
         return self._write_tracks(tracks)
 
-    def create_or_update(self):
+    def create_or_update(self) -> tuple[str, int]:
+        """
+        Returns a tuple with a message and the number of new tracks created.
+        """
         tracks = self._create_tracks(self.tracks_db | self.tracks_disk)
         return self._write_tracks(tracks)
