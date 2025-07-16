@@ -59,7 +59,7 @@ def push_comments_qty(trip):
 
     # create or update
     CommentQty.objects.bulk_update_or_create(
-        create_or_update, ["post_date", "qty"], match_field="post_id"
+        create_or_update, ["post_date", "qty"], match_field=["post_id", "trip"]
     )
 
     # delete obsolete rows
