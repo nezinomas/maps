@@ -46,7 +46,7 @@ class TracksService:
     def new_tracks(self) -> Set[str]:
         return self.tracks_disk - self.tracks_db
 
-    def _save_tracks(self, tracks):
+    def _save_tracks(self, tracks) -> None:
         Track.objects.bulk_create(
             tracks,
             update_conflicts=True,
@@ -54,7 +54,7 @@ class TracksService:
             unique_fields=["pk"],
         )
 
-    def _create_tracks(self, track_list):
+    def _create_tracks(self, track_list) -> List[Track]:
         tracks = []
         file_type = "fit"
 
@@ -85,7 +85,7 @@ class TracksService:
             tracks.append(obj)
         return tracks
 
-    def _save_statistic(self, tracks):
+    def _save_statistic(self, tracks) -> None:
         objects = []
         statistic_model_fields = []
         for track in tracks:
@@ -112,7 +112,7 @@ class TracksService:
             unique_fields=["track"],
         )
 
-    def _write_tracks(self, tracks):
+    def _write_tracks(self, tracks) -> str:
         try:
             self._save_tracks(tracks)
         except Exception as e:
