@@ -124,3 +124,9 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LOGIN_URL = "maps:login"
 LOGIN_REDIRECT_URL = "maps:utils_index"
+
+
+GEOJSON_CACHE_TIMEOUTS = {
+    "ongoing_trip": 3600,  # 1 hour
+    "past_trip": 86400,   # 1 day
+}

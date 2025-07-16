@@ -20,9 +20,11 @@ def generate_cache_key(trip):
 
 def generate_cache_timeout(trip):
     current_date = datetime.now().date()
-
-    # If the trip is ongoing, cache for 1 hour; otherwise, cache for 1 day
-    return 3600 if trip.start_date <= current_date <= trip.end_date else 86400
+    return (
+        settings.GEOJSON_CACHE_TIMEOUTS["ongoing_trip"]
+        if trip.start_date <= current_date <= trip.end_date
+        else settings.GEOJSON_CACHE_TIMEOUTS["past_trip"]
+    )
 
 
 def base_context(trip):
