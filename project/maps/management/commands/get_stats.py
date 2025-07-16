@@ -21,11 +21,11 @@ class Command(BaseCommand):
             raise CommandError(f"Can't write data to DB - {e}") from e
 
         # set cache after writing to DB
-        try:
-            if track_qty > 0:
+        if track_qty > 0:
+            try:
                 set_cache(obj.trip)
-        except Exception as e:
-            raise CommandError(f"Can't set cache - {e}") from e
+            except Exception as e:
+                raise CommandError(f"Can't set cache - {e}") from e
 
         dt = datetime.now()
         if track_qty > 0:
@@ -37,6 +37,6 @@ class Command(BaseCommand):
         else:
             self.stdout.write(
                 self.style.SUCCESS(
-                    f"{dt}: No new tracks to sync. {obj.trip.title}."
+                    f"{dt}: No new tracks to sync for {obj.trip.title}."
                 )
             )
