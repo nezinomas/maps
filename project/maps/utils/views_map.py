@@ -11,7 +11,6 @@ from ..templatetags.datetime_filter import format_time
 from .statistic_service import get_statistic
 
 
-
 def generate_cache_key(trip):
     """
     Generates a unique cache key based on the trip's primary key.
@@ -45,7 +44,7 @@ def create_stats(track):
         "ascent": 0,
     }
 
-    with contextlib.suppress(Exception):
+    with contextlib.suppress(AttributeError, TypeError):
         properties["total_km"] = round(track.stats.total_km, 1)
         properties["date"] = track.date.strftime("%Y-%m-%d")
         properties["time"] = format_time(track.stats.total_time_seconds)
@@ -84,7 +83,10 @@ def create_geo_dict(tracks):
 
 def create_geo_json(trip):
     tracks = (
-        models.Track.objects.filter(trip=trip).order_by("date").select_related("stats")
+        models.Track.objects.filter(trip=trip)
+        .order_by("date")
+        .select_related("stats")
+        .prefetch_related("path")
     )
     return json.dumps(create_geo_dict(tracks), cls=DjangoJSONEncoder)
 
