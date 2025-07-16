@@ -18,6 +18,7 @@ def generate_cache_key(trip):
     """
     return f"geojson_{trip.pk}"
 
+
 def generate_cache_timeout(trip):
     current_date = datetime.now().date()
 
@@ -103,10 +104,9 @@ def set_cache(trip, cache_key=None, cache_timeout=None):
 
 
 def create_context(trip):
-    context = base_context(trip)
-
     cache_key = generate_cache_key(trip)
 
+    context = base_context(trip)
     context["tracks"] = cache.get(cache_key) or set_cache(trip, cache_key)
 
     return context
