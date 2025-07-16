@@ -11,7 +11,7 @@ from ..templatetags.datetime_filter import format_time
 from .statistic_service import get_statistic
 
 
-def cache_timeout(trip):
+def generate_cache_timeout(trip):
     current_date = datetime.now().date()
 
     # If the trip is ongoing, cache for 1 hour; otherwise, cache for 1 day
@@ -98,9 +98,9 @@ def set_cache(trip, cache_key=None, cache_timeout=None):
         cache_key = generate_cache_key(trip)
 
     if not cache_timeout:
-        _cache_timeout = cache_timeout(trip)
+        cache_timeout = generate_cache_timeout(trip)
 
-    cache.set(cache_key, geo_data, timeout=_cache_timeout)
+    cache.set(cache_key, geo_data, timeout=cache_timeout)
 
     return geo_data
 
