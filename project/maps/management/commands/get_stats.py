@@ -27,6 +27,16 @@ class Command(BaseCommand):
         except Exception as e:
             raise CommandError(f"Can't set cache - {e}") from e
 
-        self.stdout.write(
-            self.style.SUCCESS(f"{datetime.now()}: Data has been writed to DB.")
-        )
+        dt = datetime.now()
+        if track_qty > 0:
+            self.stdout.write(
+                self.style.SUCCESS(
+                    f"{dt}: {track_qty} tracks have been successfully synced."
+                )
+            )
+        else:
+            self.stdout.write(
+                self.style.SUCCESS(
+                    f"{dt}: No new tracks to sync. {obj.trip.title}."
+                )
+            )
