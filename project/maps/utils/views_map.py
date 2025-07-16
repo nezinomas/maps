@@ -79,14 +79,17 @@ def geo_data(tracks):
 def create_context(trip):
     context = base_context(trip)
 
-    cache_key = f"geojson_{trip.pk}"
+    cache_key = generate_cache_key(trip)
 
     context["tracks"] = cache.get(cache_key) or set_cache(trip, cache_key)
 
     return context
 
 
-def set_cache(trip, cache_key):
+def set_cache(trip, cache_key = None):
+    if not cache_key:
+        cache_key = generate_cache_key(trip)
+
     tracks = (
         models.Track.objects.filter(trip=trip).order_by("date").select_related("stats")
     )
@@ -94,3 +97,10 @@ def set_cache(trip, cache_key):
     _cache_timeout = cache_timeout(trip)
     cache.set(cache_key, geo_json_data, timeout=_cache_timeout)
     return geo_json_data
+
+
+def generate_cache_key(trip):
+    """
+    Generates a unique cache key based on the trip's primary key.
+    """
+    return f"geojson_{trip.pk}"
