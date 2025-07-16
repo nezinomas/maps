@@ -12,7 +12,7 @@ class Command(BaseCommand):
         try:
             qty()
         except Exception as e:
-            raise CommandError(f"Can't sync with Wordpress - {e}")
+            raise CommandError(f"Can't sync with Wordpress - {e}") from e
 
         self.stdout.write(
             self.style.SUCCESS(f"{datetime.now()}: successfully pushed comments")
