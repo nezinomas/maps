@@ -129,9 +129,9 @@ class TracksService:
         Returns a tuple with a message and the number of new tracks created.
         """
         new_tracks = self.new_tracks()
-        tracks = self._create_tracks(new_tracks), len(new_tracks)
+        tracks = self._create_tracks(new_tracks)
 
-        return self._write_tracks(tracks)
+        return self._write_tracks(tracks), len(new_tracks)
 
     def create_or_update(self) -> tuple[str, int]:
         """
