@@ -79,7 +79,7 @@ def geo_data(tracks):
 def create_context(trip):
     context = base_context(trip)
 
-    cache_key = f"geojson_{trip.slug}"
+    cache_key = f"geojson_{trip.pk}"
     geo_json_data = cache.get(cache_key)
 
     if not geo_json_data:
