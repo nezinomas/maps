@@ -36,7 +36,5 @@ class Command(BaseCommand):
             )
         else:
             self.stdout.write(
-                self.style.SUCCESS(
-                    f"{dt}: No new tracks to sync for {obj.trip.title}."
-                )
+                self.style.SUCCESS(f"{dt}: No new tracks to sync for {obj.trip.title}.")
             )

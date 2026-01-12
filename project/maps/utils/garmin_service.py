@@ -1,17 +1,18 @@
-import contextlib
 import io
 import json
+import shutil
 import zipfile
 from datetime import date, datetime, timezone
 from pathlib import Path
 from typing import Dict, List
 
+import requests
 from django.conf import settings
 from garminconnect import (
     Garmin,
     GarminConnectAuthenticationError,
     GarminConnectConnectionError,
-    GarminConnectTooManyRequestsError,
+    GarthHTTPError,
 )
 
 from ..utils.common import get_trip
@@ -19,20 +20,55 @@ from ..utils.common import get_trip
 
 class GarminApi:
     def __init__(self):
-        self._api = self._create_api()
+        try:
+            self._api = self._create_api()
+        except Exception as e:
+            raise e
 
     def _create_api(self):
-        api = None
+        username = settings.ENV["GARMIN_USER"]
+        password = settings.ENV["GARMIN_PASS"]
+        tokenstore_path = Path(settings.ENV["GARMIN_TOKEN_STORE"]).expanduser()
 
-        with contextlib.suppress(
-            GarminConnectConnectionError,
+        # Ensure directory exists
+        if not tokenstore_path.parent.exists():
+            tokenstore_path.parent.mkdir(parents=True, exist_ok=True)
+
+        try:
+            garmin = Garmin()
+            garmin.login(str(tokenstore_path))
+            garmin.get_user_profile()
+            return garmin
+        except (GarminConnectAuthenticationError, Exception) as e:
+            print(f"Tokens expired or invalid ({e}). Cleaning up...")
+
+            try:
+                shutil.rmtree(tokenstore_path)
+                tokenstore_path.parent.mkdir(parents=True, exist_ok=True)
+            except Exception as cleanup_err:
+                print(f"Failed to delete old tokens: {cleanup_err}")
+
+        try:
+            garmin = Garmin(
+                email=username,
+                password=password,
+                is_cn=False,
+                return_on_mfa=False,
+            )
+            garmin.login()
+
+            # Save tokens for future use
+            garmin.garth.dump(str(tokenstore_path))
+            return garmin
+
+        except (
             GarminConnectAuthenticationError,
-            GarminConnectTooManyRequestsError,
+            FileNotFoundError,
+            GarthHTTPError,
+            GarminConnectConnectionError,
+            requests.exceptions.HTTPError,
         ):
-            api = Garmin(settings.ENV["GARMIN_USER"], settings.ENV["GARMIN_PASS"])
-            api.login()
-
-        return api
+            return None
 
     def get_activities(self, start: int, limit: int):
         return self._api.get_activities(start, limit)
@@ -46,7 +82,7 @@ class GarminApi:
 
         return self._api.get_activities_by_date(start_date, end_date)
 
-    def download_fit(self, activity_id):
+    def download_tcx(self, activity_id):
         return self._api.download_activity(
             activity_id, dl_fmt=self._api.ActivityDownloadFormat.TCX
         )

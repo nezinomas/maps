@@ -1,8 +1,8 @@
 import contextlib
-import orjson
 import zlib
 from datetime import datetime
 
+import orjson
 from django.conf import settings
 from django.core.cache import cache
 
