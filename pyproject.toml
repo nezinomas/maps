@@ -63,4 +63,4 @@ select = [
 ]
 
 [tool.uv.sources.parser]
-path = "wheels/parser-0.0.2-cp313-cp313-win_amd64.whl"
+path = "wheels/parser-0.0.2-cp313-cp313-manylinux_2_34_aarch64.whl"
