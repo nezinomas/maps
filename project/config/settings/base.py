@@ -130,3 +130,6 @@ GEOJSON_CACHE_TIMEOUTS = {
     "ongoing_trip": 3600,  # 1 hour
     "past_trip": 86400,  # 1 day
 }
+
+
+SECURE_REFERRER_POLICY = 'strict-origin-when-cross-origin'
