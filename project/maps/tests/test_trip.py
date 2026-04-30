@@ -24,8 +24,9 @@ def test_trip_ended():
     assert not actual
 
 
-@pytest.mark.freeze_time("2022-1-1")
-def test_trip_exists():
+def test_trip_exists(freezer):
+    freezer.move_to("2022-01-01")
+
     _trip = TripFactory()
 
     actual = get_trip()
