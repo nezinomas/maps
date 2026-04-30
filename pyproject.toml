@@ -54,6 +54,10 @@ dev = [
     "webtest>=3.0.4",
 ]
 
+production = [
+    "gunicorn>=23.0.0",
+]
+
 [tool.ruff.lint]
 select = [
     "E",
