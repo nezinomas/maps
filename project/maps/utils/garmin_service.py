@@ -12,7 +12,6 @@ from garminconnect import (
     Garmin,
     GarminConnectAuthenticationError,
     GarminConnectConnectionError,
-    GarthHTTPError,
 )
 
 from ..utils.common import get_trip
@@ -64,7 +63,6 @@ class GarminApi:
         except (
             GarminConnectAuthenticationError,
             FileNotFoundError,
-            GarthHTTPError,
             GarminConnectConnectionError,
             requests.exceptions.HTTPError,
         ):
