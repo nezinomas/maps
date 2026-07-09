@@ -18,7 +18,7 @@
     const modulaMetaVars = [];
     //# sourceURL=modula-js-before
     </script>
-    <script id="modula-js" src="https://unknownbug.net/nezinomas/wp-content/plugins/modula-best-grid-gallery/assets/js/front/jquery-modula.min.js?ver=2.14.30"></script>
+    <script id="modula-js" src="https://unknownbug.net/nezinomas/wp-content/plugins/modula-best-grid-gallery/assets/js/front/jquery-modula.min.js?ver=2.14.30" onload="window.__initModulaGalleries && window.__initModulaGalleries()"></script>
 
     <script>
 		(function() {
@@ -34,10 +34,18 @@
     </script>
 
     <script>
-    // Modula initialises galleries on jQuery's document-ready event, which has
-    // already fired by the time htmx injects these posts. So the galleries are
-    // never laid out and their images stay hidden (opacity:0, collapsed grid).
-    // Re-run Modula's own initialiser after each htmx swap instead.
+    // Modula normally initialises galleries on jQuery's document-ready event,
+    // which has already fired by the time htmx injects these posts, so the
+    // galleries are never laid out and their images stay hidden (opacity:0 in a
+    // collapsed grid). We re-run Modula's initialiser ourselves. Two timing
+    // hazards this has to survive:
+    //   1. htmx runs THIS inline script immediately, before the external Modula
+    //      script injected in the same swap has downloaded, so the plugin may
+    //      not exist yet. The script tag's onload handler calls us the moment it
+    //      is ready (reliable even on a cold first load); the poll is a fallback.
+    //   2. On the first (cold) load the grid can be laid out before its
+    //      container has its final width, leaving it collapsed. We trigger a
+    //      resize once so Modula recomputes the layout.
     (function () {
         function initGalleries(tries) {
             if (!window.jQuery) { return; }
@@ -45,10 +53,8 @@
             var pending = $('.modula.modula-gallery:not(.modula-initialized)');
             if (!pending.length) { return; }
             if (!$.fn.modulaGallery) {
-                // Modula's script is injected in this same swap and may still be
-                // loading; retry for a few seconds until the plugin is available.
-                if ((tries || 0) < 100) {
-                    window.setTimeout(function () { initGalleries((tries || 0) + 1); }, 50);
+                if ((tries || 0) < 200) {
+                    window.setTimeout(function () { initGalleries((tries || 0) + 1); }, 100);
                 }
                 return;
             }
@@ -58,7 +64,11 @@
                 el.addClass('modula-initialized');
                 el.modulaGallery(el.data('config'));
             });
+            // Nudge Modula to recompute the grid once the container has real width.
+            window.setTimeout(function () { $(window).trigger('resize'); }, 250);
         }
+
+        window.__initModulaGalleries = initGalleries;
 
         if (!window.__modulaHtmxBound) {
             window.__modulaHtmxBound = true;
