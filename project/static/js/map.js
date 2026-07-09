@@ -4,11 +4,12 @@ function initMap(routes) {
         {
             zoomControl: true,
             fullscreenControl: {
-                // No iPhone browser can put a page element into true fullscreen
-                // (they are all WebKit and may still claim support), so always
-                // use full-page (pseudo) fullscreen there; elsewhere use it only
-                // when the Fullscreen API is genuinely unavailable
-                pseudoFullscreen: /iPhone|iPod/.test(navigator.userAgent)
+                // Native fullscreen is unreliable on phones (iPhone WebKit can't
+                // do it at all, and "Request Desktop Website" hides the device
+                // from user-agent checks), so use full-page (pseudo) fullscreen
+                // on every mobile device; on desktop use it only when the
+                // Fullscreen API is genuinely unavailable
+                pseudoFullscreen: L.Browser.mobile
                     || !(document.fullscreenEnabled || document.webkitFullscreenEnabled)
             },
         }
