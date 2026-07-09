@@ -82,6 +82,15 @@
     .grid {
         grid-template-columns: 1rem 1fr 1rem;
     }
+
+    // Stack the trip statistics vertically so the text is readable
+    // instead of cramped into a single row on narrow phone screens
+    header .trip-statistic {
+        flex-direction: column;
+        align-items: center;
+        gap: 0.25rem;
+        text-align: center;
+    }
 }
 
 
