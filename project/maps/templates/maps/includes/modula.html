@@ -33,4 +33,39 @@
     //# sourceURL=wp_customize_support_script
     </script>
 
+    <script>
+    // Modula initialises galleries on jQuery's document-ready event, which has
+    // already fired by the time htmx injects these posts. So the galleries are
+    // never laid out and their images stay hidden (opacity:0, collapsed grid).
+    // Re-run Modula's own initialiser after each htmx swap instead.
+    (function () {
+        function initGalleries(tries) {
+            if (!window.jQuery) { return; }
+            var $ = window.jQuery;
+            var pending = $('.modula.modula-gallery:not(.modula-initialized)');
+            if (!pending.length) { return; }
+            if (!$.fn.modulaGallery) {
+                // Modula's script is injected in this same swap and may still be
+                // loading; retry for a few seconds until the plugin is available.
+                if ((tries || 0) < 100) {
+                    window.setTimeout(function () { initGalleries((tries || 0) + 1); }, 50);
+                }
+                return;
+            }
+            $('body').addClass('modula-best-grid-gallery');
+            pending.each(function () {
+                var el = $(this);
+                el.addClass('modula-initialized');
+                el.modulaGallery(el.data('config'));
+            });
+        }
+
+        if (!window.__modulaHtmxBound) {
+            window.__modulaHtmxBound = true;
+            document.addEventListener('htmx:afterSettle', function () { initGalleries(0); });
+        }
+        initGalleries(0);
+    })();
+    </script>
+
 {% endif %}
