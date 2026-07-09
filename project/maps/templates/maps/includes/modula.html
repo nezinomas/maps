@@ -11,6 +11,7 @@
     <script id="jquery-masonry-js" src="https://unknownbug.net/nezinomas/wp-includes/js/jquery/jquery.masonry.min.js?ver=3.1.2b"></script>
     <script id="modula-isotope-js" src="https://unknownbug.net/nezinomas/wp-content/plugins/modula-best-grid-gallery/assets/js/front/isotope.min.js?ver=2.14.30"></script>
     <script id="modula-isotope-packery-js" src="https://unknownbug.net/nezinomas/wp-content/plugins/modula-best-grid-gallery/assets/js/front/isotope-packery.min.js?ver=2.14.30"></script>
+    <script id="modula-justified-gallery-js" src="https://unknownbug.net/nezinomas/wp-content/plugins/modula-best-grid-gallery/assets/js/front/justifiedGallery.min.js?ver=2.14.30"></script>
     <script id="dompurify-js" src="https://unknownbug.net/nezinomas/wp-content/plugins/modula-best-grid-gallery/assets/js/front/purify.min.js?ver=2.14.30"></script>
     <script id="modulaFancybox-js" src="https://unknownbug.net/nezinomas/wp-content/plugins/modula-best-grid-gallery/assets/js/front/modula-fancybox.min.js?ver=2.14.30"></script>
     <script id="modula-fancybox-js" src="https://unknownbug.net/nezinomas/wp-content/plugins/modula-best-grid-gallery/assets/js/front/fancybox.min.js?ver=2.14.30"></script>
@@ -52,7 +53,11 @@
             var $ = window.jQuery;
             var pending = $('.modula.modula-gallery:not(.modula-initialized)');
             if (!pending.length) { return; }
-            if (!$.fn.modulaGallery) {
+            // modulaGallery is the plugin itself; justifiedGallery is the
+            // layout engine the "automatic" grid_type calls into. Without the
+            // latter, createAutoGrid() throws and the gallery never lays out,
+            // so wait for both before initialising.
+            if (!$.fn.modulaGallery || !$.fn.justifiedGallery) {
                 if ((tries || 0) < 200) {
                     window.setTimeout(function () { initGalleries((tries || 0) + 1); }, 100);
                 }
