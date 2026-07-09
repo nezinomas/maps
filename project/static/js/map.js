@@ -1,7 +1,17 @@
 function initMap(routes) {
     const map = L.map(
         'map',
-        { zoomControl: true, fullscreenControl: true, }
+        {
+            zoomControl: true,
+            fullscreenControl: {
+                // No iPhone browser can put a page element into true fullscreen
+                // (they are all WebKit and may still claim support), so always
+                // use full-page (pseudo) fullscreen there; elsewhere use it only
+                // when the Fullscreen API is genuinely unavailable
+                pseudoFullscreen: /iPhone|iPod/.test(navigator.userAgent)
+                    || !(document.fullscreenEnabled || document.webkitFullscreenEnabled)
+            },
+        }
     ).setView([0, 0], 2);
 
     // osm layer
