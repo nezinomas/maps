@@ -5,7 +5,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{{trip.title}}</title>
+    <title>{% block title %}{{trip.title}}{% endblock %}</title>
     <link href="{% static 'css/main.css' %}?v=1" rel="stylesheet" type="text/css" />
     <link href="{% static 'css/css-loader.css' %}" rel="stylesheet" type="text/css">
 
