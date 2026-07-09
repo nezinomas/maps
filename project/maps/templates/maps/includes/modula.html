@@ -63,9 +63,22 @@
                 var el = $(this);
                 el.addClass('modula-initialized');
                 el.modulaGallery(el.data('config'));
+                relayout(el);
             });
-            // Nudge Modula to recompute the grid once the container has real width.
-            window.setTimeout(function () { $(window).trigger('resize'); }, 250);
+        }
+
+        // The "automatic" (justified) grid_type lays itself out in JS from each
+        // image's natural size and the container's rendered width; on a cold
+        // load neither is settled when modulaGallery() first runs, so that grid
+        // collapses and its images stay hidden (opacity:0). The custom grid_type
+        // is pure CSS and doesn't care. Re-run the layout once this gallery's
+        // images have loaded, plus a fallback nudge for slow connections.
+        function relayout(el) {
+            var $ = window.jQuery;
+            function nudge() { $(window).trigger('resize'); }
+            if ($.fn.imagesLoaded) { el.imagesLoaded().always(nudge); }
+            window.setTimeout(nudge, 250);
+            window.setTimeout(nudge, 1000);
         }
 
         window.__initModulaGalleries = initGalleries;
