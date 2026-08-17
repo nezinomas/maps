@@ -2,14 +2,20 @@ from datetime import datetime
 
 from django.core.management.base import BaseCommand, CommandError
 
+from ...utils.common import get_trip
 from ...utils.tracks_service import TracksService, TracksServiceData
 from ...utils.views_map import set_cache
 
 
 class Command(BaseCommand):
-    help = "Get bike activities from Garmin"
+    help = "Process Garmin activities, save tracks and statistics to the database"
 
     def handle(self, *args, **options):
+        trip = get_trip()
+        if not trip:
+            self.stdout.write(self.style.SUCCESS(f"{datetime.now()}: No active trip."))
+            return
+
         obj = None
         track_qty = 0
 
