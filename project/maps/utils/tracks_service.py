@@ -126,7 +126,7 @@ class TracksService:
 
         # Invalidate the cached GeoJSON so the new tracks appear on the map immediately
         cache.delete(f"geojson_{self.trip.pk}")
-        
+
         # Proactively rebuild the cache so the next user doesn't experience a slow load time
         views_map.set_cache(self.trip)
 
