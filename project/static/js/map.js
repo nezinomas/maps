@@ -1,7 +1,18 @@
 function initMap(routes) {
     const map = L.map(
         'map',
-        { zoomControl: true, fullscreenControl: true, }
+        {
+            zoomControl: true,
+            fullscreenControl: {
+                // Native fullscreen is unreliable on phones (iPhone WebKit can't
+                // do it at all, and "Request Desktop Website" hides the device
+                // from user-agent checks), so use full-page (pseudo) fullscreen
+                // on every mobile device; on desktop use it only when the
+                // Fullscreen API is genuinely unavailable
+                pseudoFullscreen: L.Browser.mobile
+                    || !(document.fullscreenEnabled || document.webkitFullscreenEnabled)
+            },
+        }
     ).setView([0, 0], 2);
 
     // osm layer

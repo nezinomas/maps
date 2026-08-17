@@ -44,7 +44,7 @@ EMAIL_PORT = 25
 EMAIL_HOST_USER = ""
 EMAIL_HOST_PASSWORD = ""
 EMAIL_USE_TLS = False
-DEFAULT_FROM_EMAIL = "Invite <invite@bookkeeping.com>"
+DEFAULT_FROM_EMAIL = "Maps <maps@unknownbug.com>"
 
 
 LOGGING = {
@@ -64,7 +64,7 @@ LOGGING = {
         # Log to a text file that can be rotated by logrotate
         "logfile": {
             "class": "logging.handlers.WatchedFileHandler",
-            "filename": "/data/django_projects/_maps.log",
+            "filename": ENV["LOG_FILE"],
         },
     },
     "loggers": {

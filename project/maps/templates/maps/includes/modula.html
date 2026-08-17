@@ -3,28 +3,97 @@
 {% if modula_gallery %}
     <script src="{% static 'js/gallery.js' %}"></script>
 
-    <link rel='stylesheet' id='modula-css'  href='https://unknownbug.net/nezinomas/wp-content/plugins/modula-best-grid-gallery/assets/css/front.css?ver=2.8.16' type='text/css' media='all' />
-    <script type='text/javascript' src='https://unknownbug.net/nezinomas/wp-includes/js/hoverintent-js.min.js?ver=2.2.1' id='hoverintent-js-js'></script>
-    <script type="text/javascript" src="https://unknownbug.net/nezinomas/wp-includes/js/imagesloaded.min.js?ver=5.0.0" id="imagesloaded-js"></script>
-    <script type="text/javascript" src="https://unknownbug.net/nezinomas/wp-includes/js/masonry.min.js?ver=4.2.2" id="masonry-js"></script>
-    <script type="text/javascript" src="https://unknownbug.net/nezinomas/wp-includes/js/jquery/jquery.masonry.min.js?ver=3.1.2b" id="jquery-masonry-js"></script>
-    <script type="text/javascript" src="https://unknownbug.net/nezinomas/wp-content/plugins/modula-best-grid-gallery/assets/js/front/lazysizes.min.js?ver=2.8.16" id="modula-lazysizes-js"></script>
-    <script type="text/javascript" src="https://unknownbug.net/nezinomas/wp-content/plugins/modula-best-grid-gallery/assets/js/front/justifiedGallery.min.js?ver=2.8.16" id="modula-grid-justified-gallery-js"></script>
-    <script type="text/javascript" src="https://unknownbug.net/nezinomas/wp-content/plugins/modula-best-grid-gallery/assets/js/front/modula-fancybox.min.js?ver=2.8.16" id="modulaFancybox-js"></script>
-    <script type="text/javascript" src="https://unknownbug.net/nezinomas/wp-content/plugins/modula-best-grid-gallery/assets/js/front/fancybox.min.js?ver=2.8.16" id="modula-fancybox-js"></script>
-    <script type="text/javascript" src="https://unknownbug.net/nezinomas/wp-content/plugins/modula-best-grid-gallery/assets/js/front/jquery-modula.min.js?ver=2.8.16" id="modula-js"></script>
-    <script type="text/javascript" src="https://unknownbug.net/nezinomas/wp-content/plugins/modula-best-grid-gallery/assets/js/front/isotope.min.js?ver=2.8.16" id="modula-isotope-js"></script>
-    <script type="text/javascript" src="https://unknownbug.net/nezinomas/wp-content/plugins/modula-best-grid-gallery/assets/js/front/isotope-packery.min.js?ver=2.8.16" id="modula-isotope-packery-js"></script>
+    <link rel='stylesheet' id='modula-css'  href='https://unknownbug.net/nezinomas/wp-content/plugins/modula-best-grid-gallery/assets/css/front.css?ver=2.14.30' media='all' />
 
-    <script type="text/javascript">
-    (function() {
-        var request, b = document.body, c = 'className', cs = 'customize-support', rcs = new RegExp('(^|\\s+)(no-)?'+cs+'(\\s+|$)');
-
-            request = true;
-
-        b[c] = b[c].replace( rcs, ' ' );
-        // The customizer requires postMessage and CORS (if the site is cross domain).
-        b[c] += ( window.postMessage && request ? ' ' : ' no-' ) + cs;
-    }());
+    <script id="hoverintent-js-js" src="https://unknownbug.net/nezinomas/wp-includes/js/hoverintent-js.min.js?ver=2.2.1"></script>
+    <script id="imagesloaded-js" src="https://unknownbug.net/nezinomas/wp-includes/js/imagesloaded.min.js?ver=5.0.0"></script>
+    <script id="masonry-js" src="https://unknownbug.net/nezinomas/wp-includes/js/masonry.min.js?ver=4.2.2"></script>
+    <script id="jquery-masonry-js" src="https://unknownbug.net/nezinomas/wp-includes/js/jquery/jquery.masonry.min.js?ver=3.1.2b"></script>
+    <script id="modula-isotope-js" src="https://unknownbug.net/nezinomas/wp-content/plugins/modula-best-grid-gallery/assets/js/front/isotope.min.js?ver=2.14.30"></script>
+    <script id="modula-isotope-packery-js" src="https://unknownbug.net/nezinomas/wp-content/plugins/modula-best-grid-gallery/assets/js/front/isotope-packery.min.js?ver=2.14.30"></script>
+    <script id="modula-justified-gallery-js" src="https://unknownbug.net/nezinomas/wp-content/plugins/modula-best-grid-gallery/assets/js/front/justifiedGallery.min.js?ver=2.14.30"></script>
+    <script id="dompurify-js" src="https://unknownbug.net/nezinomas/wp-content/plugins/modula-best-grid-gallery/assets/js/front/purify.min.js?ver=2.14.30"></script>
+    <script id="modulaFancybox-js" src="https://unknownbug.net/nezinomas/wp-content/plugins/modula-best-grid-gallery/assets/js/front/modula-fancybox.min.js?ver=2.14.30"></script>
+    <script id="modula-fancybox-js" src="https://unknownbug.net/nezinomas/wp-content/plugins/modula-best-grid-gallery/assets/js/front/fancybox.min.js?ver=2.14.30"></script>
+    <script id="modula-js-before">
+    const modulaMetaVars = [];
+    //# sourceURL=modula-js-before
     </script>
+    <script id="modula-js" src="https://unknownbug.net/nezinomas/wp-content/plugins/modula-best-grid-gallery/assets/js/front/jquery-modula.min.js?ver=2.14.30" onload="window.__initModulaGalleries && window.__initModulaGalleries()"></script>
+
+    <script>
+		(function() {
+			var request, b = document.body, c = 'className', cs = 'customize-support', rcs = new RegExp('(^|\\s+)(no-)?'+cs+'(\\s+|$)');
+
+				request = true;
+
+			b[c] = b[c].replace( rcs, ' ' );
+			// The customizer requires postMessage and CORS (if the site is cross domain).
+			b[c] += ( window.postMessage && request ? ' ' : ' no-' ) + cs;
+		}());
+    //# sourceURL=wp_customize_support_script
+    </script>
+
+    <script>
+    // Modula normally initialises galleries on jQuery's document-ready event,
+    // which has already fired by the time htmx injects these posts, so the
+    // galleries are never laid out and their images stay hidden (opacity:0 in a
+    // collapsed grid). We re-run Modula's initialiser ourselves. Two timing
+    // hazards this has to survive:
+    //   1. htmx runs THIS inline script immediately, before the external Modula
+    //      script injected in the same swap has downloaded, so the plugin may
+    //      not exist yet. The script tag's onload handler calls us the moment it
+    //      is ready (reliable even on a cold first load); the poll is a fallback.
+    //   2. On the first (cold) load the grid can be laid out before its
+    //      container has its final width, leaving it collapsed. We trigger a
+    //      resize once so Modula recomputes the layout.
+    (function () {
+        function initGalleries(tries) {
+            if (!window.jQuery) { return; }
+            var $ = window.jQuery;
+            var pending = $('.modula.modula-gallery:not(.modula-initialized)');
+            if (!pending.length) { return; }
+            // modulaGallery is the plugin itself; justifiedGallery is the
+            // layout engine the "automatic" grid_type calls into. Without the
+            // latter, createAutoGrid() throws and the gallery never lays out,
+            // so wait for both before initialising.
+            if (!$.fn.modulaGallery || !$.fn.justifiedGallery) {
+                if ((tries || 0) < 200) {
+                    window.setTimeout(function () { initGalleries((tries || 0) + 1); }, 100);
+                }
+                return;
+            }
+            $('body').addClass('modula-best-grid-gallery');
+            pending.each(function () {
+                var el = $(this);
+                el.addClass('modula-initialized');
+                el.modulaGallery(el.data('config'));
+                relayout(el);
+            });
+        }
+
+        // The "automatic" (justified) grid_type lays itself out in JS from each
+        // image's natural size and the container's rendered width; on a cold
+        // load neither is settled when modulaGallery() first runs, so that grid
+        // collapses and its images stay hidden (opacity:0). The custom grid_type
+        // is pure CSS and doesn't care. Re-run the layout once this gallery's
+        // images have loaded, plus a fallback nudge for slow connections.
+        function relayout(el) {
+            var $ = window.jQuery;
+            function nudge() { $(window).trigger('resize'); }
+            if ($.fn.imagesLoaded) { el.imagesLoaded().always(nudge); }
+            window.setTimeout(nudge, 250);
+            window.setTimeout(nudge, 1000);
+        }
+
+        window.__initModulaGalleries = initGalleries;
+
+        if (!window.__modulaHtmxBound) {
+            window.__modulaHtmxBound = true;
+            document.addEventListener('htmx:afterSettle', function () { initGalleries(0); });
+        }
+        initGalleries(0);
+    })();
+    </script>
+
 {% endif %}
