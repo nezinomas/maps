@@ -149,7 +149,7 @@ class GarminService:
                 time = datetime.strptime(
                     activity.get("startTimeGMT"), "%Y-%m-%d %H:%M:%S"
                 )
-                time = time.astimezone(timezone.utc)
+                time = time.replace(tzinfo=timezone.utc)
                 trip_start = datetime.combine(
                     self.trip.start_date, datetime.min.time(), tzinfo=timezone.utc
                 )
