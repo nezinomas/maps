@@ -2,10 +2,11 @@ from pathlib import Path
 from typing import Dict, List, Set
 
 from django.conf import settings
+from django.core.cache import cache
 
 from ..models import Statistic, Track, Trip
 from ..utils.common import get_trip
-from . import parse_activity_file, parse_fit_file
+from . import parse_activity_file, parse_fit_file, views_map
 
 
 class TracksServiceData:
@@ -122,6 +123,12 @@ class TracksService:
             self._save_statistic(tracks)
         except Exception as e:
             return f"Error occurred during saving statistic: {e}"
+
+        # Invalidate the cached GeoJSON so the new tracks appear on the map immediately
+        cache.delete(f"geojson_{self.trip.pk}")
+        
+        # Proactively rebuild the cache so the next user doesn't experience a slow load time
+        views_map.set_cache(self.trip)
 
         return "Successfully created or updated tracks and statistics"
 
