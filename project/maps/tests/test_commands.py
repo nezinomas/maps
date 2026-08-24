@@ -28,3 +28,22 @@ def test_get_stats_no_active_trip_does_not_crash(
 
     captured = capsys.readouterr()
     assert "No active trip" in captured.out or "No active trip" in captured.err
+
+
+@patch("project.maps.management.commands.comments.push_comments_qty_for_all_trips")
+def test_comments_command_syncs_all_trips(mck_push, capsys):
+    call_command("comments")
+
+    assert mck_push.call_count == 1
+
+    captured = capsys.readouterr()
+    assert "successfully pushed comments" in captured.out
+
+
+@patch(
+    "project.maps.management.commands.comments.push_comments_qty_for_all_trips",
+    side_effect=Exception("boom"),
+)
+def test_comments_command_reports_failure(mck_push):
+    with pytest.raises(CommandError):
+        call_command("comments")
