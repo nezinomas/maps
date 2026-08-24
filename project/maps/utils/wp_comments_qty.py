@@ -2,8 +2,6 @@ import datetime as dt
 from collections import Counter
 from operator import itemgetter
 
-from dateutil.relativedelta import relativedelta
-
 from ..models import CommentQty, Trip
 from . import wp_content
 
@@ -69,9 +67,6 @@ def push_comments_qty(trip):
 
 
 def push_comments_qty_for_all_trips():
-    trips = Trip.objects.filter(
-        end_date__gte=dt.date.today() + relativedelta(months=+3)
-    )
-
-    for trip in trips:
+    # comments can be added to old trips too, so sync every trip
+    for trip in Trip.objects.all():
         push_comments_qty(trip)

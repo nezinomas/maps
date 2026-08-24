@@ -1,4 +1,4 @@
-from datetime import datetime, timezone
+from datetime import date, datetime, timezone
 
 import pytest
 from mock import call, patch
@@ -135,3 +135,31 @@ def test_push_comments_update_delete_old_post_id(mck):
 
     assert actual.count() == 1
     assert actual[0].post_id == obj.post_id
+
+
+@patch("project.maps.utils.wp_comments_qty.push_comments_qty")
+def test_push_comments_qty_for_all_trips_includes_old_trips(mck_push):
+    old = TripFactory(
+        title="Old",
+        start_date=date(1999, 1, 1),
+        end_date=date(1999, 2, 1),
+        blog_category=1,
+    )
+    future = TripFactory(
+        title="Future",
+        start_date=date(2999, 1, 1),
+        end_date=date(2999, 2, 1),
+        blog_category=2,
+    )
+
+    wp_comments_qty.push_comments_qty_for_all_trips()
+
+    assert mck_push.call_count == 2
+    assert {c.args[0] for c in mck_push.call_args_list} == {old, future}
+
+
+@patch("project.maps.utils.wp_comments_qty.push_comments_qty")
+def test_push_comments_qty_for_all_trips_no_trips(mck_push):
+    wp_comments_qty.push_comments_qty_for_all_trips()
+
+    assert mck_push.call_count == 0
