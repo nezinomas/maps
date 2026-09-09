@@ -68,12 +68,14 @@ select = [
 
 [tool.uv]
 environments = [
-    "sys_platform == 'linux'",
+    "sys_platform == 'linux' and platform_machine == 'x86_64'",
+    "sys_platform == 'linux' and platform_machine == 'aarch64'",
     "sys_platform == 'win32'",
 ]
 
 [tool.uv.sources]
 parser = [
-    { path = "wheels/parser-0.0.2-cp313-cp313-manylinux_2_34_aarch64.whl", marker = "sys_platform == 'linux'" },
+    { path = "wheels/parser-0.0.2-cp313-cp313-manylinux_2_34_x86_64.whl", marker = "sys_platform == 'linux' and platform_machine == 'x86_64'" },
+    { path = "wheels/parser-0.0.2-cp313-cp313-manylinux_2_34_aarch64.whl", marker = "sys_platform == 'linux' and platform_machine == 'aarch64'" },
     { path = "wheels/parser-0.0.2-cp313-cp313-win_amd64.whl", marker = "sys_platform == 'win32'" }
 ]
