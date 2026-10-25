@@ -153,7 +153,7 @@ def test_utils_trip_create(admin_client):
     actual = models.Trip.objects.last()
 
     assert actual.title == "Trip"
-    assert actual.blog_category == "1"
+    assert actual.blog_category == 1
     assert actual.description == "Description"
     assert actual.start_date == date(1999, 1, 1)
     assert actual.end_date == date(1999, 12, 31)
@@ -198,7 +198,7 @@ def test_update_trip(admin_client):
     obj.refresh_from_db()
 
     assert obj.title == "Trip Updated"
-    assert obj.blog_category == "1"
+    assert obj.blog_category == 1
     assert obj.description == "Description"
     assert obj.start_date == date(1999, 1, 1)
     assert obj.end_date == date(1999, 12, 31)

@@ -19,7 +19,7 @@ def test_command_help_texts():
 
 @patch("project.maps.management.commands.get_stats.TracksServiceData")
 @patch("project.maps.management.commands.get_stats.TracksService")
-@patch("project.maps.utils.common.get_trip", return_value=None)
+@patch("project.maps.management.commands.get_stats.get_trip", return_value=None)
 def test_get_stats_no_active_trip_does_not_crash(
     mck_get_trip, mck_service, mck_data, capsys
 ):

@@ -1,10 +1,15 @@
 from datetime import date
 
 import pytest
-from mock import patch
+from mock import Mock, patch
 
 from project.maps.factories import TripFactory
 from project.maps.utils.garmin_service import GarminService
+
+
+@pytest.fixture(autouse=True)
+def mck_create_api(monkeypatch):
+    monkeypatch.setattr("project.maps.utils.garmin_service.GarminApi._create_api", Mock())
 
 
 @patch("project.maps.utils.garmin_service.GarminService._save_activities")
