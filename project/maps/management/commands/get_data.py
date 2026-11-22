@@ -11,11 +11,15 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         try:
             # get data from garmin connect
-            GarminService().get_data()
+            result = GarminService().get_data()
         except Exception as e:
             raise CommandError(
                 f"It is not possible to sync data with Garmin - {e}"
             ) from e
+
+        # get_data reports failures as a message, for the views.
+        if result.startswith("Error"):
+            raise CommandError(f"It is not possible to sync data with Garmin - {result}")
 
         self.stdout.write(
             self.style.SUCCESS(
