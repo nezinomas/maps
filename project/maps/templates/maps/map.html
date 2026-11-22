@@ -8,17 +8,19 @@
 
     <script src="https://maps.googleapis.com/maps/api/js?key={{google_api_key}}"></script>
 
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    <script src='https://api.mapbox.com/mapbox.js/plugins/leaflet-fullscreen/v1.0.1/Leaflet.fullscreen.min.js'></script>
-    <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
-    <script src="https://unpkg.com/leaflet.gridlayer.googlemutant@0.10.0/Leaflet.GoogleMutant.js"></script>
-    <script src="https://unpkg.com/leaflet-pegman@0.1.7/leaflet-pegman.js"></script>
+    <!-- integrity: the browser refuses the file if the CDN serves anything else
+         (hashes checked against unpkg and jsdelivr, 2026-11-22). -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha384-cxOPjt7s7Iz04uaHJceBmS+qpjv2JkIHNVcuOrM+YHwZOmJGBXI00mdUXEq65HTH" crossorigin="anonymous"></script>
+    <script src='https://api.mapbox.com/mapbox.js/plugins/leaflet-fullscreen/v1.0.1/Leaflet.fullscreen.min.js' integrity="sha384-btJhAWztz7ttA6ibFC5ppM39nkCPK6CWzRVmsaLcDn37mA3x1TzF1DbFwa6tJpTN" crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js" integrity="sha384-eXVCORTRlv4FUUgS/xmOyr66XBVraen8ATNLMESp92FKXLAMiKkerixTiBvXriZr" crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/leaflet.gridlayer.googlemutant@0.10.0/Leaflet.GoogleMutant.js" integrity="sha384-Og/MdFthey1c7n3yvE0dVUvc8sp84+WAa2aTfvysPJvi7GavQetBVPIKjNFAMR7A" crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/leaflet-pegman@0.1.7/leaflet-pegman.js" integrity="sha384-pcDkMAJBDFmkiJQCf29yQ9VKzKkSUulfK7Ddvi15Pe2+UQBfHp6smIQdkRheEHrY" crossorigin="anonymous"></script>
 
     <script src="{% static 'js/map.js' %}?v=3" type="text/javascript"></script>
 
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-    <link href='https://api.mapbox.com/mapbox.js/plugins/leaflet-fullscreen/v1.0.1/leaflet.fullscreen.css' rel='stylesheet' />
-    <link rel="stylesheet" href="https://unpkg.com/leaflet-pegman@0.1.7/leaflet-pegman.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha384-sHL9NAb7lN7rfvG5lfHpm643Xkcjzp4jFvuavGOndn6pjVqS6ny56CAt3nsEVT4H" crossorigin="anonymous" />
+    <link href='https://api.mapbox.com/mapbox.js/plugins/leaflet-fullscreen/v1.0.1/leaflet.fullscreen.css' integrity="sha384-t17w2haSDwLp3KSAOHF7+VI9q2maRMLDhnIyU/JasjeWyxcN3YOcrD7T95CiJSWE" crossorigin="anonymous" rel='stylesheet' />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-pegman@0.1.7/leaflet-pegman.css" integrity="sha384-dGccXfjglJMs6xQEzXbulobKN1l3LeJgQ5e2WjcHDHoJLjJOTluXoO4dMNn9/MHR" crossorigin="anonymous" />
 
 {% endblock %}
 
